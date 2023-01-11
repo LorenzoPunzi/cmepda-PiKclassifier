@@ -13,7 +13,7 @@ Abbiamo delineato una prima potenziale parte del progetto (aka BOLDf). Questa ha
 BOLDf:
 1) Usare i MC per generare un set di "dati" con una frazione nota, ad esempio 0.5 che è sia vicina a quella target ed è unbiased a priori. Nel generarli salvare quali dati sono K (y=1) e quali Pi (y=0) per il training
 2) Trainare la DNN su questo set di dati
-3) Applicare la DNN ai "dati originali" e SOMMARE le yi ottenute su tutti gli eventi. Questa somma viene presa come il numero MEDIO di K nel sample di dati. Questo approccio ha il vantaggio di non fregarsene di ogni evento individuale ma di fare un "valore atteso totale" del numero di K, contando ogni evento pesandolo con probabilità di essere K, quindi per convenzione K=1. Ciò dovrebbe essere anche corretto nel caso (realissimo) in cui le probabilità NON sono fra loro indipendenti, tanto il valore atteso della somma è sempre la somma dei valori attesi. Quindi invece di fare una DNN con uscita {False,True} o trasformare le yi reali in 0 o 1 con un qualche criterio, PRESERVIAMO l'informazione data da un valore intermedio pesandolo come tale nella somma (In un certo senso è come se ogni evento ti dicesse "se tutti gli eventi sono come me f = yi", e si facesse una media di questi valori pesando tutti gli eventi ugualmente). 
+3) Applicare la DNN ai "dati originali" e SOMMARE le yi ottenute su tutti gli eventi. Questa somma viene presa come il numero MEDIO di K nel sample di dati. Questo approccio ha il vantaggio di non fregarsene di ogni evento individuale ma di fare un "valore atteso totale" del numero di K, contando ogni evento pesandolo con probabilità di essere K, quindi per convenzione K=1. Ciò dovrebbe essere anche corretto nel caso (realissimo) in cui le probabilità NON sono fra loro indipendenti, tanto il valore atteso della somma è sempre la somma dei valori attesi. Quindi invece di fare una DNN con uscita {False,True} o trasformare le yi reali in 0 o 1 con un qualche criterio, PRESERVIAMO l'informazione data da un valore intermedio pesandolo come tale nella somma (In un certo senso è come se ogni evento ti dicesse "se tutti gli eventi sono come me f = yi", e si facesse una media di questi valori pesando tutti gli eventi ugualmente).
 4) Si paragona la frazione così ottenuta con quella di BoldR. Bisognerà un po' esplorare il problema dell'incertezza da legare a questa stima. Per esempio noi calcoliamo il valore medio, ma se davvero fossero per esempio tutte massimamente correlate le probabilità potrebbe in linea di principio dare un valore di f intermedio anche quando nella realtà è molto vicino a 0 o 1....
 
 Si possono estendere queste tecniche anche con un training su più frazioni invece di solo 0.5, eventualmente trainando la DNN su frazioni diverse e minimizzando la loss tenendo conto anche di questo iperparametro
@@ -21,4 +21,20 @@ Si possono estendere queste tecniche anche con un training su più frazioni inve
 Quanto detto fin'ora in linea di principio è fattibile con il solo Python, eventualmente PyRoot, ed eventualmente anche il JITing di C++ all'interno.
 
 
+-----------------------------------------------------------------
 
+11/01/22:
+
+Iniziato il modulo import_functions, contenente le funzioni che permettono di
+arrivare ad ottenere un array da sottoporre al training.
+
+Utilizzato uproot per trasformare i dati dei tree in array numpy: oltre ad essere
+più flessibile (permette di dare in input anche il nome della variabile desiderata),
+impiega 1/3 del tempo della funzione costruita "a mano".
+
+Le altre due funzioni servono per valori casuali dalle distribuzioni, assegnare
+la flag ad ogni evento e fare un merge degli array delle due specie.
+
+Per queste funzioni vanno scritti unit tests e documentazione
+
+Queste funzioni sono utilizzate in dataset.py
