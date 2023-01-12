@@ -38,3 +38,8 @@ la flag ad ogni evento e fare un merge degli array delle due specie.
 Per queste funzioni vanno scritti unit tests e documentazione
 
 Queste funzioni sono utilizzate in dataset.py
+
+
+12/01/22:
+Documentazione delle prime funzioni fatta. Impostato il primo unit test (vedere
+se va bene o è migliorabile), secondo u.t. da fare

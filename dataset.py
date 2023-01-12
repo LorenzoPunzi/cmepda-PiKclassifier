@@ -32,8 +32,8 @@ for ev2 in k_data:
 h_k.Draw()
 c2.SaveAs("K_distribution_MC.png")
 
-N = 1000
-f = 0.5
+N = 1000  # Total number of events in the training sample
+f = 0.5  # Fraction of K events in the training sample
 ev_pi = distr_extraction(h_pi, int((1.-f)*N), 0)
 ev_k = distr_extraction(h_k, int(f*N), 1)
 

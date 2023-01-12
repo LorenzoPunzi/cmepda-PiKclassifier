@@ -9,7 +9,7 @@ import uproot
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+"""
 def loadmass(file, tree):
     f = ROOT.TFile.Open(file, "READ")
     t = f.Get(tree)
@@ -21,9 +21,25 @@ def loadmass(file, tree):
         k += 1
     print(v1)
     return v1
+"""
 
 
 def loadmass_uproot(file_pi, file_k, tree1, var):
+    """
+    Returns numpy arrays containing the variables requested, stored originally
+    in root files
+
+    Parameters
+    ----------
+    file_pi: string
+        MC file of B0->PiPi process
+    file_k: string
+        MC file of B0s->KK process
+    tree1: string
+        Tree containing the dataset (is the same for both the files)
+    var: string
+        Name of the branch containing the variables selected
+    """
     t1_pi = uproot.open(file_pi)[tree1]
     # t2_pi = uproot.open(file_pi)[tree2]
     v_pi = t1_pi[var].array(library="np")  # + t2_pi[var].array(library="np")
@@ -36,15 +52,42 @@ def loadmass_uproot(file_pi, file_k, tree1, var):
 
 
 def distr_extraction(histo, num, flag):
-    gen = ROOT.TRandom()
+    """
+    Returns a numpy array of random numbers extracted from the MC distribution
+    and assigns a flag number to identify the particle type
+
+    Parameters
+    ----------
+    histo: ROOT.TH1
+        Histogram of the MC distribution of the variable considered
+    num: int
+        Number of extractions requested
+    flag: int (0,1)
+        Id. number of the species: 0 for Pi, 1 for K
+    """
+    seed = int(time.time())
+    gen = ROOT.TRandom3()
+    gen.SetSeed(seed)
     arr = np.ones((num, 2))
     for k in range(0, num):
-        arr[k][0] = histo.GetRandom(gen)  # sistemare la questione del seed
-        arr[k][1] = flag
+        arr[k, 0] = histo.GetRandom()
+        arr[k, 1] = flag
     return arr
 
 
 def train_arr_setup(pi_events, k_events):
+    """
+    Function that concatenates and merges two arrays. If the arrays have more
+    than one dimension, the operations are executed on the first dimension (
+    i.e. on the raws of a 2D matrix)
+
+    Parameters
+    ----------
+    pi_events: numpy array
+        Array of a variable of interest belonging to simulated B0->PiPi events
+    k_events: numpy array
+        Array of a variable of interest belonging to simulated B0s->KK events
+    """
     tr_array = np.concatenate((pi_events, k_events), axis=0)
     np.random.shuffle(tr_array)
     return tr_array
