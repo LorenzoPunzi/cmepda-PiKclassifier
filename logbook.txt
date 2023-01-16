@@ -41,5 +41,25 @@ Queste funzioni sono utilizzate in dataset.py
 
 
 12/01/22:
+
 Documentazione delle prime funzioni fatta. Impostato il primo unit test (vedere
 se va bene o è migliorabile), secondo u.t. da fare
+
+16/01/22.
+
+C'è un problema concettuale: Noi facciamo quello che vogliamo ma alla fine anche se si trovasse perfettamente la frazione di pi e K ( i.e. separazione perfetta) COMUNQUE non è la vera f, ma solo una variabile binomiale che IN MEDIA fa f (questo è il significato della sigma_best nel potere di separazione). Questa cosa non era stata chiarita in morelloproject, ma è fondamentale ricordare che f misurata NON è f0 ma una variabile a sua volta.
+
+Si può fare eventualmente un bootstrap per misurare la varianza del nostro stimatore neurale finale, sennò considerare la somma delle varianze dei contributi yi 
+
+TH1::GetRandom ha il vantaggio di non dover tirarsi fuori un template ma ha lo svantaggio di essere distribuito non come la distribuzione ma come la pdf*U[binwidth] e inoltre i contents di ogni bin non sono che una poissoniana che in media fa l'integrale della pdf in quel bin---> fluttuazioni per sample size finita. Questi effetti sistematici se si usa GetRandom vanno quantomeno menzionati
+
+Bisogna capire che generatori random usare dato che TRandom si basa su Rndm che a quanto pare NON va usato in studi statistici
+
+Chiameremo f0 (f PURE) la frazione media da cui provengono le distribuzioni, mentre quella effettiva (f EFFECTIVE) è quella effettiva di K su pi sul sample LIMITATO di eventi
+
+Consideriamo oltre che alle classiche stragie di functional programming la possibilità di costruire delle classi ibride array-TH1 ad hoc per potersi giostrare velocemente fra le due specie
+
+Per il disegno per esempio potremmo creare una UNICA funzionzione arrtohist che converte uno nell'altro capendo che tipo è l'argomento e restituendo l'altro tipo di conseguenza
+
+
+

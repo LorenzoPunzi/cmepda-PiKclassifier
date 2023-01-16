@@ -9,7 +9,7 @@ import uproot
 import numpy as np
 import matplotlib.pyplot as plt
 
-"""
+""" This is the straightforward approach to loading data, UPROOT is preferred (see below)
 def loadmass(file, tree):
     f = ROOT.TFile.Open(file, "READ")
     t = f.Get(tree)
@@ -24,7 +24,7 @@ def loadmass(file, tree):
 """
 
 
-def loadmass_uproot(file_pi, file_k, tree1, var):
+def loadmass_uproot(file_pi, file_k, tree, var):
     """
     Returns numpy arrays containing the variables requested, stored originally
     in root files
@@ -35,17 +35,13 @@ def loadmass_uproot(file_pi, file_k, tree1, var):
         MC file of B0->PiPi process
     file_k: string
         MC file of B0s->KK process
-    tree1: string
+    tree: string
         Tree containing the dataset (is the same for both the files)
     var: string
         Name of the branch containing the variables selected
     """
-    t1_pi = uproot.open(file_pi)[tree1]
-    # t2_pi = uproot.open(file_pi)[tree2]
-    v_pi = t1_pi[var].array(library="np")  # + t2_pi[var].array(library="np")
-    t1_k = uproot.open(file_k)[tree1]
-    # t2_k = uproot.open(file_k)[tree2]
-    v_k = t1_k[var].array(library="np")  # + t2_k[var].array(library="np")
+    t_pi , t_k = uproot.open(file_pi)[tree] , uproot.open(file_k)[tree]
+    v_pi , v_k = t_pi[var].array(library='np') , t_k[var].array(library='np') 
     return v_pi, v_k
     # Vedere se si può scrivere in maniera più compatta, ad es. con liste
     # Si possono usare entrambi i tree in ogni file?
@@ -75,11 +71,29 @@ def distr_extraction(histo, num, flag):
     return arr
 
 
+def array_generator(histo_pi, histo_k, f0, n_entries):
+    """
+    """
+    seed = int(time.time()) #THIS IS NOT DRY!!!!!!! maybe gRandom but WHERE??
+    gen = ROOT.TRandom3()
+    gen.SetSeed(seed)
+    arr = np.ones((n_entries, 2))
+    for k in range(0, n_entries): #Perhaps it can be done more neatly with for elem in arr or something like that
+        flag = gen.Binomial(1,f0)  # Bernoulli
+        arr[k,1] = flag
+        if(flag):  # NOT DRY
+            arr[k,0] = histo_k.GetRandom()
+        else:
+            arr[k,0] = histo_pi.GetRandom()
+
+    return arr
+            
+
 def train_arr_setup(pi_events, k_events):
     """
     Function that concatenates and merges two arrays. If the arrays have more
     than one dimension, the operations are executed on the first dimension (
-    i.e. on the raws of a 2D matrix)
+    i.e. on the rows of a 2D matrix)
 
     Parameters
     ----------
@@ -93,16 +107,15 @@ def train_arr_setup(pi_events, k_events):
     return tr_array
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     t1 = time.time()
-    file1 = "data/tree_B0PiPi_mc.root"
-    file2 = "data/tree_B0PiPi_mc.root"
-    tree1 = "t_M0pipi;1"
-    tree2 = "t_M0pipi;2"
-    var = "M0_Mpipi"
+    file1 = 'data/tree_B0PiPi_mc.root'
+    file2 = 'data/tree_B0PiPi_mc.root'
+    tree = 't_M0pipi;2'
+    var = 'M0_Mpipi'
     #v = loadmass(file, tree)
-    v1, v2 = loadmass_uproot(file1, file2, tree2, "M0_Mpipi")
-    h = ROOT.TH1F("h", "h", 50, 5., 5.5)
+    v1, v2 = loadmass_uproot(file1, file2, tree, 'M0_Mpipi')
+    h = ROOT.TH1F('h', 'h', 50, 5., 5.5)
     for ev in v1:
         h.Fill(ev)
     ex = distr_extraction(h, 5, 1)
@@ -117,4 +130,4 @@ if __name__ == "__main__":
 
     t2 = time.time()
 
-    print("Tempo totale = %f" % (t2-t1))
+    print(f'Tempo totale = {t2-t1}')

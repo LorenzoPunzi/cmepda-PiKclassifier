@@ -3,39 +3,42 @@ import time
 import ROOT
 import numpy as np
 import matplotlib.pyplot as plt
-from import_functions import loadmass_uproot, distr_extraction, train_arr_setup
+from import_functions import loadmass_uproot, distr_extraction, train_arr_setup, array_generator
 
 
 t1 = time.time()
-mc_pi = "data/tree_B0PiPi_mc.root"
-mc_k = "data/tree_B0sKK_mc.root"
-tree1 = "t_M0pipi;1"
-tree2 = "t_M0pipi;2"
-var = "M0_Mpipi"
+file_mc_pi = 'data/tree_B0PiPi_mc.root'
+file_mc_k = 'data/tree_B0sKK_mc.root'
+#tree1 = "t_M0pipi;1"
+tree = 't_M0pipi;2'
+var = 'M0_Mpipi'
 
-pi_data, k_data = loadmass_uproot(mc_pi, mc_k, tree1, var)
+arr_mc_pi, arr_mc_k = loadmass_uproot(file_mc_pi, file_mc_k, tree, var)
 
 c1 = ROOT.TCanvas()
 c1.cd()
-h_pi = ROOT.TH1F("h_pi", "h_pi", 100, 5., 5.5)
-for ev1 in pi_data:
-    h_pi.Fill(ev1)
-h_pi.Draw()
-c1.SaveAs("Pi_distribution_MC.png")
+histo_mc_pi = ROOT.TH1D('histo_mc_pi', 'Mpipi distribution for Pion MC', 100, 5., 5.5) # this is fine but the optimal way would be to create a function which returns a TH1 object
+for event in arr_mc_pi:
+    histo_mc_pi.Fill(event)
+histo_mc_pi.Draw()
+c1.SaveAs("Mpipi_pi_MC.png")
 
 
 c2 = ROOT.TCanvas()
 c2.cd()
-h_k = ROOT.TH1F("h_k", "h_k", 100, 5., 5.5)
-for ev2 in k_data:
-    h_k.Fill(ev2)
-h_k.Draw()
-c2.SaveAs("K_distribution_MC.png")
+histo_mc_k = ROOT.TH1D("histo_mc_pi", "Mpipi distribution for Kaon MC", 100, 5., 5.5)  # We use TH1 instead of arrays because the former have the GetRandom Method
+for event in arr_mc_k:
+    histo_mc_k.Fill(event)
+histo_mc_k.Draw()
+c2.SaveAs("Mpipi_K_MC.png")
 
-N = 1000  # Total number of events in the training sample
-f = 0.5  # Fraction of K events in the training sample
-ev_pi = distr_extraction(h_pi, int((1.-f)*N), 0)
-ev_k = distr_extraction(h_k, int(f*N), 1)
+N_train = 10000  # Total number of events in the training sample
+f0_train = 0  # Pure Fraction of K events in the training sample
+#ev_pi = distr_extraction(h_pi, int((1.-f)*N), 0)
+#ev_k = distr_extraction(h_k, int(f*N), 1)
+#arr = train_arr_setup(ev_pi, ev_k)
 
-arr = train_arr_setup(ev_pi, ev_k)
-print(arr[:20])
+arr_trainingset = array_generator(histo_mc_pi, histo_mc_k, f0_train, N_train)
+plt.figure(1)
+plt.hist(arr_trainingset[:,0], bins=100, histtype = 'step')
+plt.show()
