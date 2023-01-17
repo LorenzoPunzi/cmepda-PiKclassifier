@@ -63,3 +63,8 @@ Per il disegno per esempio potremmo creare una UNICA funzionzione arrtohist che 
 
 
 
+
+------------------------------- QUESTIONS -----------------------------
+
+* How should the function modules be organized? Should we use only one module with all the functions? Or group related ones together?
+

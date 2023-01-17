@@ -33,7 +33,7 @@ histo_mc_k.Draw()
 c2.SaveAs("Mpipi_K_MC.png")
 
 N_train = 10000  # Total number of events in the training sample
-f0_train = 0  # Pure Fraction of K events in the training sample
+f0_train = 0.5  # Pure Fraction of K events in the training sample
 #ev_pi = distr_extraction(h_pi, int((1.-f)*N), 0)
 #ev_k = distr_extraction(h_k, int(f*N), 1)
 #arr = train_arr_setup(ev_pi, ev_k)
