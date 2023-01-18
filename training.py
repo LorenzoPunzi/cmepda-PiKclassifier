@@ -11,7 +11,7 @@ import time
 
 np.random.seed(int(time.time()))
 
-training_set = np.loadtxt('0.4_nparray.txt')
+training_set = np.loadtxt('data/0.5_nparray.txt')
 
 x = training_set[:,0]  # VARIABLE NAMES SHOULD BE CHANGED APPROPRIATELY 
 y = training_set[:,1]
@@ -25,13 +25,13 @@ deepnn = Model(inputs=inputlayer, outputs=outputlayer)
 deepnn.compile(loss='binary_crossentropy', optimizer='adam')
 deepnn.summary()
 
-history = deepnn.fit(x,y,validation_split=0.4,epochs=100,verbose=1)
+history = deepnn.fit(x,y,validation_split=0.5,epochs=500,verbose=1, batch_size=256)
 
 plt.figure('Losses')
 plt.plot(history.history['val_loss'])
 plt.plot(history.history['loss'])
 
-test_set = np.loadtxt('0.5_nparray.txt')[:,0]
+test_set = np.loadtxt('data/0.1_nparray.txt')[:,0]
 pred_array = deepnn.predict(test_set)
 print(test_set)
 f_pred = np.sum(pred_array)
