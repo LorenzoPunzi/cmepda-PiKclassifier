@@ -73,14 +73,8 @@ def loadvars(file_pi, file_k, tree, *vars):
 
     tree_pi, tree_k = uproot.open(file_pi)[tree], uproot.open(file_k)[tree]
 
-    v_pi = np.stack((np.zeros(tree_pi.num_entries),
-                    np.zeros(tree_pi.num_entries)), axis=1)
-    v_k = np.stack((np.zeros(tree_k.num_entries),
-                   np.ones(tree_k.num_entries)), axis=1)
-    print(v_k.shape)
-
     flag_pi = np.zeros(tree_pi.num_entries)
-    flag_k = np.zeros(tree_k.num_entries)
+    flag_k = np.ones(tree_k.num_entries)
 
     list_extracted_pi = []
     list_extracted_k = []
@@ -169,8 +163,8 @@ if __name__ == '__main__':
     gen = ROOT.TRandom3()
     gen.SetSeed(seed)
 
-    file1 = 'cmepda-PiKclassifier/root_files/tree_B0PiPi_mc.root'
-    file2 = 'cmepda-PiKclassifier/root_files/tree_B0sKK_mc.root'
+    file1 = '../root_files/tree_B0PiPi_mc.root'
+    file2 = '../root_files/tree_B0sKK_mc.root'
     tree = 't_M0pipi;2'
     var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi',
            'M0_MpiK', 'M0_p', 'M0_pt', 'M0_eta')
@@ -182,14 +176,14 @@ if __name__ == '__main__':
     for ev in v1[:, 1]:
         h.Fill(ev)
 
-    train_array = np.concatenate((v1[:10000, :], v1[:10000, :]), axis=0)
+    train_array = np.concatenate((v1[:10000, :], v2[:10000, :]), axis=0)
     np.random.shuffle(train_array)
     print(train_array.shape)
 
     np.savetxt("train_array_prova.txt", train_array)
 
     tree = 't_M0pipi;1'
-    file_data = 'cmepda-PiKclassifier/root_files/tree_Bhh_data.root'
+    file_data = '../root_files/tree_Bhh_data.root'
     v0, v0 = loadvars(file_data, file_data, tree, *var)
     np.savetxt("data_array_prova.txt", v0[:1000, :])
 
