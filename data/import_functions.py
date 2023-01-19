@@ -180,12 +180,12 @@ if __name__ == '__main__':
     np.random.shuffle(train_array)
     print(train_array.shape)
 
-    np.savetxt("train_array_prova.txt", train_array)
+    np.savetxt("txt/train_array_prova.txt", train_array)
 
     tree = 't_M0pipi;1'
     file_data = '../root_files/tree_Bhh_data.root'
     v0, v0 = loadvars(file_data, file_data, tree, *var)
-    np.savetxt("data_array_prova.txt", v0[:1000, :])
+    np.savetxt("txt/data_array_prova.txt", v0[:1000, :])
 
     c1 = ROOT.TCanvas()
     h.DrawCopy()
