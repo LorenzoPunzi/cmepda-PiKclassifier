@@ -10,10 +10,15 @@ import time
 
 np.random.seed(int(time.time()))
 
-training_set = np.loadtxt('data/0.5_nparray.txt')
+training_set = np.loadtxt('data/txt/train_array_prova.txt')
 
-kpid = training_set[:,0]
-features = training_set[:,1:]   
+print(training_set)
+
+kpid = training_set[:,-1]
+features = training_set[:,:-1] 
+
+print(kpid)
+print(features)
 
 inputlayer=Input(shape=(np.shape(features)[1],))
 hiddenlayer = Dense(2, activation='relu')(inputlayer)
@@ -24,7 +29,7 @@ deepnn = Model(inputs=inputlayer, outputs=outputlayer)
 deepnn.compile(loss='binary_crossentropy', optimizer='adam')
 deepnn.summary()
 
-history = deepnn.fit(features,kpid,validation_split=0.5,epochs=500,verbose=1, batch_size=256)
+history = deepnn.fit(features,kpid,validation_split=0.5,epochs=200,verbose=1, batch_size=128)
 
 plt.figure('Losses')
 plt.xlabel('Epoch')
@@ -34,12 +39,11 @@ plt.plot(history.history['val_loss'], label='Validation Loss')
 plt.plot(history.history['loss'], label='Training Loss')
 plt.legend()
 
-test_set = np.loadtxt('data/0.1_nparray.txt')[:,0]
+test_set = np.loadtxt('data/txt/data_array_prova.txt')[:,:-1]
 pred_array = deepnn.predict(test_set)
 print(test_set)
 f_pred = np.sum(pred_array)
 print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
 print('Max prediction :',np.max(pred_array))
 print('Min prediction :',np.min(pred_array))
-print(pred_array)
 plt.show()
