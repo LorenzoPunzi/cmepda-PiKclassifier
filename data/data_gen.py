@@ -4,7 +4,7 @@ import ROOT
 # import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from import_functions import loadmass_uproot, distr_extraction, train_arr_setup, array_generator
+from import_functions import loadmass_uproot, array_generator
 
 
 def data_gen(Num=10000, outputfile="prova_data.txt"):
@@ -43,9 +43,6 @@ def data_gen(Num=10000, outputfile="prova_data.txt"):
     histo_mc_k.Draw()
     c2.SaveAs("Mpipi_K_MC.png")
 
-    #ev_pi = distr_extraction(h_pi, int((1.-f)*N), 0)
-    #ev_k = distr_extraction(h_k, int(f*N), 1)
-    #arr = train_arr_setup(ev_pi, ev_k)
 
     arr_data = array_generator(histo_mc_pi, histo_mc_k, f0_train, N_train)
     np.savetxt(outputfile, arr_data)

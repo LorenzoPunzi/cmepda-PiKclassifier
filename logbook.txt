@@ -73,3 +73,5 @@ Creiamo il training.py inizialmente per array di sola UNA colonna di dati (+ 1 d
 
 * How should the function modules be organized? Should we use only one module with all the functions? Or group related ones together?
 
+* Can we/ should we use multiprocessing in one point or another?
+

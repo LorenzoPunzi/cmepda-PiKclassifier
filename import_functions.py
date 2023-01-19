@@ -40,9 +40,16 @@ def loadmass_uproot(file_pi, file_k, tree, var):
     var: string
         Name of the branch containing the variables selected
     """
-    t_pi , t_k = uproot.open(file_pi)[tree] , uproot.open(file_k)[tree]
-    v_pi , v_k = t_pi[var].array(library='np') , t_k[var].array(library='np') 
-    return v_pi, v_k
+    """
+    if (len(vars) == 0): # DOES THIS MAKE SENSE? OR DO WE NOT NEED IT IF THE FUNCTION IS CALLED INTERNALLY?
+        pass
+    tree_pi , tree_k = uproot.open(file_pi)[tree] , uproot.open(file_k)[tree]
+    for variable in vars:
+        var_pi , var_k = t_pi[variable].array(library='np') , t_k[variable].array(library='np') 
+    """
+    tree_pi , tree_k = uproot.open(file_pi)[tree] , uproot.open(file_k)[tree]
+    var_pi , var_k = t_pi[var].array(library='np') , t_k[var].array(library='np')
+    return var_pi, var_k
     # Vedere se si può scrivere in maniera più compatta, ad es. con liste
     # Si possono usare entrambi i tree in ogni file?
 
@@ -80,7 +87,7 @@ def array_generator(histo_pi, histo_k, f0, n_entries):
     arr = np.ones((n_entries, 2))
     for k in range(0, n_entries): #Perhaps it can be done more neatly with for elem in arr or something like that
         flag = gen.Binomial(1,f0)  # Bernoulli
-        arr[k,1] = flag
+        arr[k,-1] = flag
         if(flag):  # NOT DRY
             arr[k,0] = histo_k.GetRandom()
         else:
