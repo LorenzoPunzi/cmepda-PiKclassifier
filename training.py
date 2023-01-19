@@ -1,6 +1,5 @@
 """
-Trains a DNN with a numpy array with ONE data column to distinguish between pions and Kaons given one variable on which to train simultaneously
-WILL NEED TO BE GENERALIZED TO MULTIPLE COLUMNS/VARIABLES ARRAYS
+Trains a DNN with a numpy array with variable data columns to distinguish between pions and Kaons given multiple variables (features) on which to train simultaneously
 """
 
 import numpy as np
@@ -13,10 +12,10 @@ np.random.seed(int(time.time()))
 
 training_set = np.loadtxt('data/0.5_nparray.txt')
 
-x = training_set[:,0]  # VARIABLE NAMES SHOULD BE CHANGED APPROPRIATELY 
-y = training_set[:,1]
+kpid = training_set[:,0]
+features = training_set[:,1:]   
 
-inputlayer=Input(shape=(1,))
+inputlayer=Input(shape=(np.shape(features)[1],))
 hiddenlayer = Dense(2, activation='relu')(inputlayer)
 hiddenlayer = Dense(5, activation='relu')(hiddenlayer)
 hiddenlayer = Dense(5, activation='relu')(hiddenlayer)
@@ -25,11 +24,15 @@ deepnn = Model(inputs=inputlayer, outputs=outputlayer)
 deepnn.compile(loss='binary_crossentropy', optimizer='adam')
 deepnn.summary()
 
-history = deepnn.fit(x,y,validation_split=0.5,epochs=500,verbose=1, batch_size=256)
+history = deepnn.fit(features,kpid,validation_split=0.5,epochs=500,verbose=1, batch_size=256)
 
 plt.figure('Losses')
-plt.plot(history.history['val_loss'])
-plt.plot(history.history['loss'])
+plt.xlabel('Epoch')
+plt.ylabel('Binary CrossEntropy Loss')
+
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.plot(history.history['loss'], label='Training Loss')
+plt.legend()
 
 test_set = np.loadtxt('data/0.1_nparray.txt')[:,0]
 pred_array = deepnn.predict(test_set)
@@ -39,4 +42,4 @@ print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
 print('Max prediction :',np.max(pred_array))
 print('Min prediction :',np.min(pred_array))
 print(pred_array)
-#plt.show()
+plt.show()
