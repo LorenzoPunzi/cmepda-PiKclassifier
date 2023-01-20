@@ -18,18 +18,19 @@ kpid = training_set[:,-1]
 features = training_set[:,:-1] 
 
 print(kpid)
+print(np.max(kpid))
 print(features)
 
 inputlayer=Input(shape=(np.shape(features)[1],))
 hiddenlayer = Dense(2, activation='relu')(inputlayer)
 hiddenlayer = Dense(5, activation='relu')(hiddenlayer)
-hiddenlayer = Dense(5, activation='relu')(hiddenlayer)
+hiddenlayer = Dense(10, activation='relu')(hiddenlayer)
 outputlayer = Dense(1, activation='sigmoid')(hiddenlayer)
 deepnn = Model(inputs=inputlayer, outputs=outputlayer)
 deepnn.compile(loss='binary_crossentropy', optimizer='adam')
 deepnn.summary()
 
-history = deepnn.fit(features,kpid,validation_split=0.5,epochs=200,verbose=1, batch_size=128)
+history = deepnn.fit(features,kpid,validation_split=0.5,epochs=100,verbose=1, batch_size=256)
 
 plt.figure('Losses')
 plt.xlabel('Epoch')
