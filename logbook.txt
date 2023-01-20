@@ -69,6 +69,19 @@ Questo potrebbe essere dovuto al fatto che gli stiamo dando soltanto una variabi
 
 19/01/23:
 
+20/01/23 (incontro Rizzi):
+
+Innanzitutto la somma dei valori yi in uscita non è un buono stimatore (come ha dimostrato Rizzi). Perciò sarà necessario fare un template fit sulla distribuzione di y in uscita dei dati usando come template le distribuzioni y dei dati di training.
+
+Cose da fare:
+    - Rimettere a posto i file .py nella cartella data/
+    - Template fit/sistema lineare a valle della DNN
+    - Cornerplot per vedere la separazioni fra variabili
+    - Moduli per template fit classico / sistema lineare classico
+    - Perfezionare la DNN
+    - Boost decision tree
+    - Grafico RoC per varie strategie
+
 
 
 
