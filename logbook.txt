@@ -87,6 +87,18 @@ Cose da fare:
 
 
 
+----------------- IDEA GENERALE PROGETTO ---------------------
+
+--- I/O DATA CON ROOT 
+--- FIT ROOT CLASSICO 
+--- ML:
+    - DNN
+    - BDT
+--- PLOT---> TH1,CORNER,ROC
+*** CONFRONTO RISULTATI
+
+
+
 ------------------------------- QUESTIONS -----------------------------
 
 * How should the function modules be organized? Should we use only one module with all the functions? Or group related ones together?
