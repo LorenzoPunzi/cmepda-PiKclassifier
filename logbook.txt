@@ -49,7 +49,7 @@ se va bene o è migliorabile), secondo u.t. da fare
 
 C'è un problema concettuale: Noi facciamo quello che vogliamo ma alla fine anche se si trovasse perfettamente la frazione di pi e K ( i.e. separazione perfetta) COMUNQUE non è la vera f, ma solo una variabile binomiale che IN MEDIA fa f (questo è il significato della sigma_best nel potere di separazione). Questa cosa non era stata chiarita in morelloproject, ma è fondamentale ricordare che f misurata NON è f0 ma una variabile a sua volta.
 
-Si può fare eventualmente un bootstrap per misurare la varianza del nostro stimatore neurale finale, sennò considerare la somma delle varianze dei contributi yi 
+Si può fare eventualmente un bootstrap per misurare la varianza del nostro stimatore neurale finale, sennò considerare la somma delle varianze dei contributi yi
 
 TH1::GetRandom ha il vantaggio di non dover tirarsi fuori un template ma ha lo svantaggio di essere distribuito non come la distribuzione ma come la pdf*U[binwidth] e inoltre i contents di ogni bin non sono che una poissoniana che in media fa l'integrale della pdf in quel bin---> fluttuazioni per sample size finita. Questi effetti sistematici se si usa GetRandom vanno quantomeno menzionati
 
@@ -85,12 +85,31 @@ Cose da fare:
 
 
 
+21/01/23:
+
+Creata cartella contenente gli scripts per il template fit classico. L'upload
+dei dataset conviene farlo con RDataFrame che è agilissimo e evita di fare
+esplicitamente loop e dichiarazioni inutili di variabili (boilerplate addiòs)
+
+Il fit non è terminato e l'organizzazione delle funzioni è da migliorare, ad
+ora la cartella contiene:
+  - template_fit.py -> funzioni di base per i fit dei due dataset mc
+    e poi per il fit congiunto dati i rispettivi output (parametri di fit che
+    si passano comodamente tra funzioni)
+  - plot_utilities.py -> modulo che dovrebbe raccogliere funzioni comode per
+    fare i plot degli istogrammi con sopra i fit: andrà implementato anche un
+    subplot per i residui e andrà migliorata la schermata con le informazioni
+    del fit (parametri, chi2, prob)
+
+
+
+
 
 
 ----------------- IDEA GENERALE PROGETTO ---------------------
 
---- I/O DATA CON ROOT 
---- FIT ROOT CLASSICO 
+--- I/O DATA CON ROOT
+--- FIT ROOT CLASSICO
 --- ML:
     - DNN
     - BDT
@@ -104,4 +123,3 @@ Cose da fare:
 * How should the function modules be organized? Should we use only one module with all the functions? Or group related ones together?
 
 * Can we/ should we use multiprocessing in one point or another?
-
