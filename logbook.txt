@@ -103,6 +103,23 @@ ora la cartella contiene:
 
 
 
+30/01/23:
+
+Template fit sui montecarlo sono ultimati (andrebbe rivisto quanto sono affidabili,
+cioè se il fit è robusto rispetto a piccole variazioni nel range ecc). Il fit sui
+dati è impostato ma va perfezionato.
+
+Ciao da Elia
+
+Icomandi da eseguire per compilare la shared library, dati i file header.h e
+sourcefile.cpp, sono:
+    gcc -c -fpic fit_functions.cpp `root-config --cflags --glibs` -o fit_functions
+    gcc -shared -fpic -o func_library.so fit_functions
+
+
+
+
+
 
 
 

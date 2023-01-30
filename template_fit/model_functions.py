@@ -5,6 +5,16 @@ import ROOT
 import numpy as np
 
 
+def InitializeFunctionsLibrary():
+    """
+    Function that loads into the Python environment the shared library
+    containing the fit functions.
+    """
+    ROOT.gInterpreter.ProcessLine('#include "header.h"')
+    ROOT.gSystem.Load(
+        '~/cmepda/cmepda-PiKclassifier/template_fit/func_library.so')
+
+
 def BreitWigner(LowLim, UpLim, funcname='BW', pars=(2000, 5.28, 0.5)):
     """
     Returns a TF1 function corresponding to a relativistic Breit-Wigner.
@@ -25,6 +35,7 @@ def BreitWigner(LowLim, UpLim, funcname='BW', pars=(2000, 5.28, 0.5)):
     pars: tuple of double
         Initial parameters given to the function
     """
+
     arg_gamma = 'TMath::Sqrt([1]*[1]*([2]*[2] + [1]*[1]))'
     arg_kappa = '([1]*[2]*' + arg_gamma + \
         '/TMath::Sqrt([1]*[1] + ' + arg_gamma + '))'
@@ -46,13 +57,9 @@ def BreitWigner(LowLim, UpLim, funcname='BW', pars=(2000, 5.28, 0.5)):
 def DoubleGaussian(LowLim, UpLim, funcname='DoubleGaussian',
                    pars=(1.4e5, 0.5, 5.28, 0.02, 5.28, 0.02)):
     """
-    Returns a TF1 function corresponding to a weighted sum of two Gaussians.
-    The parameters are written in C++ ROOT style and represent the following
-    quantities:
-        [0] = Normalization
-        [1] = Fraction of first gaussian elements in distribution
-        [2], [3] = Mean and Sigma for first Gaussian
-        [4], [5] = Mean and Sigma for second Gaussian
+    Returns a TF1 function corresponding to a weighted sum of two Gaussians;
+    its expression is written in a C++ shared library and is imported in the
+    Python environment by the InitializeFunctionsLibrary() function.
 
     Parameters
     ----------
@@ -65,12 +72,9 @@ def DoubleGaussian(LowLim, UpLim, funcname='DoubleGaussian',
     pars: tuple of double
         Initial parameters given to the function
     """
-    const = '1/2.5066'
-    gaus1 = 'TMath::Exp(-(x-[2])*(x-[2])/(2*[3]))/[3]'
-    gaus2 = 'TMath::Exp(-(x-[4])*(x-[4])/(2*[5]))/[5]'
-    str = '[0]*6e-4*([1]*' + gaus1 + ' + (1-[1])*' + gaus2 + ')*' + const
+    InitializeFunctionsLibrary()
 
-    function = ROOT.TF1(funcname, str, LowLim, UpLim, 6)
+    function = ROOT.TF1(funcname, ROOT.DoubleGaussian, LowLim, UpLim, 6)
 
     [function.SetParameter(k, pars[k]) for k in range(6)]
 
@@ -87,12 +91,8 @@ def GaussJohnson(LowLim, UpLim, funcname='Gauss+Johnson',
                  pars=(1.4e05, 0.99, 1.75, 0.043, 5.29, 0.85, 5.19, 0.06)):
     """
     Returns a TF1 function corresponding to a weighted sum of a Johnson and a
-    Gaussian. The parameters in the definition are written in C++ ROOT style
-    and represent the following quantities:
-        [0] = Normalization
-        [1] = Fraction of first gaussian elements in distribution
-        [2], [3], [4], [5] = Johnson parameters (need to be positive!)
-        [6], [7] = Mean and Sigma for Gaussian
+    Gaussian; its expression is written in a C++ shared library and is imported
+    in the Python environment by the InitializeFunctionsLibrary() function.
 
     Parameters
     ----------
@@ -105,16 +105,9 @@ def GaussJohnson(LowLim, UpLim, funcname='Gauss+Johnson',
     pars: tuple of double
         Initial parameters given to the function
     """
-    const = '1/2.5066'
-    arg = '((x-[4])/[3])'
-    expo_arg = '([5]+[2]*TMath::ASinH' + arg + ')'
-    expo = 'TMath::Exp(-0.5*' + expo_arg + '*' + expo_arg + ')'
-    denom = 'TMath::Sqrt(1+(' + arg + '*' + arg + '))'
-    johns = '([2]/[3])*' + expo + '/' + denom
-    gaus = 'TMath::Exp(-(x-[6])*(x-[6])/(2*[7]))/[7]'
-    str = '[0]*6e-4*([1]*' + johns + ' + (1-[1])*' + gaus + ')*' + const
+    InitializeFunctionsLibrary()
 
-    function = ROOT.TF1(funcname, str, LowLim, UpLim, 8)
+    function = ROOT.TF1(funcname, ROOT.GaussJohnson, LowLim, UpLim, 8)
     [function.SetParameter(k, pars[k]) for k in range(8)]
 
     function.SetParLimits(1, 0, 1)
@@ -124,27 +117,14 @@ def GaussJohnson(LowLim, UpLim, funcname='Gauss+Johnson',
 
     return function
 
-    """
-def func_dictionary():
-    dictionary = {}
-
-    dictionary["BreitWigner"] = BreitWigner()
-    dictionary["DoubleGaussian"] = DoubleGaussian()
-    dictionary["GaussJohnson"] = GaussJohnson()
-
-    return dictionary
-"""
-
 
 if __name__ == "__main__":
 
     c = ROOT.TCanvas()
     c.cd()
 
-    a = BreitWigner(5, 5.6, pars=(1, 5.28, 0.02))
-
-    # d = func_dictionary()
-    # print(d.values())
+    a = GaussJohnson(5., 5.6, pars=(
+                     1.4e05, 0.99, 1.75, 0.043, 5.29, 0.85, 5.19, 0.06))
 
     a.Draw()
     c.SaveAs("prova_func.png")
