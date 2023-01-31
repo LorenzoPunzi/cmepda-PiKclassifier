@@ -32,7 +32,7 @@ double GaussJohnson(double* x, double* par) {
 
 double TemplateComposition(double* x, double* par) {
     // In total has 16 parameters
-    return par[0]*(par[1]*GaussJohnson(x, &par[2]) + (1-par[1])*DoubleGaussian(x, &par[6]));
+    return par[0]*(par[1]*GaussJohnson(x, &par[2]) + (1-par[1])*DoubleGaussian(x, &par[10]));
 }
 
 
