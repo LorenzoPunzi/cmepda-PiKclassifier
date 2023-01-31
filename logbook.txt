@@ -125,12 +125,14 @@ sourcefile.cpp, sono:
 
 ----------------- IDEA GENERALE PROGETTO ---------------------
 
---- I/O DATA CON ROOT
+--- I/O DATA CON ROOT (RDF ove possibile)
 --- FIT ROOT CLASSICO
 --- ML:
     - DNN
     - BDT
 --- PLOT---> TH1,CORNER,ROC
+--- UNIT TEST
+--- DOC (SPHYNX)
 *** CONFRONTO RISULTATI
 
 
