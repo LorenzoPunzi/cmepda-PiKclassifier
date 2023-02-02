@@ -117,7 +117,13 @@ sourcefile.cpp, sono:
     gcc -shared -fpic -o func_library.so fit_functions
 
 
+31/01/23:
 
+Abbiamo trovato un piccolo errore nel template fit e siamo riusciti a trovare il valore "giusto" per f. 
+
+Lorenzo ha problemi a montare le .so, ma non a usarle se già create...
+
+Le priorità ora sono capire corner.py e il template fit a valle della DNN (se questa si riesce a far funzionare bene).
 
 
 
