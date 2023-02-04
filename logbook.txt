@@ -85,7 +85,7 @@ Cose da fare:
 
 
 
-21/01/23:
+21/01/23 (Ruben):
 
 Creata cartella contenente gli scripts per il template fit classico. L'upload
 dei dataset conviene farlo con RDataFrame che è agilissimo e evita di fare
@@ -103,7 +103,7 @@ ora la cartella contiene:
 
 
 
-30/01/23:
+30/01/23 (Ruben):
 
 Template fit sui montecarlo sono ultimati (andrebbe rivisto quanto sono affidabili,
 cioè se il fit è robusto rispetto a piccole variazioni nel range ecc). Il fit sui
@@ -117,13 +117,47 @@ sourcefile.cpp, sono:
     gcc -shared -fpic -o func_library.so fit_functions
 
 
-31/01/23:
+31/01/23 (Lorenzo e Ruben):
 
 Abbiamo trovato un piccolo errore nel template fit e siamo riusciti a trovare il valore "giusto" per f. 
 
 Lorenzo ha problemi a montare le .so, ma non a usarle se già create...
 
 Le priorità ora sono capire corner.py e il template fit a valle della DNN (se questa si riesce a far funzionare bene).
+
+
+
+03/02/23 (Lorenzo):
+
+Ho creato il file cornerplot.py per fare i corner plot. Devo mandare in input array a più variabili di soli pi o soli k dai mc, e per farlo bisognerà fare uno script utilizzando la funzione loadvars in import_functions.py, che non ricordo chi ha scritto. Non mi sembra che venga usata in nessuno degli script presenti, quindi la provo a usare.
+
+Inoltre non capisco bene la differenza fra data_gen e training_set, sembrano fare più o meno la stessa cosa. Non ho capito chi è stato a generare i multivariable array xxxx_array_prova.txt. Tra l'altro data_gen ha un serio problema, la funzione prende solo due argomenti mentre gliene viene dati 3 (anche f0) nel main.
+
+Infine dataset.py non capisco a cosa serva, se è obsoleto cancelliamolo. Lo stesso dataset_generation.py, che però vedo che è più recente
+
+
+04/02/23 (Lorenzo):
+
+Ho rinominato /template_fit/import_functions.py come /template_fit/template_functions.py modificando anche l'import in /template_fit/template_fit.py, così da non confondersi con /data/import_functions.py
+
+Potrebbe essere opportuno rinominare la cartella /data --> /arraygen dato che è forse più pertinente come nome
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

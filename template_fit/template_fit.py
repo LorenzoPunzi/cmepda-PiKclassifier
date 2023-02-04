@@ -6,7 +6,7 @@ population present in the dataset Bhh_data.root
 import time
 import ROOT
 import numpy as np
-from model_functions import DoubleGaussian, GaussJohnson
+from template_functions import DoubleGaussian, GaussJohnson
 
 
 def fit_on_montecarlo(df, var, fitfunc, img_name="template.png", Nbins=1000,
@@ -77,10 +77,10 @@ if __name__ == "__main__":
     df_pi, df_k = ROOT.RDataFrame(tree, file1), ROOT.RDataFrame(tree, file2)
 
     templ_pi = fit_on_montecarlo(df_pi, var, DoubleGaussian(5.02, 5.42),
-                                 img_name='template_fit_pi.png',
+                                 img_name='fig/template_fit_pi.png',
                                  h_title='M_pipi distribution (B0->PiPi MC)')
     templ_k = fit_on_montecarlo(df_k, var, GaussJohnson(5.02, 5.42),
-                                img_name='template_fit_k.png',
+                                img_name='fig/template_fit_k.png',
                                 h_title='M_pipi distribution (B0s->KK MC)')
 
     df_data = ROOT.RDataFrame('t_M0pipi;1', file_data)
