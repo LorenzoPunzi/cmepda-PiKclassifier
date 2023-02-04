@@ -142,6 +142,7 @@ Ho rinominato /template_fit/import_functions.py come /template_fit/template_func
 
 Potrebbe essere opportuno rinominare la cartella /data --> /arraygen dato che è forse più pertinente come nome
 
+Per qualche motivo non funziona if __name__ == '__main__' in corner.py, devo fare diretto...
 
 
 
