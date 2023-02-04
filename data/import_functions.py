@@ -69,6 +69,7 @@ def loadvars(file_pi, file_k, tree, *vars):
     """
 
     if (len(vars) == 0):  # DOES THIS MAKE SENSE? OR DO WE NOT NEED IT IF THE FUNCTION IS CALLED INTERNALLY?
+        print("No variables passed to loadvars function!") #We should put an error here
         pass
 
     tree_pi, tree_k = uproot.open(file_pi)[tree], uproot.open(file_k)[tree]

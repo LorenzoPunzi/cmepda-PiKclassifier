@@ -4,7 +4,7 @@ import ROOT
 # import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from import_functions import loadmass_uproot, distr_extraction, train_arr_setup, array_generator
+from import_functions import loadmass_uproot, distr_extraction, train_arr_setup, array_generator, loadvars
 
 
 def training_set(Num=1000, f0=0.5, outputfile="prova_trset.txt"):
@@ -14,9 +14,10 @@ def training_set(Num=1000, f0=0.5, outputfile="prova_trset.txt"):
     file_mc_k = 'root_files/tree_B0sKK_mc.root'
     #tree1 = "t_M0pipi;1"
     tree = 't_M0pipi;2'
-    var = 'M0_Mpipi'
+    vars = ('M0_Mpipi')#), 'M0_MKK', 'M0_p', 'M0_eta', 'h1_p', 'h1_eta', 'h2_p', 'h2_eta')
 
-    arr_mc_pi, arr_mc_k = loadmass_uproot(file_mc_pi, file_mc_k, tree, var)
+    arr_mc_pi, arr_mc_k = loadvars(file_mc_pi, file_mc_k, tree, vars)
+
 
     c1 = ROOT.TCanvas()
     c1.cd()
@@ -41,6 +42,7 @@ def training_set(Num=1000, f0=0.5, outputfile="prova_trset.txt"):
     # ev_pi = distr_extraction(h_pi, int((1.-f)*N), 0)
     # ev_k = distr_extraction(h_k, int(f*N), 1)
     # arr = train_arr_setup(ev_pi, ev_k)
+
 
     arr_trainingset = array_generator(
         histo_mc_pi, histo_mc_k, f0_train, N_train)
