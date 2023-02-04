@@ -85,7 +85,7 @@ def loadvars(file_pi, file_k, tree, *vars):
         # v_pi = np.concatenate((v_pi, arr_pi), axis=1)
         list_extracted_k.append(tree_k[variable].array(library='np'))
         #v_k = np.concatenate((v_k, arr_k), axis=1)
-        print(variable)
+        #print(variable)
 
     list_extracted_pi.append(flag_pi)
     list_extracted_k.append(flag_k)

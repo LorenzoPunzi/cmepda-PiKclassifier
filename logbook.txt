@@ -129,11 +129,11 @@ Le priorità ora sono capire corner.py e il template fit a valle della DNN (se q
 
 03/02/23 (Lorenzo):
 
-Ho creato il file cornerplot.py per fare i corner plot. Devo mandare in input array a più variabili di soli pi o soli k dai mc, e per farlo bisognerà fare uno script utilizzando la funzione loadvars in import_functions.py, che non ricordo chi ha scritto. Non mi sembra che venga usata in nessuno degli script presenti, quindi la provo a usare.
+Ho creato il file cornerplot.py per fare i corner plot. Devo mandare in input array a più variabili di soli pi o soli k dai mc, e per farlo bisognerà fare uno script utilizzando la funzione loadvars in import_functions.py, che non ricordo chi ha scritto (ps: è stato Ruben). Non mi sembra che venga usata in nessuno degli script presenti (ps: era usata nel main di import_functions stessa), quindi la provo a usare.
 
-Inoltre non capisco bene la differenza fra data_gen e training_set, sembrano fare più o meno la stessa cosa. Non ho capito chi è stato a generare i multivariable array xxxx_array_prova.txt. Tra l'altro data_gen ha un serio problema, la funzione prende solo due argomenti mentre gliene viene dati 3 (anche f0) nel main.
+Inoltre non capisco bene la differenza fra data_gen e training_set, sembrano fare più o meno la stessa cosa. Non ho capito chi è stato a generare i multivariable array xxxx_array_prova.txt (ps: è stato import_functions nel main, vedi sopra). Tra l'altro data_gen ha un serio problema, la funzione prende solo due argomenti mentre gliene viene dati 3 (anche f0) nel main.
 
-Infine dataset.py non capisco a cosa serva, se è obsoleto cancelliamolo. Lo stesso dataset_generation.py, che però vedo che è più recente
+Infine dataset.py non capisco a cosa serva, se è obsoleto cancelliamolo. Lo stesso dataset_generation.py, che però vedo che è più recente. (ps: A quanto pare possono entrambe essere cancellate)
 
 
 04/02/23 (Lorenzo):
@@ -143,6 +143,10 @@ Ho rinominato /template_fit/import_functions.py come /template_fit/template_func
 Potrebbe essere opportuno rinominare la cartella /data --> /arraygen dato che è forse più pertinente come nome
 
 Per qualche motivo non funziona if __name__ == '__main__' in corner.py, devo fare diretto...
+
+Ho fatto corner.py, in particolare due funzioni: una fa il corner plot dato un array, l'altra date liste di array fanno un corner plot sovrapposto degli array.
+
+Ho runnato il cornerplot sovrapposto per tutte le scelte possibili di variabili e praticamente tutte apparte le M0_Mxx sembrano troppo simili fra i pi e i k: QUESTO È UN SERIO PROBLEMA. Ho salvato le varie combinazioni come immagini per poterle vedere in seguito.
 
 
 
