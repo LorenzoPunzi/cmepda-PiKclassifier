@@ -68,6 +68,8 @@ def loadvars(file_pi, file_k, tree, *vars):  # FUNDAMENTAL
         MC file of B0s->KK process
     tree: string
         Tree containing the dataset (is the same for both the files)
+    *vars: string
+        Tuple containing names of the variables requested
     """
 
     if (len(vars) == 0):  # DOES THIS MAKE SENSE? OR DO WE NOT NEED IT IF THE FUNCTION IS CALLED INTERNALLY?
@@ -80,21 +82,16 @@ def loadvars(file_pi, file_k, tree, *vars):  # FUNDAMENTAL
     flag_pi = np.zeros(tree_pi.num_entries)
     flag_k = np.ones(tree_k.num_entries)
 
-    list_extracted_pi = []
-    list_extracted_k = []
+    list_pi, list_k = [], []
+
+    list_pi.append(flag_pi)
+    list_k.append(flag_k)
 
     for variable in vars:
-        list_extracted_pi.append(tree_pi[variable].array(library='np'))
-        # v_pi = np.concatenate((v_pi, arr_pi), axis=1)
-        list_extracted_k.append(tree_k[variable].array(library='np'))
-        #v_k = np.concatenate((v_k, arr_k), axis=1)
-        #print(variable)
+        list_pi.append(tree_pi[variable].array(library='np'))
+        list_k.append(tree_k[variable].array(library='np'))
 
-    list_extracted_pi.append(flag_pi)
-    list_extracted_k.append(flag_k)
-
-    v_pi = np.stack(list_extracted_pi, axis=1)
-    v_k = np.stack(list_extracted_k, axis=1)
+    v_pi, v_k = np.stack(list_pi, axis=1), np.stack(list_k, axis=1)
 
     return v_pi, v_k
 
@@ -166,6 +163,13 @@ def array_to_txt(arr, filename):
     current_path = os.path.dirname(__file__)
     path = os.path.join(current_path, filename)
     np.savetxt(path, arr)
+
+
+def merge_variables(*var):
+    """
+    Function that merges some variables with an empirically established
+    function. Returns the arrays of the new defined variables
+    """
 
 
 if __name__ == '__main__':

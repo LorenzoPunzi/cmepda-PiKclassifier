@@ -196,6 +196,17 @@ Piccoli aggiustamenti alle funzioni nella cartella /data:
     - funzioni in import_functions classificate in base al loro utilizzo
 
 
+Mixing delle variabili: funzione lineare "v1+alpha*v2", l'alpha "ottimale" è quello
+tale per cui un test di KS sui due sample rende una statistica maggiore. Per evitare
+problemi di scala il range delle variabili è trasformato nel range [0,1]
+
+In generale, guardando i risultati della statistica di KS c'è speranza di riuscire
+a utilizzare efficacemente tutte le principali variabili (quindi anche P, MPiK, ...).
+Non è detto che questo basti a far convergere tutto.
+
+Il modulo merge_variables.py contiene tutto ciò che serve, ma va un po' rifinito
+e soprattutto potrebbe diventare una funzione all'interno di un altro modulo.
+Certo è che per ora è utile così per visualizzare il tutto, ci si penserà.
 
 
 
