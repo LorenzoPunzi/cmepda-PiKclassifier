@@ -36,22 +36,20 @@ def overlaid_cornerplot(array_list, array_labels, figname, variable_names):
     figure.set_size_inches(9, 7)
     plt.savefig(figname)
 
-#if __name__ == '___main__':
 
+if __name__ == '___main__':
 
-file_mc_pi = '../root_files/tree_B0PiPi_mc.root'
-file_mc_k = '../root_files/tree_B0sKK_mc.root'
-tree = 't_M0pipi;2'
-vars = ('M0_Mpipi', 'M0_MKK', 'M0_p', 'M0_eta')
-# 'h1_p', 'h1_eta', 'h2_p', 'h2_eta')
-# vars = ('h1_IP', 'M0_px', 'M0_py', 'M0_pz', 'M0_pt')
+    file_mc_pi = '../root_files/tree_B0PiPi_mc.root'
+    file_mc_k = '../root_files/tree_B0sKK_mc.root'
+    tree = 't_M0pipi;2'
+    vars = ('M0_Mpipi', 'M0_MKK', 'M0_p', 'M0_eta')
+    # 'h1_p', 'h1_eta', 'h2_p', 'h2_eta')
+    # vars = ('h1_IP', 'M0_px', 'M0_py', 'M0_pz', 'M0_pt')
 
-arr_mc_pi, arr_mc_k = loadvars(file_mc_pi, file_mc_k, tree, *vars)
+    arr_mc_pi, arr_mc_k = loadvars(file_mc_pi, file_mc_k, tree, *vars)
 
 #cornerplot(arr_mc_pi, 'fig/cornerplot_pi.png')
 #cornerplot(arr_mc_k, 'fig/cornerplot_k.png')
-overlaid_cornerplot([arr_mc_pi, arr_mc_k], ["pions", "kaons"],
-                    'fig/overlaid_cornerplot_' + '_'.join(vars)+'.pdf', vars)
-
-
-plt.show()
+    overlaid_cornerplot([arr_mc_pi, arr_mc_k], ["pions", "kaons"],
+                        'fig/overlaid_cornerplot_'+'_'.join(vars)+'.pdf', vars)
+    plt.show()

@@ -3,6 +3,7 @@ Module containing functions that import the dataset from the TTrees and store
 the variables of interest in a numpy array for ML treatment
 """
 
+import os
 import time
 import ROOT
 import uproot
@@ -24,6 +25,7 @@ def loadmass(file, tree):
 """
 
 
+# not used, in the classic template fit the RDF scheme is preferred
 def loadmass_uproot(file_pi, file_k, tree, var):
     """
     Returns numpy arrays containing the variables requested, stored originally
@@ -53,7 +55,7 @@ def loadmass_uproot(file_pi, file_k, tree, var):
     return v_pi, v_k
 
 
-def loadvars(file_pi, file_k, tree, *vars):
+def loadvars(file_pi, file_k, tree, *vars):  # FUNDAMENTAL
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files
@@ -69,7 +71,8 @@ def loadvars(file_pi, file_k, tree, *vars):
     """
 
     if (len(vars) == 0):  # DOES THIS MAKE SENSE? OR DO WE NOT NEED IT IF THE FUNCTION IS CALLED INTERNALLY?
-        print("No variables passed to loadvars function!") #We should put an error here
+        # We should put an error here
+        print("No variables passed to loadvars function!")
         pass
 
     tree_pi, tree_k = uproot.open(file_pi)[tree], uproot.open(file_k)[tree]
@@ -96,7 +99,7 @@ def loadvars(file_pi, file_k, tree, *vars):
     return v_pi, v_k
 
 
-def distr_extraction(histo, num, flag):
+def distr_extraction(histo, num, flag):  # not used
     """
     Returns a numpy array of random numbers extracted from the MC distribution
     and assigns a flag number to identify the particle type
@@ -120,7 +123,7 @@ def distr_extraction(histo, num, flag):
     return arr
 
 
-def array_generator(histo_pi, histo_k, f0, n_entries):
+def array_generator(histo_pi, histo_k, f0, n_entries):  # not used
     """
     """
     seed = int(time.time())  # THIS IS NOT DRY!!!!!!! maybe gRandom but WHERE??
@@ -139,7 +142,7 @@ def array_generator(histo_pi, histo_k, f0, n_entries):
     return arr
 
 
-def train_arr_setup(pi_events, k_events):
+def train_arr_setup(pi_events, k_events):  # not used
     """
     Function that concatenates and merges two arrays. If the arrays have more
     than one dimension, the operations are executed on the first dimension (
@@ -155,6 +158,14 @@ def train_arr_setup(pi_events, k_events):
     tr_array = np.concatenate((pi_events, k_events), axis=0)
     np.random.shuffle(tr_array)
     return tr_array
+
+
+def array_to_txt(arr, filename):
+    """Simple function that saves an array in a .txt file into the /txt folder
+    """
+    current_path = os.path.dirname(__file__)
+    path = os.path.join(current_path, filename)
+    np.savetxt(path, arr)
 
 
 if __name__ == '__main__':
@@ -191,6 +202,12 @@ if __name__ == '__main__':
     c1 = ROOT.TCanvas()
     h.DrawCopy()
     c1.SaveAs("prova.png")
+
     t2 = time.time()
+
+    '''
+    a = np.array([0, 1, 2, 3, 4])
+    array_to_txt(a, "txt/dummyarray.txt")
+    '''
 
     print(f'Tempo totale = {t2-t1}')

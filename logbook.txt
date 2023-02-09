@@ -184,6 +184,18 @@ che si possono tentare:
       tra regione rossa e blu
 
 
+09/02/23 (Ruben):
+
+Piccoli aggiustamenti alle funzioni nella cartella /data:
+    - il nome della cartella per ora lo lascerei così perché sarebbero da cambiare
+      i path dei file ovunque. Questo non è un problema ma va tenuta comunque attenzione
+      alla questione dei path per sviluppare (alla fine) un sistema flessibile per
+      raggiungere i file con i dati (es. funzione os.path)
+    - nuova funzione dummy "array_to_txt" in import_functions (per sgravare così il
+      main da inutili righe di codice ----> da fare)
+    - funzioni in import_functions classificate in base al loro utilizzo
+
+
 
 
 
