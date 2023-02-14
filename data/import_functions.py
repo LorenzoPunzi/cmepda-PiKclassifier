@@ -58,7 +58,8 @@ def loadmass_uproot(file_pi, file_k, tree, var):
 def loadvars(file_pi, file_k, tree, *vars):  # FUNDAMENTAL
     """
     Returns numpy arrays containing the requested variables, stored originally
-    in MC root files
+    in MC root files. The LAST column of the output array contains a flag (0
+    for Pions, 1 for Kaons)
 
     Parameters
     ----------
@@ -84,12 +85,12 @@ def loadvars(file_pi, file_k, tree, *vars):  # FUNDAMENTAL
 
     list_pi, list_k = [], []
 
-    list_pi.append(flag_pi)
-    list_k.append(flag_k)
-
     for variable in vars:
         list_pi.append(tree_pi[variable].array(library='np'))
         list_k.append(tree_k[variable].array(library='np'))
+
+    list_pi.append(flag_pi)
+    list_k.append(flag_k)
 
     v_pi, v_k = np.stack(list_pi, axis=1), np.stack(list_k, axis=1)
 
