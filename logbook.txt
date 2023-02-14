@@ -215,6 +215,10 @@ tra le masse MKK, Mpipi e l'impulso: vedere se con nuove combinazioni torna megl
 o se proprio non c'è nulla da fare
 
 
+14/02/23 (Lorenzo):
+
+Ho trasformato training.py in un modulo importabile con funzione deepneuralnetwork(...) e ho testato che funzioni chiamandola dal main dello stesso file.
+
 
 
 

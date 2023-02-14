@@ -8,43 +8,50 @@ from keras.layers import Dense, Input
 from keras.models import Model
 import time
 
-np.random.seed(int(time.time()))
+def deepneuralnetwork(training_array, data_array, neurhid1 = 20, neurhid2 = 10, neurhid3 = 5 , epochnum = 100, plotflag = False, verb = 0, testdata = True):
+    """
+    """
+    np.random.seed(int(time.time()))
 
-training_set = np.loadtxt('data/txt/train_array_prova.txt')
+    training_set = np.loadtxt(training_array)
 
-print(training_set)
+    #print(training_set)
 
-kpid = training_set[:,-1]
-features = training_set[:,:-1] 
+    pid = training_set[:,-1]
+    features = training_set[:,:-1] 
 
-print(kpid)
-print(np.max(kpid))
-print(features)
+    #print(pid)
+    #print(np.max(pid))
+    #print(features)
 
-inputlayer=Input(shape=(np.shape(features)[1],))
-hiddenlayer = Dense(20, activation='relu')(inputlayer)
-#hiddenlayer = Dense(20, activation='relu')(hiddenlayer)
-#hiddenlayer = Dense(20, activation='relu')(hiddenlayer)
-outputlayer = Dense(1, activation='sigmoid')(hiddenlayer)
-deepnn = Model(inputs=inputlayer, outputs=outputlayer)
-deepnn.compile(loss='binary_crossentropy', optimizer='adam')
-deepnn.summary()
+    inputlayer=Input(shape=(np.shape(features)[1],))
+    hiddenlayer = Dense(neurhid1, activation='relu')(inputlayer)
+    hiddenlayer = Dense(neurhid2, activation='relu')(hiddenlayer)
+    hiddenlayer = Dense(neurhid3, activation='relu')(hiddenlayer)
+    outputlayer = Dense(1, activation='sigmoid')(hiddenlayer)
+    deepnn = Model(inputs=inputlayer, outputs=outputlayer)
+    deepnn.compile(loss='binary_crossentropy', optimizer='adam')
+    deepnn.summary()
 
-history = deepnn.fit(features,kpid,validation_split=0.5,epochs=100,verbose=1, batch_size=256)
+    history = deepnn.fit(features, pid, validation_split=0.5, epochs=epochnum, verbose=verb, batch_size=256)
 
-plt.figure('Losses')
-plt.xlabel('Epoch')
-plt.ylabel('Binary CrossEntropy Loss')
+    plt.figure('Losses')
+    plt.xlabel('Epoch')
+    plt.ylabel('Binary CrossEntropy Loss')
 
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.plot(history.history['loss'], label='Training Loss')
-plt.legend()
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.legend()
 
-test_set = np.loadtxt('data/txt/data_array_prova.txt')[:,:-1]
-pred_array = deepnn.predict(test_set)
-print(test_set)
-f_pred = np.sum(pred_array)
-print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
-print('Max prediction :',np.max(pred_array))
-print('Min prediction :',np.min(pred_array))
-plt.show()
+    data_set = np.loadtxt(data_array)[:,:-1] if testdata else np.loadtxt(data_array)
+
+    pred_array = deepnn.predict(data_set)
+    print(data_set)
+    f_pred = np.sum(pred_array)
+    print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
+    print('Max prediction :',np.max(pred_array))
+    print('Min prediction :',np.min(pred_array))
+    if plotflag : plt.show()
+
+if __name__ == '__main__':
+    deepneuralnetwork('./data/txt/train_array_prova.txt','./data/txt/data_array_prova.txt', plotflag = True, verb = 0)
