@@ -14,7 +14,7 @@ def deepneuralnetwork(training_array, data_array, neurhid1 = 20, neurhid2 = 10, 
     np.random.seed(int(time.time()))
 
     training_set = np.loadtxt(training_array)
-
+ 
     #print(training_set)
 
     pid = training_set[:,-1]
@@ -53,5 +53,7 @@ def deepneuralnetwork(training_array, data_array, neurhid1 = 20, neurhid2 = 10, 
     print('Min prediction :',np.min(pred_array))
     if plotflag : plt.show()
 
+    return pred_array
+
 if __name__ == '__main__':
-    deepneuralnetwork('./data/txt/train_array_prova.txt','./data/txt/data_array_prova.txt', plotflag = True, verb = 0)
+    predicted = deepneuralnetwork('./data/txt/train_array_prova.txt','./data/txt/data_array_prova.txt', plotflag = True, verb = 0)
