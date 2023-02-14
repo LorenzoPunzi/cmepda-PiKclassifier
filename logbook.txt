@@ -206,7 +206,7 @@ Non è detto che questo basti a far convergere tutto.
 
 Il modulo merge_variables.py contiene tutto ciò che serve, e adesso salve le immagini
 con le nuove distribuzioni confrontate con quelle vecchie. VA PRESTATA ATTENZIONE
-AL WARNING RESTITUITO DAL TERMINALE quando si fa cirare il codice: ci deve essere
+AL WARNING RESTITUITO DAL TERMINALE quando si fa girare il codice: ci deve essere
 un modo corretto di deallocare la memoria delle figure (e quindi di chiuderle),
 ma ora come ora non saprei come implementarla.
 
@@ -216,9 +216,11 @@ o se proprio non c'è nulla da fare
 
 
 14/02/23 (Lorenzo):
-
 Ho trasformato training.py in un modulo importabile con funzione deepneuralnetwork(...) e ho testato che funzioni chiamandola dal main dello stesso file.
 
+14/02/23 (Ruben):
+Migliorato merge_variables e runnato sulle combinazioni più promettenti. Salvati
+in file txt le statistiche di KS per la nuova variabile e per le variabili iniziali.
 
 
 
