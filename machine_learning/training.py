@@ -10,12 +10,14 @@ from keras.layers import Dense, Input
 from keras.models import Model
 
 
-def train_DNN(training_array, neurhid1=20, neurhid2=10, neurhid3=5, epochnum=100, plotflag=False, verb=0, testdata=True):
+def train_dnn(training_array, neurons = [20,10,5], epochnum=100, plotflag=False, verb=0, template_eval = False):
     """
     """
     np.random.seed(int(time.time()))
 
     training_set = np.loadtxt(training_array)
+    pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
+    K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
     pid = training_set[:, -1]
     features = training_set[:, :-1]
     # print(pid)
@@ -23,9 +25,9 @@ def train_DNN(training_array, neurhid1=20, neurhid2=10, neurhid3=5, epochnum=100
     # print(features)
 
     inputlayer = Input(shape=(np.shape(features)[1],))
-    hiddenlayer = Dense(neurhid1, activation='relu')(inputlayer)
-    hiddenlayer = Dense(neurhid2, activation='relu')(hiddenlayer)
-    hiddenlayer = Dense(neurhid3, activation='relu')(hiddenlayer)
+    hiddenlayer = Dense(neurons[0], activation='relu')(inputlayer)
+    for i in neurons[1:]:
+        hiddenlayer = Dense(i, activation='relu')(hiddenlayer)
     outputlayer = Dense(1, activation='sigmoid')(hiddenlayer)
     deepnn = Model(inputs=inputlayer, outputs=outputlayer)
     deepnn.compile(loss='binary_crossentropy', optimizer='adam')
@@ -42,9 +44,11 @@ def train_DNN(training_array, neurhid1=20, neurhid2=10, neurhid3=5, epochnum=100
     plt.plot(history.history['loss'], label='Training Loss')
     plt.legend()
     if plotflag:
-        plt.savefig(os.path.join('fig', "epochs"))
+        plt.show()
+    plt.savefig(os.path.join('fig', "epochs.pdf"))
 
     return deepnn
+
 
 
 if __name__ == '__main__':
@@ -55,7 +59,7 @@ if __name__ == '__main__':
     data_array_path = os.path.join(
         current_path, txt_path, 'data_array_prova.txt')
 
-    deepnn = train_DNN(train_array_path, plotflag=True, verb=0)
+    deepnn = train_dnn(train_array_path, plotflag=True, verb=0)
 
     testdata = True
     data_set = np.loadtxt(data_array_path)[
