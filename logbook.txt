@@ -126,7 +126,6 @@ Lorenzo ha problemi a montare le .so, ma non a usarle se già create...
 Le priorità ora sono capire corner.py e il template fit a valle della DNN (se questa si riesce a far funzionare bene).
 
 
-
 03/02/23 (Lorenzo):
 
 Ho creato il file cornerplot.py per fare i corner plot. Devo mandare in input
@@ -164,7 +163,6 @@ array, l'altra date liste di array fanno un corner plot sovrapposto degli array.
 Ho runnato il cornerplot sovrapposto per tutte le scelte possibili di variabili
 e praticamente tutte apparte le M0_Mxx sembrano troppo simili fra i pi e i k: QUESTO È UN SERIO PROBLEMA.
 Ho salvato le varie combinazioni come immagini per poterle vedere in seguito.
-
 
 
 05/02/23 (Ruben):
@@ -216,11 +214,32 @@ o se proprio non c'è nulla da fare
 
 
 14/02/23 (Lorenzo):
+
 Ho trasformato training.py in un modulo importabile con funzione deepneuralnetwork(...) e ho testato che funzioni chiamandola dal main dello stesso file.
 
+
 14/02/23 (Ruben):
+
 Migliorato merge_variables e runnato sulle combinazioni più promettenti. Salvati
 in file txt le statistiche di KS per la nuova variabile e per le variabili iniziali.
+
+
+15/02/23 (Lorenzo e Ruben):
+
+Ricevuto il generatore di B da Michael e modificato per runnare su B senza background con adesso anche RICH. Generati i MC nuovi con RICH.
+
+Modificato trining.py con train_dnn() (che volendo plotta anche i template di pi e K) e eval_dnn() separate.
+
+
+16/02/23 (Lorenzo e Ruben):
+
+Modificato cornerplot.py con parsing della shell delle variabili e mask sugli eventi con RICH = 999 per motivi di diplaying del cornerplot.
+
+Bisogna riflettere sul fatto che solo il K ha alcuni (e non pochi) eventi con RICH1 e/o RICH2 = 999. Questo in teoria permette di discriminare per quegli eventi perfettamente i K dai pi (e forse sono proprio gli eventi che la rete ora con RICH prevede essere y =1). Tuttavia non è ovvio che sia realistica come procedura, dato che irl comunque i RICH avrebbero una efficienza<1 e quindi sarebbe possibile avere eventi senza RICH attivato (cioè 999) anche per PiPi. Una possibile soluzione sarebbe quella di applicare delle efficienze ad hoc (binomiale quando si filla la variabile hx_thetaCx) sull'impronta delle vere efficienze riportate da lhcb.
+
+
+
+
 
 
 
