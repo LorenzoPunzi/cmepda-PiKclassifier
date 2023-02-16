@@ -10,14 +10,11 @@ from keras.layers import Dense, Input
 from keras.models import Model
 
 
-def train_dnn(training_array, neurons = [20,10,5], epochnum=100, plotflag=False, verb=0, template_eval = False):
+def train_dnn(training_set, neurons = [20,10,5], epochnum=100, plotflag=False, verb=0, template_eval = False):
     """
     """
     np.random.seed(int(time.time()))
 
-    training_set = np.loadtxt(training_array)
-    pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
-    K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
     pid = training_set[:, -1]
     features = training_set[:, :-1]
     # print(pid)
@@ -36,19 +33,43 @@ def train_dnn(training_array, neurons = [20,10,5], epochnum=100, plotflag=False,
     history = deepnn.fit(features, pid, validation_split=0.5,
                          epochs=epochnum, verbose=verb, batch_size=256)
 
-    plt.figure('Losses')
-    plt.xlabel('Epoch')
-    plt.ylabel('Binary CrossEntropy Loss')
-
-    plt.plot(history.history['val_loss'], label='Validation Loss')
-    plt.plot(history.history['loss'], label='Training Loss')
-    plt.legend()
     if plotflag:
+        plt.figure('Losses')
+        plt.xlabel('Epoch')
+        plt.ylabel('Binary CrossEntropy Loss')
+
+        plt.plot(history.history['val_loss'], label='Validation Loss')
+        plt.plot(history.history['loss'], label='Training Loss')
+        plt.legend()
+        plt.savefig(os.path.join('fig', "epochs.pdf"))
         plt.show()
-    plt.savefig(os.path.join('fig', "epochs.pdf"))
+    
+    if template_eval :
+        pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
+        K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
+        pi_eval = eval_dnn(deepnn, pi_set, plot='Pieval',test_data=True)
+        K_eval = eval_dnn(deepnn, K_set, plot='Keval',test_data=True)
 
     return deepnn
 
+
+def eval_dnn(dnn, eval_set, plot= '', test_data = False, f_print = False):
+    """
+    """
+    prediction_array = dnn.predict(eval_set) if not test_data else dnn.predict(eval_set[:,:-1])
+    
+    if plot:
+        plt.figure(plot)
+        plt.hist(prediction_array, bins=100)
+        plt.show()
+    
+    if f_print:
+        f_pred = np.sum(prediction_array)
+        print(f'The predicted K fraction is : {f_pred/len(prediction_array)}')
+        print('Max prediction :', np.max(prediction_array))
+        print('Min prediction :', np.min(prediction_array))
+
+    return prediction_array
 
 
 if __name__ == '__main__':
@@ -59,17 +80,8 @@ if __name__ == '__main__':
     data_array_path = os.path.join(
         current_path, txt_path, 'data_array_prova.txt')
 
-    deepnn = train_dnn(train_array_path, plotflag=True, verb=0)
+    deepnn = train_dnn(np.loadtxt(train_array_path), verb=0, template_eval=True)
+    
+    pred_array = eval_dnn(deepnn,np.loadtxt(data_array_path),test_data=True,f_print=True,plot='PredHist')
+    print(pred_array)
 
-    testdata = True
-    data_set = np.loadtxt(data_array_path)[
-                          :, :-1] if testdata else np.loadtxt(data_array_path)
-
-    pred_array = deepnn.predict(data_set)
-    print(data_set)
-    f_pred = np.sum(pred_array)
-    print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
-    print('Max prediction :', np.max(pred_array))
-    print('Min prediction :', np.min(pred_array))
-
-    # return pred_array
