@@ -180,11 +180,11 @@ if __name__ == '__main__':
     gen = ROOT.TRandom3()
     gen.SetSeed(seed)
 
-    file1 = '../root_files/tree_B0PiPi_mc.root'
-    file2 = '../root_files/tree_B0sKK_mc.root'
-    tree = 't_M0pipi;2'
+    file1 = '../root_files/tree_B0PiPi.root'
+    file2 = '../root_files/tree_B0sKK.root'
+    tree = 't_M0pipi;1'
     var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi',
-           'M0_MpiK', 'M0_p', 'M0_pt', 'M0_eta')
+           'M0_MpiK', 'M0_p', 'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
 
     #v = loadmass(file, tree)
     # v1, v2 = loadmass_uproot(file1, file2, tree, var)
