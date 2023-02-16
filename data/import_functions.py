@@ -73,7 +73,7 @@ def loadvars(file_pi, file_k, tree, *vars):  # FUNDAMENTAL
         Tuple containing names of the variables requested
     """
 
-    if (len(vars) == 0):  # DOES THIS MAKE SENSE? OR DO WE NOT NEED IT IF THE FUNCTION IS CALLED INTERNALLY?
+    if (len(vars) == 0):  
         # We should put an error here
         print("No variables passed to loadvars function!")
         pass

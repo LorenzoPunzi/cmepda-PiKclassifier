@@ -83,5 +83,5 @@ if __name__ == '__main__':
     deepnn = train_dnn(np.loadtxt(train_array_path), verb=0, template_eval=True)
     
     pred_array = eval_dnn(deepnn,np.loadtxt(data_array_path),test_data=True,f_print=True,plot='PredHist')
-    print(pred_array)
+    #print(pred_array)
 

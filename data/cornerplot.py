@@ -7,6 +7,7 @@ import numpy as np
 import corner
 from matplotlib import pyplot as plt
 from import_functions import loadvars
+import sys
 
 
 def cornerplot(array, figname):
@@ -39,17 +40,17 @@ def overlaid_cornerplot(array_list, array_labels, figname, variable_names):
 
 if __name__ == '__main__':
 
-    file_mc_pi = '../root_files/tree_B0PiPi_mc.root'
-    file_mc_k = '../root_files/tree_B0sKK_mc.root'
-    tree = 't_M0pipi;2'
-    vars = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt')
-    # 'h1_p', 'h1_eta', 'h2_p', 'h2_eta')
-    # vars = ('h1_IP', 'M0_px', 'M0_py', 'M0_pz', 'M0_pt')
+    file_mc_pi = '../root_files/tree_B0PiPi.root'
+    file_mc_k = '../root_files/tree_B0sKK.root'
+    tree = 't_M0pipi;1'
+    if len(sys.argv) == 1:
+        print('No variables given to display!')
+        sys.exit(0)
+    vars = [var for var in sys.argv[1:]]
 
     arr_mc_pi, arr_mc_k = loadvars(file_mc_pi, file_mc_k, tree, *vars)
-
-    # cornerplot(arr_mc_pi, 'fig/cornerplot_pi.png')
-    # cornerplot(arr_mc_k, 'fig/cornerplot_k.png')
-    overlaid_cornerplot([arr_mc_pi, arr_mc_k], ["pions", "kaons"],
+    mask_pi = (arr_mc_pi<999).all(axis=1)
+    mask_k = (arr_mc_k<999).all(axis=1)
+    overlaid_cornerplot([arr_mc_pi[mask_pi,:], arr_mc_k[mask_k,:]], ["pions", "kaons"],
                         'fig/overlaid_cornerplot_'+'_'.join(vars)+'.pdf', vars)
     plt.show()
