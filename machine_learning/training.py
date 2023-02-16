@@ -31,7 +31,7 @@ def train_dnn(training_set, neurons = [20,10,5], epochnum=100, plotflag=False, v
     deepnn.summary()
 
     history = deepnn.fit(features, pid, validation_split=0.5,
-                         epochs=epochnum, verbose=verb, batch_size=256)
+                         epochs=epochnum, verbose=verb, batch_size=128)
 
     if plotflag:
         plt.figure('Losses')
@@ -60,7 +60,8 @@ def eval_dnn(dnn, eval_set, plot= '', test_data = False, f_print = False):
     
     if plot:
         plt.figure(plot)
-        plt.hist(prediction_array, bins=100)
+        plt.hist(prediction_array, bins=500, histtype='step')
+        plt.savefig('./fig/predict_'+plot+'.pdf')
         plt.show()
     
     if f_print:
@@ -80,8 +81,8 @@ if __name__ == '__main__':
     data_array_path = os.path.join(
         current_path, txt_path, 'data_array_prova.txt')
 
-    deepnn = train_dnn(np.loadtxt(train_array_path), verb=0, template_eval=True)
+    deepnn = train_dnn(np.loadtxt(train_array_path),neurons=[20,20,20], verb=0, template_eval=True)
     
-    pred_array = eval_dnn(deepnn,np.loadtxt(data_array_path),test_data=True,f_print=True,plot='PredHist')
+    pred_array = eval_dnn(deepnn,np.loadtxt(data_array_path),test_data=True,f_print=True,plot='Dataeval')
     #print(pred_array)
 

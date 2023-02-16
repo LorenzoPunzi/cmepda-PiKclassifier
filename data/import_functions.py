@@ -193,7 +193,7 @@ if __name__ == '__main__':
     for ev in v1[:, 1]:
         h.Fill(ev)
 
-    train_array = np.concatenate((v1[:10000, :], v2[:10000, :]), axis=0)
+    train_array = np.concatenate((v1[:50000, :], v2[:50000, :]), axis=0)
     np.random.shuffle(train_array)
     print(train_array.shape)
 
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     tree = 't_M0pipi;1'
     file_data = '../root_files/tree_Bhh_data.root'
     v0, v0 = loadvars(file_data, file_data, tree, *var)
-    np.savetxt("txt/data_array_prova.txt", v0[:1000, :])
+    np.savetxt("txt/data_array_prova.txt", v0[:10000, :])
 
     c1 = ROOT.TCanvas()
     h.DrawCopy()
