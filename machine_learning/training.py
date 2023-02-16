@@ -62,7 +62,7 @@ def eval_dnn(dnn, eval_set, plot= '', test_data = False, f_print = False):
         plt.figure(plot)
         plt.hist(prediction_array, bins=500, histtype='step')
         plt.savefig('./fig/predict_'+plot+'.pdf')
-        plt.show()
+        plt.draw()
     
     if f_print:
         f_pred = np.sum(prediction_array)
@@ -84,5 +84,6 @@ if __name__ == '__main__':
     deepnn = train_dnn(np.loadtxt(train_array_path),neurons=[20,20,20], verb=0, template_eval=True)
     
     pred_array = eval_dnn(deepnn,np.loadtxt(data_array_path),test_data=True,f_print=True,plot='Dataeval')
+    plt.show()
     #print(pred_array)
 
