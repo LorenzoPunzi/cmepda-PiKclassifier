@@ -37,48 +37,50 @@ def KS_optimization(v_pi, v_K, parlims=[-10, 10], n_try=1000):
     return max_stat, round(pars[idx_sel], 3)
 
 
-def mergevar(tree_pi, tree_k, *vars):
+def mergevar(trees, vars):
     """
     """
-    [v1_pi, v2_pi] = [tree_pi[var].array(library='np') for var in vars]
-    [v1_K, v2_K] = [tree_k[var].array(library='np') for var in vars]
+    [tree_pi, tree_k] = trees
+    n_vars = len(vars)
+    v_pi, v_k = [0]*n_vars, [0]*n_vars  # Initialize to 0 for semplicity
+    for i in range(n_vars):
+        var = vars[i]
+        v_pi[i], v_k[i] = tree_pi[var].array(
+            library='np'), tree_k[var].array(library='np')
 
-    v1lim = [min(min(v1_pi), min(v1_K)), max(max(v1_pi), max(v1_K))]
-    v2lim = [min(min(v2_pi), min(v2_K)), max(max(v2_pi), max(v2_K))]
+    v1lim = [min(min(v_pi[0]), min(v_k[0])), max(max(v_pi[0]), max(v_k[0]))]
+    v2lim = [min(min(v_pi[1]), min(v_k[1])), max(max(v_pi[1]), max(v_k[1]))]
 
-    v1_pi = (v1_pi - v1lim[0])/(v1lim[1]-v1lim[0])
-    v2_pi = (v2_pi - v2lim[0])/(v2lim[1]-v2lim[0])
-    v1_K = (v1_K - v1lim[0])/(v1lim[1]-v1lim[0])
-    v2_K = (v2_K - v2lim[0])/(v2lim[1]-v2lim[0])
-
-    v_pi = [v1_pi, v2_pi]
-    v_K = [v1_K, v2_K]
+    v1_pi = (v_pi[0]-v1lim[0])/(v1lim[1]-v1lim[0])
+    v2_pi = (v_pi[1]-v2lim[0])/(v2lim[1]-v2lim[0])
+    v1_k = (v_k[0]-v1lim[0])/(v1lim[1]-v1lim[0])
+    v2_k = (v_k[1]-v2lim[0])/(v2lim[1]-v2lim[0])
 
     kolmogorov_stat, m = KS_optimization(
-        v_pi, v_K, parlims=[-100., 100.], n_try=1000)
+        [v1_pi, v2_pi], [v1_k, v2_k], parlims=[-100., 100.], n_try=1000)
 
     KS_stats = []
     KS_stats.append(kolmogorov_stat)
-    KS_stats.append(KS(v1_pi, v1_K, alternative='twosided').statistic)
-    KS_stats.append(KS(v2_pi, v2_K, alternative='twosided').statistic)
+    KS_stats.append(KS(v1_pi, v1_k, alternative='twosided').statistic)
+    KS_stats.append(KS(v2_pi, v2_k, alternative='twosided').statistic)
 
     v_merge_pi = mix_function(v1_pi, v2_pi, m)
-    v_merge_K = mix_function(v1_K, v2_K, m)
+    v_merge_k = mix_function(v1_k, v2_k, m)
 
     plt.figure(1)
     plt.subplot(2, 1, 1)
     plt.hist(v_merge_pi, 100, color='blue', histtype='step')
-    plt.hist(v_merge_K, 100, color='red', histtype='step')
+    plt.hist(v_merge_k, 100, color='red', histtype='step')
     plt.subplot(2, 1, 2)
     plt.hist(v1_pi, 100, color='blue', histtype='step')
-    plt.hist(v1_K, 100, color='red', histtype='step')
+    plt.hist(v1_k, 100, color='red', histtype='step')
     plt.hist(v2_pi, 100, color='blue', histtype='step')
-    plt.hist(v2_K, 100, color='red', histtype='step')
+    plt.hist(v2_k, 100, color='red', histtype='step')
     # plt.show()
     plt.savefig('fig/'+vars[0]+'_'+vars[1]+'_merged_'+str(m)+'.pdf')
     plt.close()
 
-    return v_merge_pi, v_merge_K, m, KS_stats
+    return v_merge_pi, v_merge_k, m, KS_stats
 
 
 if __name__ == '__main__':
@@ -89,7 +91,7 @@ if __name__ == '__main__':
     filenames = ['tree_B0PiPi_mc.root', 'tree_B0sKK_mc.root']
     files = [os.path.join(
         current_path, filepath, filename) for filename in filenames]
-    [tree_pi, tree_k] = [uproot.open(file)[tree] for file in files]
+    trees = [uproot.open(file)[tree] for file in files]
 
     vars = ['M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_Mpipi', 'M0_p', 'M0_pt']
     # Si può sicuramente fare in modo più figo con un parser
@@ -105,15 +107,13 @@ if __name__ == '__main__':
     combinations.append(np.array([0, 1]))  # MKK - MKpi
     combinations.append(np.array([0, 2]))  # MKK - MpiK
 
-    # comb4 = np.array([])
     stats = []
     str_combinations = []
 
     for comb in combinations:
         selected_vars = [vars[comb[0]], vars[comb[1]]]
         print(selected_vars)
-        v_merge_pi, v_merge_K, m, stats_new = mergevar(
-            tree_pi, tree_k, *selected_vars)
+        v_merge_pi, v_merge_K, m, stats_new = mergevar(trees, selected_vars)
         stats.append(stats_new)
         print(m)
         string_combination = vars[comb[0]]+'_'+vars[comb[1]]+'_merged_'

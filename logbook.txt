@@ -237,7 +237,14 @@ Modificato cornerplot.py con parsing della shell delle variabili e mask sugli ev
 
 Bisogna riflettere sul fatto che solo il K ha alcuni (e non pochi) eventi con RICH1 e/o RICH2 = 999. Questo in teoria permette di discriminare per quegli eventi perfettamente i K dai pi (e forse sono proprio gli eventi che la rete ora con RICH prevede essere y =1). Tuttavia non è ovvio che sia realistica come procedura, dato che irl comunque i RICH avrebbero una efficienza<1 e quindi sarebbe possibile avere eventi senza RICH attivato (cioè 999) anche per PiPi. Una possibile soluzione sarebbe quella di applicare delle efficienze ad hoc (binomiale quando si filla la variabile hx_thetaCx) sull'impronta delle vere efficienze riportate da lhcb.
 
-
+Costruita la funzione array_generator in import_functions.py, che vuole essere
+la funzione principale per generare gli array di training e/o testing. C'è
+qualche problema nell'includere le variabili merged: probabilmente andrà
+ripensata la struttura di "mergevar" e del modulo in generale, poiché non è
+comodo importare dai txt e le variabili vanno correttamente mixate anche per il
+dataset dei dati veri (cosa che al momento non viene fatta) --> Penso di potermici
+mettere sabato sera (Ruben), tanto è una cosa noiosa e si può andare avanti
+benissimo anche senza
 
 
 
