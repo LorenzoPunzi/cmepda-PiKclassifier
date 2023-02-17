@@ -10,7 +10,7 @@ from keras.layers import Dense, Input
 from keras.models import Model
 
 
-def train_dnn(training_set, neurons = [20,10,5], epochnum=100, plotflag=False, verb=0, template_eval = False):
+def train_dnn(training_set, neurons = [20,10,5], epochnum=100, plotflag=False, verb=0):
     """
     """
     np.random.seed(int(time.time()))
@@ -43,25 +43,20 @@ def train_dnn(training_set, neurons = [20,10,5], epochnum=100, plotflag=False, v
         plt.legend()
         plt.savefig(os.path.join('fig', "epochs.pdf"))
         plt.show()
-    
-    if template_eval :
-        pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
-        K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
-        pi_eval = eval_dnn(deepnn, pi_set, plot='Pieval',test_data=True)
-        K_eval = eval_dnn(deepnn, K_set, plot='Keval',test_data=True)
 
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plot= '', test_data = False, f_print = False):
+def eval_dnn(dnn, eval_set, plot= [], test_data = False, f_print = False):
     """
     """
     prediction_array = dnn.predict(eval_set) if not test_data else dnn.predict(eval_set[:,:-1])
     
     if plot:
-        plt.figure(plot)
-        plt.hist(prediction_array, bins=500, histtype='step')
-        plt.savefig('./fig/predict_'+plot+'.pdf')
+        plotname = plot[0]
+        plt.figure(plotname)
+        plt.hist(prediction_array, bins=300, histtype='step', color=plot[1])
+        plt.savefig('./fig/predict_'+plotname+'.pdf')
         plt.draw()
     
     if f_print:
@@ -72,18 +67,29 @@ def eval_dnn(dnn, eval_set, plot= '', test_data = False, f_print = False):
 
     return prediction_array
 
+def dnn(trainarrayname, dataarrayname, txt_path = '../data/txt', flagged_data = False, plot_pi = ['Templ_eval', 'red'], plot_K = ['Templ_eval', 'blue'], plot_data = ['Dataeval','blue']):
+    
+    current_path = os.path.dirname(__file__)
+    train_array_path = os.path.join(
+        current_path, txt_path, trainarrayname)
+    data_array_path = os.path.join(
+        current_path, txt_path, dataarrayname)
+
+    training_set = np.loadtxt(train_array_path)
+    pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
+    K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
+    data_set = np.loadtxt(data_array_path)
+
+    deepnn = train_dnn(training_set,neurons=[20,20,20], verb=0) 
+    pred_array = eval_dnn(deepnn,data_set,plot=plot_data,test_data=flagged_data,f_print=True)
+    pi_eval = eval_dnn(deepnn, pi_set,plot=plot_pi,test_data=True)
+    K_eval = eval_dnn(deepnn, K_set,plot=plot_K,test_data=True)
+
+    return pi_eval, K_eval, pred_array
 
 if __name__ == '__main__':
-    current_path = os.path.dirname(__file__)
-    txt_path = '../data/txt'
-    train_array_path = os.path.join(
-        current_path, txt_path, 'train_array_prova.txt')
-    data_array_path = os.path.join(
-        current_path, txt_path, 'data_array_prova.txt')
-
-    deepnn = train_dnn(np.loadtxt(train_array_path),neurons=[20,20,20], verb=0, template_eval=True)
     
-    pred_array = eval_dnn(deepnn,np.loadtxt(data_array_path),test_data=True,f_print=True,plot='Dataeval')
+    pi_eval, K_eval, pred_array = dnn('train_array_prova.txt','data_array_prova.txt',flagged_data=True)   
     plt.show()
     #print(pred_array)
 
