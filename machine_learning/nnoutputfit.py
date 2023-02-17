@@ -21,5 +21,5 @@ if __name__ == '__main__':
     pi_eval, k_eval, data_eval = dnn('train_array_prova.txt','data_array_prova.txt',flagged_data=True)
     y_cut = find_cut(pi_eval, k_eval, 0.9)
     plt.axvline(x = y_cut, color = 'green')
-    plt.show()
+    plt.show() 
 
