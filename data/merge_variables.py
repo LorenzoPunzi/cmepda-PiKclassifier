@@ -37,16 +37,38 @@ def KS_optimization(v_pi, v_K, parlims=[-10, 10], n_try=1000):
     return max_stat, round(pars[idx_sel], 3)
 
 
-def mergevar(trees, vars):
+def mergevar(tree_files, tree, vars):
     """
+    Function that takes two variables stored in TTrees and mixes them to create
+    a new feature. This feature is then computed for both the MCs and for data
+    and stored in a 3-column array, returned by the function.
+    In this version, the function relies on the two functions implemented
+    previously in this module
+
+    Parameters
+    ----------
+    trees: string
+        Trees that store the original variables. A list of 3 arguments has to be
+        passed, containing the trees for Pi and K MCs and data (in this order)
+    vars: string
+        Couple of variables that have to be mixed by he function. In this
+        version, it must be alist of two arguments
     """
-    [tree_pi, tree_k] = trees
-    n_vars = len(vars)
-    v_pi, v_k = [0]*n_vars, [0]*n_vars  # Initialize to 0 for semplicity
+    if not len(tree_files) == 3:
+        print("Errore nella lunghezza delle liste passate a \'mergevar\'")
+    if not len(vars) == 2:
+        print("Errore nella lunghezza delle liste passate a \'mergevar\'")
+
+    tree_pi, tree_k, tree_data = [
+        uproot.open(file)[tree] for file in tree_files]
+
+    n_vars = 2  # Merging only couples of variables
+    v_pi, v_k, v_data = [0]*n_vars, [0]*n_vars, [0]*n_vars
     for i in range(n_vars):
         var = vars[i]
-        v_pi[i], v_k[i] = tree_pi[var].array(
-            library='np'), tree_k[var].array(library='np')
+        v_pi[i] = tree_pi[var].array(library='np')
+        v_k[i] = tree_k[var].array(library='np')
+        v_data[i] = tree_data[var].array(library='np')
 
     v1lim = [min(min(v_pi[0]), min(v_k[0])), max(max(v_pi[0]), max(v_k[0]))]
     v2lim = [min(min(v_pi[1]), min(v_k[1])), max(max(v_pi[1]), max(v_k[1]))]
@@ -55,6 +77,9 @@ def mergevar(trees, vars):
     v2_pi = (v_pi[1]-v2lim[0])/(v2lim[1]-v2lim[0])
     v1_k = (v_k[0]-v1lim[0])/(v1lim[1]-v1lim[0])
     v2_k = (v_k[1]-v2lim[0])/(v2lim[1]-v2lim[0])
+
+    v1_data = (v_data[0]-v1lim[0])/(v1lim[1]-v1lim[0])
+    v2_data = (v_data[1]-v1lim[0])/(v1lim[1]-v1lim[0])
 
     kolmogorov_stat, m = KS_optimization(
         [v1_pi, v2_pi], [v1_k, v2_k], parlims=[-100., 100.], n_try=1000)
@@ -66,6 +91,9 @@ def mergevar(trees, vars):
 
     v_merge_pi = mix_function(v1_pi, v2_pi, m)
     v_merge_k = mix_function(v1_k, v2_k, m)
+    v_merge_data = mix_function(v1_data, v2_data, m)
+
+    merged_arrays = [v_merge_pi, v_merge_k, v_merge_data]
 
     plt.figure(1)
     plt.subplot(2, 1, 1)
@@ -80,25 +108,25 @@ def mergevar(trees, vars):
     plt.savefig('fig/'+vars[0]+'_'+vars[1]+'_merged_'+str(m)+'.pdf')
     plt.close()
 
-    return v_merge_pi, v_merge_k, m, KS_stats
+    return merged_arrays, m, KS_stats
 
 
 if __name__ == '__main__':
     t0 = time.time()
     current_path = os.path.dirname(__file__)
-    tree = 't_M0pipi;2'
+    tree = 't_M0pipi;1'
     filepath = '../root_files'
-    filenames = ['tree_B0PiPi_mc.root', 'tree_B0sKK_mc.root']
+    filenames = ['tree_B0PiPi_mc.root',
+                 'tree_B0sKK_mc.root', 'tree_Bhh_data.root']
     files = [os.path.join(
         current_path, filepath, filename) for filename in filenames]
-    trees = [uproot.open(file)[tree] for file in files]
 
     vars = ['M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_Mpipi', 'M0_p', 'M0_pt']
     # Si può sicuramente fare in modo più figo con un parser
 
     combinations = []
     combinations.append(np.array([1, 2]))  # MKpi - MpiK
-    combinations.append(np.array([0, 4]))  # MKK - p
+    '''combinations.append(np.array([0, 4]))  # MKK - p
     combinations.append(np.array([3, 4]))  # Mpipi - p
     combinations.append(np.array([4, 3]))  # p - Mpipi
     combinations.append(np.array([4, 0]))  # p - MKK
@@ -106,21 +134,21 @@ if __name__ == '__main__':
     combinations.append(np.array([1, 4]))  # MKpi - p
     combinations.append(np.array([0, 1]))  # MKK - MKpi
     combinations.append(np.array([0, 2]))  # MKK - MpiK
-
+    '''
     stats = []
     str_combinations = []
 
     for comb in combinations:
         selected_vars = [vars[comb[0]], vars[comb[1]]]
         print(selected_vars)
-        v_merge_pi, v_merge_K, m, stats_new = mergevar(trees, selected_vars)
+        new_arrays, m, stats_new = mergevar(files, tree, selected_vars)
         stats.append(stats_new)
-        print(m)
+        mc_array = np.stack((new_arrays[0], new_arrays[1]), axis=1)
         string_combination = vars[comb[0]]+'_'+vars[comb[1]]+'_merged_'
-        np.savetxt('txt/newvars_pi/'+string_combination
-                   + str(m)+'.txt', v_merge_pi)
-        np.savetxt('txt/newvars_k/'+string_combination
-                   + str(m)+'.txt', v_merge_K)
+        np.savetxt('txt/newvars/'+string_combination+'_mc_'+str(m)+'.txt',
+                   mc_array, delimiter='  ', header='mc_pi,  mc_k')
+        np.savetxt('txt/newvars/'+string_combination+'_data_'+str(m)+'.txt',
+                   np.array(new_arrays[2]), delimiter='  ')
         str_combinations.append(string_combination)
 
     arr_stats = np.array(stats).reshape(len(combinations), 3)

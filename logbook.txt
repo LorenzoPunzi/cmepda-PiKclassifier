@@ -248,17 +248,42 @@ benissimo anche senza
 
 17/02/23 (Lorenzo):
 
-Ho costruito la funzione dnn() in training.py che fa training di una dnn e evaluation su un data sample, restituendo anche la evaluation di Pi e K. Ho costruito poi in nnoutputfit.py la funzione find_cut() che trova la y_cut necessaria per avere una certa efficienza/specificità sul taglio.
+Ho costruito la funzione dnn() in training.py che fa training di una dnn e evaluation
+su un data sample, restituendo anche la evaluation di Pi e K. Ho costruito poi in
+nnoutputfit.py la funzione find_cut() che trova la y_cut necessaria per avere una
+certa efficienza/specificità sul taglio.
+
 
 18/02/23 (Lorenzo):
 
-In nnoutputfit.py ho costruito la funzione roc() che disegna la curva di roc relativa al taglio in y di cui sopra. Ho inoltre implementato la risoluzione del sistema lineare con le efficienze per trovare la frazione di K dato il taglio y_cut.
+In nnoutputfit.py ho costruito la funzione roc() che disegna la curva di roc relativa
+al taglio in y di cui sopra. Ho inoltre implementato la risoluzione del sistema
+lineare con le efficienze per trovare la frazione di K dato il taglio y_cut.
 
-Ho poi risolto un problema legato alla forma delle variabili di cut come [...] invece di semplici float: dopo vari tentativi e peripezie ho capito che gli array che escono da model.predict() sono (n,1), non semplici array 1D. Quindi in eval_dnn() ho aggiunto un .flatten() per farli diventare regolari array 1D.
+Ho poi risolto un problema legato alla forma delle variabili di cut come [...] invece
+di semplici float: dopo vari tentativi e peripezie ho capito che gli array che escono
+da model.predict() sono (n,1), non semplici array 1D. Quindi in eval_dnn() ho aggiunto
+un .flatten() per farli diventare regolari array 1D.
 
-Bisogna capire come mai le distribuzioni in y dei Pi e K sono così tanto variabili da una trained dnn a un'altra. Ci sono delle spikes a 0,1 e 0,4x e non è chiaro se i RICH = 999 siano leciti da usare o too easy.
+Bisogna capire come mai le distribuzioni in y dei Pi e K sono così tanto variabili
+da una trained dnn a un'altra. Ci sono delle spikes a 0,1 e 0,4x e non è chiaro
+se i RICH = 999 siano leciti da usare o too easy.
 
-Ho cercato di "giocare" un po' con i parametri della dnn per avere una risposta stabile ma non mi è ancora risucito
+Ho cercato di "giocare" un po' con i parametri della dnn per avere una risposta
+stabile ma non mi è ancora risucito
+
+
+19-20/02/23 (Ruben):
+
+Confrontando "loadvars()" e "merge_variables.py", ho notato che si utilizza
+uproot in due modi differenti: in loadvars si chiama uproot N volte per costruire
+gli array delle N variabili; in merge_variables invece si chiama una volta sola
+e i tree così estratti vengono quindi passati alla funzione mergevar() --> testando
+loadvars col metodo originale e col secondo metodo il tempo totale del processo
+risulta essere, rispettivamente 0.229 e 0.428 secondi: loadvars() quindi resta così
+e si modifica mergevar() in modo da uniformare gli input alle funzioni.
+
+
 
 
 
