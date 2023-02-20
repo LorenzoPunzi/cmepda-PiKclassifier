@@ -256,7 +256,7 @@ In nnoutputfit.py ho costruito la funzione roc() che disegna la curva di roc rel
 
 Ho poi risolto un problema legato alla forma delle variabili di cut come [...] invece di semplici float: dopo vari tentativi e peripezie ho capito che gli array che escono da model.predict() sono (n,1), non semplici array 1D. Quindi in eval_dnn() ho aggiunto un .flatten() per farli diventare regolari array 1D.
 
-
+Bisogna capire come mai le distribuzioni in y dei Pi e K sono così tanto variabili da una trained dnn a un'altra. Ci sono delle spikes a 0,1 e 0,4x e non è chiaro se i RICH = 999 siano leciti da usare o too easy.
 
 
 
