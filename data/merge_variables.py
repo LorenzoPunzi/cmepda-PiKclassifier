@@ -126,15 +126,15 @@ if __name__ == '__main__':
 
     combinations = []
     combinations.append(np.array([1, 2]))  # MKpi - MpiK
-    '''combinations.append(np.array([0, 4]))  # MKK - p
+    combinations.append(np.array([0, 4]))  # MKK - p
     combinations.append(np.array([3, 4]))  # Mpipi - p
-    combinations.append(np.array([4, 3]))  # p - Mpipi
-    combinations.append(np.array([4, 0]))  # p - MKK
-    combinations.append(np.array([2, 4]))  # MpiK - p
-    combinations.append(np.array([1, 4]))  # MKpi - p
-    combinations.append(np.array([0, 1]))  # MKK - MKpi
+    # combinations.append(np.array([4, 3]))  # p - Mpipi
+    # combinations.append(np.array([4, 0]))  # p - MKK
+    # combinations.append(np.array([2, 4]))  # MpiK - p
+    # combinations.append(np.array([1, 4]))  # MKpi - p
     combinations.append(np.array([0, 2]))  # MKK - MpiK
-    '''
+    combinations.append(np.array([3, 1]))  # Mpipi - MKpi
+
     stats = []
     str_combinations = []
 
@@ -144,12 +144,12 @@ if __name__ == '__main__':
         new_arrays, m, stats_new = mergevar(files, tree, selected_vars)
         stats.append(stats_new)
         mc_array = np.stack((new_arrays[0], new_arrays[1]), axis=1)
-        string_combination = vars[comb[0]]+'_'+vars[comb[1]]+'_merged_'
-        np.savetxt('txt/newvars/'+string_combination+'_mc_'+str(m)+'.txt',
-                   mc_array, delimiter='  ', header='mc_pi,  mc_k')
-        np.savetxt('txt/newvars/'+string_combination+'_data_'+str(m)+'.txt',
-                   np.array(new_arrays[2]), delimiter='  ')
-        str_combinations.append(string_combination)
+        string_combination = vars[comb[0]]+'_'+vars[comb[1]]+'_merged'
+        np.savetxt('txt/newvars/'+string_combination+'__mc.txt',
+                   mc_array, delimiter='  ', header='mc_pi,  mc_k,    m = '+str(m))
+        np.savetxt('txt/newvars/'+string_combination+'__data.txt',
+                   np.array(new_arrays[2]), delimiter='  ', header='m = '+str(m))
+        str_combinations.append(string_combination+'  ||  ')
 
     arr_stats = np.array(stats).reshape(len(combinations), 3)
     np.savetxt('txt/output_KS_merged.txt', arr_stats,

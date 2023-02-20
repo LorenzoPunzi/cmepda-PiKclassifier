@@ -57,7 +57,49 @@ def loadvars(file_pi, file_k, tree, vars):  # FUNDAMENTAL
     return v_pi, v_k
 
 
-def array_generator(filepaths, tree, vars, *mixed_vars, Ntrain=50000, Ndata=10000,
+def include_merged_variables(initial_arrays, for_training=False, for_testing=False):
+    """
+    """
+    newvar_names = ['M0_MKpi_M0_MpiK',
+                    'M0_MKK_M0_p',
+                    'M0_Mpipi_M0_p',
+                    'M0_MKK_M0_MpiK',
+                    'M0_Mpipi_M0_MKpi']
+    n_new_vars = len(newvar_names)
+    n_old_vars = len(initial_arrays[0][0, :])
+    new_arrays = []
+
+    if for_training is True:
+        strings = ['txt/newvars/' + newvar_names[idx] + '_merged'
+                   + '__mc.txt' for idx in range(n_new_vars)]
+        print(strings)
+        list_pi, list_k = [], []
+        for st in strings:
+            v_pi, v_k = np.loadtxt(st, unpack=True)
+            list_pi.append(v_pi), list_k.append(v_k)
+        for col in range(n_old_vars):
+            list_pi.append(initial_arrays[0][:, col])
+            list_k.append(initial_arrays[1][:, col])
+        new_arrays = [np.stack(list_pi, axis=1), np.stack(list_k, axis=1)]
+        print('All good train_array')
+
+    if for_testing is True:
+        strings = ['txt/newvars/' + newvar_names[idx] + '_merged'
+                   + '__data.txt' for idx in range(n_new_vars)]
+        print(strings)
+        list_data = []
+        for st in strings:
+            v_data = np.loadtxt(st, unpack=True)
+            list_data.append(v_data)
+        for col in range(n_old_vars):
+            list_data.append(initial_arrays[0][:, col])
+        new_arrays = [np.stack(list_data, axis=1)]
+        print('All good testing_array')
+
+    return new_arrays
+
+
+def array_generator(filepaths, tree, vars, Ntrain=50000, Ndata=10000,
                     for_training=True, for_testing=True, mixing=False):
     """
     Generates arrays for ML treatment (training and testing) and saves them in
@@ -86,24 +128,15 @@ def array_generator(filepaths, tree, vars, *mixed_vars, Ntrain=50000, Ndata=1000
     else:
         print('Errore nell istanziamento di array_generator()')
         pass
-
-    if mixed_vars & len(*mixed_vars) != 0:
-        pass
     # Da capire cosa non va se una delle due flag for_XX è messa FALSE
 
     train_array, test_array = np.zeros(len(vars)), np.zeros(len(vars))
 
     if for_training:
+        v1, v2 = loadvars(filepath_pi, filepath_k, tree, vars)
         if mixing:
-            v1, v2 = loadvars(filepath_pi, filepath_k, tree, vars)
-            v_mc_pi, v_mc_pi = [], []
-            v_mc_pi.append(v1)
-            v_mc_pi.append(v2)
-            for mv in mixed_vars:
-                v_a, v_b, m, KS_stat = mergevar([filepath_pi, filepath_k], mv)
-                v_mc_pi.append(v_a)
-                v_mc_pi.append(v_b)
-            v_mc_pi, v_mc_k = np.array(v_mc_pi), np.array(v_mc_k)
+            v_out = include_merged_variables([v1, v2], for_training=True)
+            [v_mc_pi, v_mc_k] = v_out
         else:
             v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k, tree, vars)
         train_array = np.concatenate(
@@ -113,25 +146,15 @@ def array_generator(filepaths, tree, vars, *mixed_vars, Ntrain=50000, Ndata=1000
         # np.savetxt("txt/training_array.txt", train_array)
 
     if for_testing:
-        if mixing & for_training:
-            v0, v0 = loadvars(filepath_data, filepath_data, tree, vars)
-            v_data = []
-            for mv in mixed_vars:
-                v_a, v_b, m, KS_stat = mergevar([filepath_pi, filepath_k], mv)
-
+        v0, v0 = loadvars(filepath_data, filepath_data, tree, vars)
+        if mixing:
+            [v_data] = include_merged_variables([v0], for_testing=True)
+        else:
+            v_data = v0
         test_array = v_data[:Ndata, :]
         # np.savetxt("txt/data_array_prova.txt", v_testing)
 
-    if mixed_vars:
-        # Chiamare qui la funzione include_merged_values
-        a = []
-
     return train_array, test_array
-
-
-def include_merged_values(train_array, test_array, mixed variables):
-    """
-    """
 
 
 if __name__ == '__main__':
@@ -145,15 +168,18 @@ if __name__ == '__main__':
     filepaths = [os.path.join(
         current_path, rel_path, file) for file in filenames]
 
-    print(len(filepaths))
+    file_pi, file_k, file_data = filepaths
 
+    print(len(filepaths))
     tree = 't_M0pipi;1'
     var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p',
-           'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
+           'M0_pt', 'M0_eta')  # , 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
 
-    v1, v2 = array_generator(filepaths, tree, var)
+    v1, v2 = array_generator(filepaths, tree, var, mixing=True)
 
-    # v = loadmass(file, tree)
+    print(v1[:, -1])
+
+    # v1, v2 = loadvars(file_pi, file_k, tree, var)
     # v1, v2 = loadmass_uproot(file1, file2, tree, var)
 
     t2 = time.time()
