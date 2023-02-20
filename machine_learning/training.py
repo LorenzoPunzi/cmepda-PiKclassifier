@@ -51,7 +51,7 @@ def eval_dnn(dnn, eval_set, plotoptions= [], test_data = False, f_print = False)
     """
     """
     prediction_array = dnn.predict(eval_set) if not test_data else dnn.predict(eval_set[:,:-1])
-    
+    prediction_array = prediction_array.flatten()
     if plotoptions:
         plotname = plotoptions[0]
         plt.figure(plotname)
@@ -79,9 +79,12 @@ def dnn(trainarrayname, dataarrayname, txt_path = '../data/txt', flagged_data = 
         current_path, txt_path, dataarrayname)
 
     training_set = np.loadtxt(train_array_path)
+    print(training_set[:3,:])
+    print(training_set[2,2])
     pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
     K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
     print(pi_set[:3,:])
+    print(pi_set[2,2])
     data_set = np.loadtxt(data_array_path)
 
     deepnn = train_dnn(training_set,neurons=[20,20,15,10], verb=0, showhistory=True) 
