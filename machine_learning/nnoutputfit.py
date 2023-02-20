@@ -34,7 +34,7 @@ if __name__ == '__main__':
     plt.savefig('./fig/ycut.pdf')
     roc(pi_eval,k_eval)
     
-    print(f'y cut is {y_cut} , misid is {misid}') #Why is it an ARRAY??? I can't understand
+    print(f'y cut is {y_cut} , misid is {misid}')
     f = ((data_eval>y_cut).sum(axis=0)/data_eval.size-misid)/(efficiency-misid)
     print(f'The estimated fraction of K events is {f}') 
 

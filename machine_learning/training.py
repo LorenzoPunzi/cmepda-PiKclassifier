@@ -17,9 +17,6 @@ def train_dnn(training_set, neurons = [20,10,5], epochnum=100, showhistory=False
 
     pid = training_set[:, -1]
     features = training_set[:, :-1]
-    # print(pid)
-    # print(np.max(pid))
-    # print(features)
 
     inputlayer = Input(shape=(np.shape(features)[1],))
     hiddenlayer = Dense(neurons[0], activation='relu')(inputlayer)
@@ -70,7 +67,7 @@ def eval_dnn(dnn, eval_set, plotoptions= [], test_data = False, f_print = False)
 
     return prediction_array
 
-def dnn(trainarrayname, dataarrayname, txt_path = '../data/txt', flagged_data = False, plotoptions_pi = ['Templ_eval', 'red', 'Evalueated pions'], plotoptions_K = ['Templ_eval', 'blue', 'Evaluated kaons'], plotoptions_data = ['Dataeval','blue', 'Evaluated data']):
+def dnn(trainarrayname, dataarrayname, layers = [20,20,15,10], txt_path = '../data/txt', flagged_data = False, plotoptions_pi = ['Templ_eval', 'red', 'Evalueated pions'], plotoptions_K = ['Templ_eval', 'blue', 'Evaluated kaons'], plotoptions_data = ['Dataeval','blue', 'Evaluated data']):
     
     current_path = os.path.dirname(__file__)
     train_array_path = os.path.join(
@@ -79,19 +76,14 @@ def dnn(trainarrayname, dataarrayname, txt_path = '../data/txt', flagged_data = 
         current_path, txt_path, dataarrayname)
 
     training_set = np.loadtxt(train_array_path)
-    print(training_set[:3,:])
-    print(training_set[2,2])
     pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
     K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
-    print(pi_set[:3,:])
-    print(pi_set[2,2])
     data_set = np.loadtxt(data_array_path)
 
-    deepnn = train_dnn(training_set,neurons=[20,20,15,10], verb=0, showhistory=True) 
+    deepnn = train_dnn(training_set,neurons=layers, verb=0, showhistory=True) 
     pred_array = eval_dnn(deepnn,data_set,plotoptions=plotoptions_data,test_data=flagged_data,f_print=True)
     pi_eval = eval_dnn(deepnn, pi_set,plotoptions=plotoptions_pi,test_data=True)
     K_eval = eval_dnn(deepnn, K_set,plotoptions=plotoptions_K,test_data=True)
-    print(pi_eval)
 
     return pi_eval, K_eval, pred_array
 
@@ -99,5 +91,4 @@ if __name__ == '__main__':
     
     pi_eval, K_eval, pred_array = dnn('train_array_prova.txt','data_array_prova.txt',flagged_data=True)   
     plt.show()
-    #print(pred_array)
 
