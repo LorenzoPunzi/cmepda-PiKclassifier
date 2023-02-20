@@ -80,7 +80,7 @@ def dnn(trainarrayname, dataarrayname, layers = [20,20,15,10], txt_path = '../da
     K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
     data_set = np.loadtxt(data_array_path)
 
-    deepnn = train_dnn(training_set,neurons=layers, verb=0, showhistory=True) 
+    deepnn = train_dnn(training_set,neurons=layers, verb=0, showhistory=False) 
     pred_array = eval_dnn(deepnn,data_set,plotoptions=plotoptions_data,test_data=flagged_data,f_print=True)
     pi_eval = eval_dnn(deepnn, pi_set,plotoptions=plotoptions_pi,test_data=True)
     K_eval = eval_dnn(deepnn, K_set,plotoptions=plotoptions_K,test_data=True)
