@@ -4,7 +4,7 @@ Tests some functions inside nnoutputfit.py
 import unittest
 import numpy as np
 import matplotlib.pyplot as plt
-from machine_learning.training import dnn
+#from machine_learning.training import dnn
 from machine_learning.nnoutputfit import find_cut
 
 
