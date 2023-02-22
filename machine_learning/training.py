@@ -10,7 +10,8 @@ from keras.layers import Dense, Input
 from keras.models import Model
 
 
-def train_dnn(training_set, neurons = [20,10,5], epochnum=100, showhistory=False, verb=0):
+def train_dnn(training_set, neurons=[20, 10, 5], epochnum=100,
+              showhistory=False, verb=0):
     """
     """
     np.random.seed(int(time.time()))
@@ -44,21 +45,23 @@ def train_dnn(training_set, neurons = [20,10,5], epochnum=100, showhistory=False
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plotoptions= [], test_data = False, f_print = False):
+def eval_dnn(dnn, eval_set, plot_opt=[], test_data=False, f_print=False):
     """
     """
-    prediction_array = dnn.predict(eval_set) if not test_data else dnn.predict(eval_set[:,:-1])
+    prediction_array = dnn.predict(
+        eval_set) if not test_data else dnn.predict(eval_set[:, :-1])
     prediction_array = prediction_array.flatten()
-    if plotoptions:
-        plotname = plotoptions[0]
+    if plot_opt:
+        plotname = plot_opt[0]
         plt.figure(plotname)
-        plt.hist(prediction_array, bins=300, histtype='step', color=plotoptions[1], label= plotoptions[2])
+        plt.hist(prediction_array, bins=300, histtype='step',
+                 color=plot_opt[1], label=plot_opt[2])
         plt.xlabel('y')
-        plt.ylabel('Events per 1/300') #MAKE IT BETTER
+        plt.ylabel('Events per 1/300')  # MAKE IT BETTER
         plt.legend()
         plt.savefig('./fig/predict_'+plotname+'.pdf')
         plt.draw()
-    
+
     if f_print:
         f_pred = np.sum(prediction_array)
         print(f'The predicted K fraction is : {f_pred/len(prediction_array)}')
@@ -67,8 +70,18 @@ def eval_dnn(dnn, eval_set, plotoptions= [], test_data = False, f_print = False)
 
     return prediction_array
 
-def dnn(trainarrayname, dataarrayname, layers = [20,20,15,10], txt_path = '../data/txt', flagged_data = False, plotoptions_pi = ['Templ_eval', 'red', 'Evalueated pions'], plotoptions_K = ['Templ_eval', 'blue', 'Evaluated kaons'], plotoptions_data = ['Dataeval','blue', 'Evaluated data']):
-    
+
+def dnn(input_files, layers=[20, 20, 15, 15, 10],
+        txt_path='../data/txt', flagged_data=False,
+        plotoptions_pi=['Templ_eval', 'red', 'Evaluated pions'],
+        plotoptions_K=['Templ_eval', 'blue', 'Evaluated kaons'],
+        plotoptions_data=['Dataeval', 'blue', 'Evaluated data']):
+    """
+    """
+    [trainarrayname, dataarrayname] = input_files
+
+    # Perché questo lavoro con le directories si fa qua e non nel main? Risulta
+    # necessario o comodo per qualcosa di specifico?
     current_path = os.path.dirname(__file__)
     train_array_path = os.path.join(
         current_path, txt_path, trainarrayname)
@@ -76,19 +89,26 @@ def dnn(trainarrayname, dataarrayname, layers = [20,20,15,10], txt_path = '../da
         current_path, txt_path, dataarrayname)
 
     training_set = np.loadtxt(train_array_path)
-    pi_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 0])
-    K_set = np.array([training_set[i,:] for i in range(np.shape(training_set)[0]) if training_set[i,-1]== 1])
+    pi_set = np.array([training_set[i, :] for i in range(
+        np.shape(training_set)[0]) if training_set[i, -1] == 0])
+    K_set = np.array([training_set[i, :] for i in range(
+        np.shape(training_set)[0]) if training_set[i, -1] == 1])
     data_set = np.loadtxt(data_array_path)
 
-    deepnn = train_dnn(training_set,neurons=layers, verb=0, showhistory=False) 
-    pred_array = eval_dnn(deepnn,data_set,plotoptions=plotoptions_data,test_data=flagged_data,f_print=True)
-    pi_eval = eval_dnn(deepnn, pi_set,plotoptions=plotoptions_pi,test_data=True)
-    K_eval = eval_dnn(deepnn, K_set,plotoptions=plotoptions_K,test_data=True)
+    deepnn = train_dnn(training_set, epochnum=150,
+                       neurons=layers, verb=1, showhistory=True)
+    pi_eval = eval_dnn(
+        deepnn, pi_set, plot_opt=plotoptions_pi, test_data=True)
+    K_eval = eval_dnn(deepnn, K_set, plot_opt=plotoptions_K, test_data=True)
+    pred_array = eval_dnn(
+        deepnn, data_set, plot_opt=plotoptions_data, test_data=flagged_data, f_print=True)
 
     return pi_eval, K_eval, pred_array
 
-if __name__ == '__main__':
-    
-    pi_eval, K_eval, pred_array = dnn('train_array_prova.txt','data_array_prova.txt',flagged_data=True)   
-    plt.show()
 
+if __name__ == '__main__':
+
+    input_files = ['train_array_prova.txt', 'data_array_prova.txt']
+
+    pi_eval, K_eval, pred_array = dnn(input_files, flagged_data=True)
+    plt.show()

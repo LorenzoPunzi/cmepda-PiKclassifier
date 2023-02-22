@@ -99,7 +99,7 @@ def include_merged_variables(initial_arrays, for_training=False, for_testing=Fal
     return new_arrays
 
 
-def array_generator(filepaths, tree, vars, Ntrain=50000, Ndata=10000,
+def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
                     for_training=True, for_testing=True, mixing=False):
     """
     Generates arrays for ML treatment (training and testing) and saves them in
@@ -162,8 +162,8 @@ if __name__ == '__main__':
 
     current_path = os.path.dirname(__file__)
     rel_path = '../root_files'
-    filenames = ['tree_B0PiPi_mc.root',
-                 'tree_B0sKK_mc.root', 'tree_Bhh_data.root']
+    filenames = ['tree_B0PiPi.root',
+                 'tree_B0sKK.root', 'tree_Bhh_data.root']
 
     filepaths = [os.path.join(
         current_path, rel_path, file) for file in filenames]
@@ -173,14 +173,11 @@ if __name__ == '__main__':
     print(len(filepaths))
     tree = 't_M0pipi;1'
     var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p',
-           'M0_pt', 'M0_eta')  # , 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
+           'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
 
-    v1, v2 = array_generator(filepaths, tree, var, mixing=True)
-
-    print(v1[:, -1])
-
-    # v1, v2 = loadvars(file_pi, file_k, tree, var)
-    # v1, v2 = loadmass_uproot(file1, file2, tree, var)
+    v_train, v_test = array_generator(filepaths, tree, var, mixing=False)
+    np.savetxt('txt/train_array_prova.txt', v_train)
+    np.savetxt('txt/data_array_prova.txt', v_test)
 
     t2 = time.time()
 
