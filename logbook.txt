@@ -284,6 +284,21 @@ risulta essere, rispettivamente 0.229 e 0.428 secondi: loadvars() quindi resta c
 e si modifica mergevar() in modo da uniformare gli input alle funzioni.
 
 
+22/02/23 (Ruben):
+
+Iniziato a guardare il merge delle variabili cinematiche con i cerenkov: i risultati
+dipendono molto del numero di "999" nei cerenkov, quindi va chiarito intanto quel
+punto per poi proseguire definitivamente
+
+In generale il criterio (empirico) con il quale si accetta una combinazione è
+deltaKS > 0.015, dove la variazione è riferita al KS maggiore dei sample originari
+
+Commento training.py: un po' macchinoso gestire tutte le opzioni sparse per il codice,
+potrebbe essere utile fare una classe apposta e definire l'oggetto opt_dnn che nei
+suoi metodi raccoglie tutte queste opzioni
+
+
+
 
 
 
