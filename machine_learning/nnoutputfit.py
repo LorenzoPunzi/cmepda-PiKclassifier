@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def find_cut(pi_array, k_array, efficiency, inverse_mode = False):
 
-    y = -np.sort(-k_array)[int(efficiency*len(k_array))] if not inverse_mode else np.sort(pi_array)[int(efficiency*len(pi_array))]
+    y = -np.sort(-k_array)[int(efficiency*(len(k_array)-1))] if not inverse_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
     misid = (pi_array>y).sum()/pi_array.size if not inverse_mode else (k_array>y).sum()/k_array.size
     #.sum() sums how many True there are in the masked (xx_array>y)
     return y , misid
