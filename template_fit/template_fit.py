@@ -36,10 +36,16 @@ def fit_on_montecarlo(df, var, fitfunc, img_name="template.png", Nbins=1000,
     return exit_pars
 
 
-def fit_on_data(df, var, templ_pars_pi, templ_pars_k, img_name="Fit_data.png",
+def fit_on_data(df, dfmc1, dfmc2, var, img_name="Fit_data.png",
                 Nbins=1000, h_name="h", h_title="h", LowLim=5., UpLim=5.6):
     """
     """
+    templ_pars_pi = fit_on_montecarlo(dfmc1, var, DoubleGaussian(5.02, 5.42),
+                                 img_name='fig/template_fit_pi.png',
+                                 h_title='M_pipi distribution (B0->PiPi MC)')
+    templ_pars_k = fit_on_montecarlo(dfmc2, var, GaussJohnson(5.02, 5.42),
+                                img_name='fig/template_fit_k.png',
+                                h_title='M_pipi distribution (B0s->KK MC)')
     #ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetOptFit(11111)
     h = df.Histo1D((h_name, h_title, Nbins, LowLim, UpLim), var)
@@ -74,15 +80,6 @@ if __name__ == "__main__":
     tree = 't_M0pipi;2'
     var = 'M0_Mpipi'
 
-    df_pi, df_k = ROOT.RDataFrame(tree, file1), ROOT.RDataFrame(tree, file2)
+    df_pi, df_k, df_data = ROOT.RDataFrame(tree, file1), ROOT.RDataFrame(tree, file2), ROOT.RDataFrame('t_M0pipi;1', file_data)
 
-    templ_pi = fit_on_montecarlo(df_pi, var, DoubleGaussian(5.02, 5.42),
-                                 img_name='fig/template_fit_pi.png',
-                                 h_title='M_pipi distribution (B0->PiPi MC)')
-    templ_k = fit_on_montecarlo(df_k, var, GaussJohnson(5.02, 5.42),
-                                img_name='fig/template_fit_k.png',
-                                h_title='M_pipi distribution (B0s->KK MC)')
-
-    df_data = ROOT.RDataFrame('t_M0pipi;1', file_data)
-
-    fit_on_data(df_data, var, templ_pi, templ_k, LowLim=5.02, UpLim=5.42)
+    fit_on_data(df_data, df_pi, df_k, var, LowLim=5.02, UpLim=5.42)
