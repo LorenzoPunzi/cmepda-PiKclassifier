@@ -1,3 +1,6 @@
+#ifndef TEMPLATE_FIT_FUNCTIONS
+#define TEMPLATE_FIT_FUNCTIONS
+
 #include <iostream>
 #include "TROOT.h"
 #include "TMath.h"
@@ -14,3 +17,6 @@ double GaussJohnson(double* x, double* par);
 double TemplateComposition(double* x, double* par);
 
 double Square(double x);
+
+
+#endif

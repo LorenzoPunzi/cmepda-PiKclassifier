@@ -10,9 +10,14 @@ def InitializeFunctionsLibrary():
     Function that loads into the Python environment the shared library
     containing the fit functions.
     """
-    ROOT.gInterpreter.ProcessLine('#include "header.h"')
-    ROOT.gSystem.Load(
-        '~/cmepda/cmepda-PiKclassifier/template_fit/func_library.so')
+    load_head = ROOT.gSystem.Load('#include "fit_functions.h"')
+    if not load_head:
+        print("ERROR in header load")
+        quit()
+    success = ROOT.gSystem.CompileMacro('fit_functions.cpp', opt="ks")
+    if not success:
+        print("ERROR in source code compilation")
+        quit()
 
 
 def BreitWigner(LowLim, UpLim, funcname='BW', pars=(2000, 5.28, 0.5)):

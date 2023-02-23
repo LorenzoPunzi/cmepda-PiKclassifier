@@ -130,3 +130,7 @@ dmypy.json
 
 # Root Files
 root_files/
+
+# Library compilation utils
+*.pcm
+*.d
