@@ -4,6 +4,8 @@ Analyses the output dnn() function in training.py
 
 import numpy as np
 import matplotlib.pyplot as plt
+from .training import dnn
+import os
 
 
 def find_cut(pi_array, k_array, efficiency, inverse_mode = False):
@@ -21,11 +23,14 @@ def roc(pi_array, k_array, eff_span = (0.5,0.95,50)):
     plt.xlabel('False Positive Probability')
     plt.ylabel('True Positive Probability')
     plt.draw()
-    plt.savefig('./fig/roc.pdf')
+    current_path = os.path.dirname(__file__)
+    rel_path = './fig'
+    figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
+    plt.savefig(figurepath)
 
 if __name__ == '__main__':
     
-    from training import dnn
+    
 
     pi_eval, k_eval, data_eval = dnn('train_array_prova.txt','data_array_prova.txt',flagged_data=True)
     efficiency = 0.9

@@ -283,6 +283,14 @@ loadvars col metodo originale e col secondo metodo il tempo totale del processo
 risulta essere, rispettivamente 0.229 e 0.428 secondi: loadvars() quindi resta così
 e si modifica mergevar() in modo da uniformare gli input alle funzioni.
 
+21/02/23 + 22/02/23 (Lorenzo):
+
+Ho creato dei test linspace per il find_cut() di nnoutputfit.py, non senza alcuni problemi.
+Innanzitutto bisognerebbe capire più rigorosamente come fissare il delta di assertAlmostEqual(), dato che per ora l'ho fissato solo quanto basta per far passare il test (lol).
+
+Il problema principale invece sta nell'importare nnoutputfit, che a sua volta importa training. Questo importing ricorsivo da ERRORE perché quando chiami il test lo fai dalla cartella tests, in cui NON esiste un file training da importare, ma lui prova a importarlo nel momento in cui test importa nnoutputfit. Per ora l'unica maniera che ho trovato di risolvere la questione è di importare il training solo nel main di nnoutputfit ma va trovata chiaramente una maniera migliore.
+
+Ho in seguito aggiustato il funzionamento del test stesso corregendo la funzione
 
 22/02/23 (Ruben):
 
@@ -296,6 +304,12 @@ deltaKS > 0.015, dove la variazione è riferita al KS maggiore dei sample origin
 Commento training.py: un po' macchinoso gestire tutte le opzioni sparse per il codice,
 potrebbe essere utile fare una classe apposta e definire l'oggetto opt_dnn che nei
 suoi metodi raccoglie tutte queste opzioni
+
+23/02/23 (Lorenzo):
+
+Ho risolto il problmea dell'import: devi scrivere from .training import xxx, usando cioè il relative import. Così non fa storie quando importi nnoutputfit da tests. Tuttavia una cosa strana è che sembra metterci chiaramente di più a runnare il relativo test (vorrei vedere se ci mette anche di più a runnare nnoutputfit stesso), nonstante poi dica che il test ci ha messo i soliti 0.00x secondi.
+
+Inoltre ho iniziato a scrivere un test, stavolta "grafico" per la roc() function. Il problema sembra essere il salvare la figura che compare nella roc() function, acnhe mettendo una cartella fig dedicata nella cartella tests...
 
 
 
