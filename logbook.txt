@@ -309,7 +309,9 @@ suoi metodi raccoglie tutte queste opzioni
 
 Ho risolto il problmea dell'import: devi scrivere from .training import xxx, usando cioè il relative import. Così non fa storie quando importi nnoutputfit da tests. Tuttavia una cosa strana è che sembra metterci chiaramente di più a runnare il relativo test (vorrei vedere se ci mette anche di più a runnare nnoutputfit stesso), nonstante poi dica che il test ci ha messo i soliti 0.00x secondi.
 
-Inoltre ho iniziato a scrivere un test, stavolta "grafico" per la roc() function. Il problema sembra essere il salvare la figura che compare nella roc() function, acnhe mettendo una cartella fig dedicata nella cartella tests...
+Inoltre ho iniziato a scrivere un test, stavolta "grafico" per la roc() function. Il problema sembra essere il salvare la figura che compare nella roc() function, acnhe mettendo una cartella fig dedicata nella cartella tests. Ho risolto usando os.path.xxx per usare gli absolute paths ogni volta invece dei relative paths.
+
+Riguardando meglio la parte con RDataFrame che usiamo per il template fit, perché potremmo per esempio usare ROOT.EnableImplicitMT() per un po' di multithreading?
 
 
 
