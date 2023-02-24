@@ -4,7 +4,7 @@ Analyses the output dnn() function in training.py
 
 import numpy as np
 import matplotlib.pyplot as plt
-from .training import dnn
+from training import dnn
 import os
 
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     
     
 
-    pi_eval, k_eval, data_eval = dnn('train_array_prova.txt','data_array_prova.txt',flagged_data=True)
+    pi_eval, k_eval, data_eval = dnn(['train_array_prova.txt','data_array_prova.txt'],flagged_data=True)
     efficiency = 0.9
 
     y_cut , misid = find_cut(pi_eval, k_eval, efficiency)
