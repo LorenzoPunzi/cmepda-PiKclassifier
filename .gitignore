@@ -134,3 +134,4 @@ root_files/
 # Library compilation utils
 *.pcm
 *.d
+template_fit/fit_functions

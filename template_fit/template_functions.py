@@ -16,6 +16,7 @@ def InitializeFunctionsLibrary():
         print("ERROR in header load")
         quit()
     success = ROOT.gSystem.CompileMacro('fit_functions.cpp', opt="ks")
+    success = False
     if not success:
         lib_file = ''
         for root, dirnames, filenames in os.walk("."):
