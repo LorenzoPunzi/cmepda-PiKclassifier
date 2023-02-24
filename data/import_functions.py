@@ -69,17 +69,27 @@ def include_merged_variables(initial_arrays, for_training=False, for_testing=Fal
     n_old_vars = len(initial_arrays[0][0, :])
     new_arrays = []
 
-    if for_training is True:
+    if for_training:
+        # Control on array length
+        l0_pi = len(initial_arrays[0][:, 0])
+        l0_k = len(initial_arrays[1][:, 0])
+        if not l0_pi == l0_k:
+            length = min(l0_pi, l0_k)
+        else:
+            length = l0_pi
+
         strings = ['txt/newvars/' + newvar_names[idx] + '_merged'
                    + '__mc.txt' for idx in range(n_new_vars)]
         print(strings)
         list_pi, list_k = [], []
         for st in strings:
             v_pi, v_k = np.loadtxt(st, unpack=True)
-            list_pi.append(v_pi), list_k.append(v_k)
+            list_pi.append(v_pi[:length]), list_k.append(v_k[:length])
+            print(list_pi[-1].shape, list_k[-1].shape)
         for col in range(n_old_vars):
-            list_pi.append(initial_arrays[0][:, col])
-            list_k.append(initial_arrays[1][:, col])
+            list_pi.append(initial_arrays[0][:length, col])
+            list_k.append(initial_arrays[1][:length, col])
+            print(list_pi[-1].shape, list_k[-1].shape)
         new_arrays = [np.stack(list_pi, axis=1), np.stack(list_k, axis=1)]
         print('All good train_array')
 
@@ -119,11 +129,12 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
     for_training, for_testing: bool
         Option that selects which dataset has to be created
     """
+    print(len(filepaths))
     if for_training & for_testing:
         filepath_pi, filepath_k, filepath_data = filepaths
-    elif len(filepaths) == 2 & for_training & (for_testing is False):
+    elif len(filepaths) == 2 & for_training:
         filepath_pi, filepath_k = filepaths
-    elif len(filepaths) == 1 & for_testing & (for_training is False):
+    elif len(filepaths) == 1 & for_testing:
         filepath_data = filepaths[0]
     else:
         print('Errore nell istanziamento di array_generator()')
@@ -146,12 +157,16 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
         # np.savetxt("txt/training_array.txt", train_array)
 
     if for_testing:
-        v0, v0 = loadvars(filepath_data, filepath_data, tree, vars)
+        v0, _ = loadvars(filepath_data, filepath_data, tree, vars)
         if mixing:
             [v_data] = include_merged_variables([v0], for_testing=True)
         else:
             v_data = v0
-        test_array = v_data[:Ndata, :]
+        # Selezioniamo solo le colonne utili (non l'ultima, che consisteva in
+        # un insieme di 0) e il numero di eventi (righe) selezionato
+        test_array = v_data[:Ndata, :-1]
+        # print(test_array.shape)
+        # print(test_array[:, -1])
         # np.savetxt("txt/data_array_prova.txt", v_testing)
 
     return train_array, test_array
@@ -175,9 +190,9 @@ if __name__ == '__main__':
     var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p',
            'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
 
-    v_train, v_test = array_generator(filepaths, tree, var, mixing=False)
-    np.savetxt('txt/train_array_prova.txt', v_train)
-    np.savetxt('txt/data_array_prova.txt', v_test)
+    v_train, v_test = array_generator(filepaths, tree, var, mixing=True)
+    # np.savetxt('txt/train_array_prova.txt', v_train)
+    # np.savetxt('txt/data_array_prova.txt', v_test)
 
     t2 = time.time()
 

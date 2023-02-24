@@ -93,7 +93,13 @@ def mergevar(tree_files, tree, vars):
     v_merge_k = mix_function(v1_k, v2_k, m)
     v_merge_data = mix_function(v1_data, v2_data, m)
 
-    merged_arrays = [v_merge_pi, v_merge_k, v_merge_data]
+    # Controllo aggiuntivo nel caso gli array MC avessero lunghezza diversa.
+    # In generale la cosa ottimale è che i due datasets abbiano lo stesso numero
+    # di eventi
+    if not len(v_merge_pi) == len(v_merge_k):
+        length = min(len(v_merge_pi), len(v_merge_k))
+
+    merged_arrays = [v_merge_pi[:length], v_merge_k[:length], v_merge_data]
 
     plt.figure(1)
     plt.subplot(2, 1, 1)
@@ -121,13 +127,13 @@ if __name__ == '__main__':
     files = [os.path.join(
         current_path, filepath, filename) for filename in filenames]
 
-    # vars = ['M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_Mpipi', 'M0_p', 'M0_pt']
-    vars = ['M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_Mpipi',
-            'M0_p', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2']
+    vars = ['M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_Mpipi', 'M0_p', 'M0_pt']
+    # vars = ['M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_Mpipi',
+    #         'M0_p', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2']
     # Si può sicuramente fare in modo più figo con un parser
 
     combinations = []
-    '''
+
     combinations.append(np.array([1, 2]))  # MKpi - MpiK
     combinations.append(np.array([0, 4]))  # MKK - p
     combinations.append(np.array([3, 4]))  # Mpipi - p
@@ -137,7 +143,7 @@ if __name__ == '__main__':
     combinations.append(np.array([0, 5]))  # MKK - thetaC0
     combinations.append(np.array([0, 6]))  # MKK - thetaC1
     combinations.append(np.array([0, 7]))  # MKK - thetaC2
-
+    '''
     stats = []
     str_combinations = []
 
@@ -147,16 +153,16 @@ if __name__ == '__main__':
         new_arrays, m, stats_new = mergevar(files, tree, selected_vars)
         stats.append(stats_new)
         # risolvere il problema per cui non si può fare lo stack di due array di lunghezza diversa
-        # mc_array = np.stack((new_arrays[0], new_arrays[1]), axis=1)
+        mc_array = np.stack((new_arrays[0], new_arrays[1]), axis=1)
         string_combination = vars[comb[0]]+'_'+vars[comb[1]]+'_merged'
-        # np.savetxt('txt/newvars/'+string_combination+'__mc.txt', mc_array,
-        #            delimiter='  ', header='mc_pi,  mc_k,    m = '+str(m))
-        # np.savetxt('txt/newvars/'+string_combination+'__data.txt',
-        #            np.array(new_arrays[2]), delimiter='  ', header='m = '+str(m))
+        np.savetxt('txt/newvars/'+string_combination+'__mc.txt', mc_array,
+                   delimiter='  ', header='mc_pi,  mc_k,    m = '+str(m))
+        np.savetxt('txt/newvars/'+string_combination+'__data.txt',
+                   np.array(new_arrays[2]), delimiter='  ', header='m = '+str(m))
         str_combinations.append(string_combination+'  ||  ')
 
     arr_stats = np.array(stats).reshape(len(combinations), 3)
-    np.savetxt('txt/output_KS_merged_prova.txt', arr_stats,
+    np.savetxt('txt/output_KS_merged_firstset.txt', arr_stats,
                delimiter='    ', header=''.join(str_combinations))
 
     t1 = time.time()

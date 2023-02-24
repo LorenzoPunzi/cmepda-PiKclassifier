@@ -11,12 +11,11 @@ def InitializeFunctionsLibrary():
     Function that loads into the Python environment the shared library
     containing the fit functions.
     """
-    load_head = ROOT.gInterpreter.Load('#include "fit_functions.h"')
+    load_head = ROOT.gInterpreter.Declare('#include "fit_functions.h"')
     if not load_head:
         print("ERROR in header load")
         quit()
     success = ROOT.gSystem.CompileMacro('fit_functions.cpp', opt="ks")
-    success = False
     if not success:
         lib_file = ''
         for root, dirnames, filenames in os.walk("."):
