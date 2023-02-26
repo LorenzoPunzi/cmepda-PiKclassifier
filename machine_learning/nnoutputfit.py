@@ -4,7 +4,7 @@ Analyses the output dnn() function in training.py
 
 import numpy as np
 import matplotlib.pyplot as plt
-from training_modified import dnn
+from training import dnn
 from dnn_utils import dnn_settings
 import os
 
@@ -37,13 +37,13 @@ def roc(pi_array, k_array, eff_span=(0.5, 0.95, 50)):
 if __name__ == '__main__':
 
     settings = dnn_settings()
-    settings.layers = [60, 45, 30, 15]
+    settings.layers = [75, 60, 45, 30, 15]
     settings.batch_size = 128
-    settings.epochnum = 200
+    settings.epochnum = 500
 
     pi_eval, k_eval, data_eval = dnn(
         ['train_array_prova.txt', 'data_array_prova.txt'], settings)
-    efficiency = 0.9
+    efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
     plt.axvline(x=y_cut, color='green', label='y cut for '

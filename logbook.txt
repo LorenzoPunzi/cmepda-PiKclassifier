@@ -305,13 +305,53 @@ Commento training.py: un po' macchinoso gestire tutte le opzioni sparse per il c
 potrebbe essere utile fare una classe apposta e definire l'oggetto opt_dnn che nei
 suoi metodi raccoglie tutte queste opzioni
 
+
 23/02/23 (Lorenzo):
 
-Ho risolto il problmea dell'import: devi scrivere from .training import xxx, usando cioè il relative import. Così non fa storie quando importi nnoutputfit da tests. Tuttavia una cosa strana è che sembra metterci chiaramente di più a runnare il relativo test (vorrei vedere se ci mette anche di più a runnare nnoutputfit stesso), nonstante poi dica che il test ci ha messo i soliti 0.00x secondi.
+Ho risolto il problmea dell'import: devi scrivere from .training import xxx,
+usando cioè il relative import. Così non fa storie quando importi nnoutputfit da
+tests. Tuttavia una cosa strana è che sembra metterci chiaramente di più a
+runnare il relativo test (vorrei vedere se ci mette anche di più a runnare
+nnoutputfit stesso), nonstante poi dica che il test ci ha messo i soliti 0.00x
+secondi.
 
-Inoltre ho iniziato a scrivere un test, stavolta "grafico" per la roc() function. Il problema sembra essere il salvare la figura che compare nella roc() function, acnhe mettendo una cartella fig dedicata nella cartella tests. Ho risolto usando os.path.xxx per usare gli absolute paths ogni volta invece dei relative paths.
+Inoltre ho iniziato a scrivere un test, stavolta "grafico" per la roc() function.
+Il problema sembra essere il salvare la figura che compare nella roc() function,
+anche mettendo una cartella fig dedicata nella cartella tests. Ho risolto usando
+os.path.xxx per usare gli absolute paths ogni volta invece dei relative paths.
 
-Riguardando meglio la parte con RDataFrame che usiamo per il template fit, perché potremmo per esempio usare ROOT.EnableImplicitMT() per un po' di multithreading?
+Riguardando meglio la parte con RDataFrame che usiamo per il template fit,
+potremmo per esempio usare ROOT.EnableImplicitMT() per un po' di multithreading?
+- Ruben: in linea di principio sì (e dovrebbe funzionare), però se provo a
+  mettere il comando ROOT.ROOT.EnableImplicitMT() all'inizio del codice, questo
+  non gira :(
+
+
+25-26/02/23 (Ruben):
+
+Costruita la classe che gestisce le opzioni della DNN e aggiornato di conseguenza
+i file nnoutputfit e training.py
+
+Valutazioni sul funzionamento della DNN:
+  - il batch_size ottimale sembra essere 128, con valori più alti o più bassi le
+    loss non scendono
+  - A volte capita che le loss (soprattutto la training) scendano e poi risalgano,
+    questo si ha spesso con un numero molto alto di parametri (>2000). NEWS: una
+    prova più recente con 9991 parametri liberi e 500 epoche mostra una lenta
+    discesa della training loss dopo la epoca 200, nonostante le risalite precedenti
+    (figura "epochs_strangecase.pdf")
+  - Visto il punto precedente, aggiungere layers non sembra consigliato; merita
+    invece giocare sul numero di neuroni in 3/4 layer: la combinazione "finale"
+    sperimentata è 60-45-30-15 (epochnum=200)
+  - Ricordiamoci comunque che le sizes degli array di training e di testing sono,
+    rispettivamente 100000 e 15000: potrebbe esserci una discreta dipendenza dalla
+    finitezza del sample
+  - Caso "ottimale" sperimentato (presente nella repo): la frazione stimata di K
+    è 0.446, con efficienza del 90%. Entrambe le loss soffrono di oscillazioni,
+    ma mentre il trend della training è sempre discendente, la validation presenta
+    alcuni spikes --> stabilire se e come questo può rappresentare un problema e
+    pensare a alcuni metodi per risolverlo, nel caso
+
 
 
 
