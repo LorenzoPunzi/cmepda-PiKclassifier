@@ -8,16 +8,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.layers import Dense, Input
 from keras.models import Model
+from dnn_utils import dnn_settings
 
 
-def train_dnn(training_set, neurons=[20, 10, 5], epochnum=100,
-              showhistory=False, verb=0):
+def train_dnn(training_set, settings):
     """
     """
     np.random.seed(int(time.time()))
 
     pid = training_set[:, -1]
     features = training_set[:, :-1]
+    print(np.shape(features))
+    print(pid)
+
+    neurons = settings.layers
 
     inputlayer = Input(shape=(np.shape(features)[1],))
     hiddenlayer = Dense(neurons[0], activation='relu')(inputlayer)
@@ -29,9 +33,10 @@ def train_dnn(training_set, neurons=[20, 10, 5], epochnum=100,
     deepnn.summary()
 
     history = deepnn.fit(features, pid, validation_split=0.5,
-                         epochs=epochnum, verbose=verb, batch_size=128)
+                         epochs=settings.epochnum, verbose=settings.verbose,
+                         batch_size=settings.batch_size)
 
-    if showhistory:
+    if settings.showhistory:
         plt.figure('Losses')
         plt.xlabel('Epoch')
         plt.ylabel('Binary CrossEntropy Loss')
@@ -45,11 +50,11 @@ def train_dnn(training_set, neurons=[20, 10, 5], epochnum=100,
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plot_opt=[], test_data=False, f_print=False):
+def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, f_print=False):
     """
     """
     prediction_array = dnn.predict(
-        eval_set) if not test_data else dnn.predict(eval_set[:, :-1])
+        eval_set) if flag_data else dnn.predict(eval_set[:, :-1])
     prediction_array = prediction_array.flatten()
     if plot_opt:
         plotname = plot_opt[0]
@@ -71,13 +76,10 @@ def eval_dnn(dnn, eval_set, plot_opt=[], test_data=False, f_print=False):
     return prediction_array
 
 
-def dnn(input_files, layers=[20, 20, 15, 15, 10],
-        txt_path='../data/txt', flagged_data=False,
-        plotoptions_pi=['Templ_eval', 'red', 'Evaluated pions'],
-        plotoptions_K=['Templ_eval', 'blue', 'Evaluated kaons'],
-        plotoptions_data=['Dataeval', 'blue', 'Evaluated data']):
+def dnn(input_files, settings, txt_path='../data/txt'):
     """
     """
+    print(settings.layers)
     [trainarrayname, dataarrayname] = input_files
 
     # Perché questo lavoro con le directories si fa qua e non nel main? Risulta
@@ -95,13 +97,14 @@ def dnn(input_files, layers=[20, 20, 15, 15, 10],
         np.shape(training_set)[0]) if training_set[i, -1] == 1])
     data_set = np.loadtxt(data_array_path)
 
-    deepnn = train_dnn(training_set, epochnum=100,
-                       neurons=layers, verb=1, showhistory=True)
-    pi_eval = eval_dnn(
-        deepnn, pi_set, plot_opt=plotoptions_pi, test_data=True)
-    K_eval = eval_dnn(deepnn, K_set, plot_opt=plotoptions_K, test_data=True)
-    pred_array = eval_dnn(
-        deepnn, data_set, plot_opt=plotoptions_data, test_data=flagged_data, f_print=True)
+    deepnn = train_dnn(training_set, settings)
+
+    pi_eval = eval_dnn(deepnn, pi_set, flag_data=False,
+                       plot_opt=['Templ_eval', 'red', 'Evaluated pions'])
+    K_eval = eval_dnn(deepnn, K_set, flag_data=False,
+                      plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'])
+    pred_array = eval_dnn(deepnn, data_set, flag_data=False,
+                          plot_opt=['Dataeval', 'blue', 'Evaluated data'], f_print=True)
 
     return pi_eval, K_eval, pred_array
 
@@ -110,5 +113,10 @@ if __name__ == '__main__':
 
     input_files = ['train_array_prova.txt', 'data_array_prova.txt']
 
-    pi_eval, K_eval, pred_array = dnn(input_files, flagged_data=True)
-    plt.show()
+    settings = dnn_settings()
+    settings.layers = [60, 45, 30, 15]
+    settings.batch_size = 128
+    settings.epochnum = 200
+
+    pi_eval, K_eval, pred_array = dnn(input_files, settings)
+    # plt.show()

@@ -93,7 +93,7 @@ def include_merged_variables(initial_arrays, for_training=False, for_testing=Fal
         new_arrays = [np.stack(list_pi, axis=1), np.stack(list_k, axis=1)]
         print('All good train_array')
 
-    if for_testing is True:
+    if for_testing:
         strings = ['txt/newvars/' + newvar_names[idx] + '_merged'
                    + '__data.txt' for idx in range(n_new_vars)]
         print(strings)
