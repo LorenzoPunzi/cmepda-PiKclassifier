@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def loadvars(file_pi, file_k, tree, vars):  # FUNDAMENTAL
+def loadvars(file_pi, file_k, tree, vars):
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files. The LAST column of the output array contains a flag (0
@@ -57,14 +57,10 @@ def loadvars(file_pi, file_k, tree, vars):  # FUNDAMENTAL
     return v_pi, v_k
 
 
-def include_merged_variables(initial_arrays, for_training=False, for_testing=False):
+def include_merged_variables(initial_arrays, newvar_names, for_training=False, for_testing=False):
     """
     """
-    newvar_names = ['M0_MKpi_M0_MpiK',
-                    'M0_MKK_M0_p',
-                    'M0_Mpipi_M0_p',
-                    'M0_MKK_M0_MpiK',
-                    'M0_Mpipi_M0_MKpi']
+
     n_new_vars = len(newvar_names)
     n_old_vars = len(initial_arrays[0][0, :])
     new_arrays = []
@@ -110,7 +106,8 @@ def include_merged_variables(initial_arrays, for_training=False, for_testing=Fal
 
 
 def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
-                    for_training=True, for_testing=True, mixing=False):
+                    for_training=True, for_testing=True, mixing=False,
+                    newvars=[]):
     """
     Generates arrays for ML treatment (training and testing) and saves them in
     .txt files
@@ -130,11 +127,11 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
         Option that selects which dataset has to be created
     """
     print(len(filepaths))
-    if for_training & for_testing:
+    if (for_training and for_testing):
         filepath_pi, filepath_k, filepath_data = filepaths
-    elif len(filepaths) == 2 & for_training:
+    elif (len(filepaths) == 2 and for_training):
         filepath_pi, filepath_k = filepaths
-    elif len(filepaths) == 1 & for_testing:
+    elif (len(filepaths) == 1 and for_testing):
         filepath_data = filepaths[0]
     else:
         print('Errore nell istanziamento di array_generator()')
@@ -143,11 +140,15 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
 
     train_array, test_array = np.zeros(len(vars)), np.zeros(len(vars))
 
+    if (mixing and len(newvars == 0)):
+        newvars = ['M0_MKpi_M0_MpiK', 'M0_MKK_M0_p', 'M0_Mpipi_M0_p',
+                   'M0_MKK_M0_MpiK', 'M0_Mpipi_M0_MKpi']
+
     if for_training:
         v1, v2 = loadvars(filepath_pi, filepath_k, tree, vars)
         if mixing:
-            v_out = include_merged_variables([v1, v2], for_training=True)
-            [v_mc_pi, v_mc_k] = v_out
+            [v_mc_pi, v_mc_k] = include_merged_variables(
+                [v1, v2], for_training=True, newvar_names=newvars)
         else:
             v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k, tree, vars)
         train_array = np.concatenate(
@@ -159,7 +160,8 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
     if for_testing:
         v0, _ = loadvars(filepath_data, filepath_data, tree, vars)
         if mixing:
-            [v_data] = include_merged_variables([v0], for_testing=True)
+            [v_data] = include_merged_variables([v0], for_testing=True,
+                                                newvar_names=newvars)
         else:
             v_data = v0
         # Selezioniamo solo le colonne utili (non l'ultima, che consisteva in
