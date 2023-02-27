@@ -103,7 +103,7 @@ def dnn(input_files, settings, txt_path='../data/txt'):
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'])
     K_eval = eval_dnn(deepnn, K_set, flag_data=False,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'])
-    pred_array = eval_dnn(deepnn, data_set, flag_data=False,
+    pred_array = eval_dnn(deepnn, data_set, flag_data=True,
                           plot_opt=['Dataeval', 'blue', 'Evaluated data'], f_print=True)
 
     return pi_eval, K_eval, pred_array

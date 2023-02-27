@@ -150,7 +150,7 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
             [v_mc_pi, v_mc_k] = include_merged_variables(
                 [v1, v2], for_training=True, newvar_names=newvars)
         else:
-            v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k, tree, vars)
+            v_mc_pi, v_mc_k = v1, v2
         train_array = np.concatenate(
             (v_mc_pi[:int(Ntrain/2), :], v_mc_k[:int(Ntrain/2), :]), axis=0)
         np.random.shuffle(train_array)
@@ -190,11 +190,11 @@ if __name__ == '__main__':
     print(len(filepaths))
     tree = 't_M0pipi;1'
     var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p',
-           'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2')
+           'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2')
 
-    v_train, v_test = array_generator(filepaths, tree, var, mixing=True)
-    # np.savetxt('txt/train_array_prova.txt', v_train)
-    # np.savetxt('txt/data_array_prova.txt', v_test)
+    v_train, v_test = array_generator(filepaths, tree, var, mixing=False, Ntrain=280000)
+    np.savetxt('txt/train_array_prova.txt', v_train)
+    np.savetxt('txt/data_array_prova.txt', v_test)
 
     t2 = time.time()
 

@@ -57,7 +57,7 @@ class dnn_settings:
 
     @verbose.setter
     def verbose(self, verb):
-        if (verb == 0 | verb == 1 | verb == 2):
+        if (verb == 0 or verb == 1 or verb == 2):
             self._verbose = verb
         else:
             print('ERROR: uncorrect value given to "verbose" method')
