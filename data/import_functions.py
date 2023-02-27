@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def loadvars(file_pi, file_k, tree, vars):
+def loadvars(file_pi, file_k, tree, vars, flag_column = True):
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files. The LAST column of the output array contains a flag (0
@@ -20,9 +20,9 @@ def loadvars(file_pi, file_k, tree, vars):
     Parameters
     ----------
     file_pi: string
-        MC file of B0->PiPi process
+        Path of MC file of B0->PiPi process
     file_k: string
-        MC file of B0s->KK process
+        Path of MC file of B0s->KK process
     tree: string
         Tree containing the dataset (is the same for both the files)
     *vars: string
@@ -49,8 +49,9 @@ def loadvars(file_pi, file_k, tree, vars):
         list_pi.append(tree_pi[variable].array(library='np'))
         list_k.append(tree_k[variable].array(library='np'))
 
-    list_pi.append(flag_pi)
-    list_k.append(flag_k)
+    if flag_column:
+        list_pi.append(flag_pi)
+        list_k.append(flag_k)
 
     v_pi, v_k = np.stack(list_pi, axis=1), np.stack(list_k, axis=1)
 
@@ -158,21 +159,27 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
         # np.savetxt("txt/training_array.txt", train_array)
 
     if for_testing:
-        v0, _ = loadvars(filepath_data, filepath_data, tree, vars)
+        v0, _ = loadvars(filepath_data, filepath_data, tree, vars, flag_column=False) # Non mette la flag alla fine perché sono dati
         if mixing:
             [v_data] = include_merged_variables([v0], for_testing=True,
                                                 newvar_names=newvars)
         else:
             v_data = v0
         # Selezioniamo solo le colonne utili (non l'ultima, che consisteva in
-        # un insieme di 0) e il numero di eventi (righe) selezionato
-        test_array = v_data[:Ndata, :-1]
+        # un insieme di 0)
+        test_array = v_data[:Ndata, :]
         # print(test_array.shape)
         # print(test_array[:, -1])
         # np.savetxt("txt/data_array_prova.txt", v_testing)
 
     return train_array, test_array
 
+def get_filepaths(filenames = ['tree_B0PiPi.root','tree_B0sKK.root', 'tree_Bhh_data.root']):
+
+    current_path = os.path.dirname(__file__)
+    rel_path = '../root_files'
+    filepaths = [os.path.join(current_path, rel_path, file) for file in filenames]
+    return filepaths
 
 if __name__ == '__main__':
     t1 = time.time()
@@ -185,7 +192,7 @@ if __name__ == '__main__':
     filepaths = [os.path.join(
         current_path, rel_path, file) for file in filenames]
 
-    file_pi, file_k, file_data = filepaths
+    file_pi, file_k, file_data = filepaths # Questa riga serve??
 
     print(len(filepaths))
     tree = 't_M0pipi;1'

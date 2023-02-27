@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.layers import Dense, Input
 from keras.models import Model
-from dnn_utils import dnn_settings
+from machine_learning.dnn_utils import dnn_settings
 
 
 def train_dnn(training_set, settings):

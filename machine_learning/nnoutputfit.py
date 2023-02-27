@@ -4,8 +4,8 @@ Analyses the output dnn() function in training.py
 
 import numpy as np
 import matplotlib.pyplot as plt
-from training import dnn
-from dnn_utils import dnn_settings
+from machine_learning.training import dnn
+from machine_learning.dnn_utils import dnn_settings
 import os
 from sklearn import metrics
 
@@ -42,7 +42,7 @@ def rocsklearn(pi_array,k_array, effpnt = 0):
     rocx, rocy, _ = metrics.roc_curve(true_array,y_array)
     auc = metrics.roc_auc_score(true_array,y_array)
     print(f'AUC of the ROC is {auc}')
-    plt.figure('roc')
+    plt.figure('ROC')
     plt.plot(rocx,rocy, label= 'ROC curve', color='red')
     plt.xlabel('False Positive Probability')
     plt.xlim(0,1)
