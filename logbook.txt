@@ -327,7 +327,7 @@ potremmo per esempio usare ROOT.EnableImplicitMT() per un po' di multithreading?
   non gira :(
 
 
-25-26/02/23 (Ruben):
+25/02/23 (Ruben):
 
 Costruita la classe che gestisce le opzioni della DNN e aggiornato di conseguenza
 i file nnoutputfit e training.py
@@ -352,6 +352,17 @@ Valutazioni sul funzionamento della DNN:
     alcuni spikes --> stabilire se e come questo può rappresentare un problema e
     pensare a alcuni metodi per risolverlo, nel caso
 
+
+26/02/23 (Ruben):
+
+Costruito il test per il template fit, dove si richiede che nel caso in cui i dati
+siano composti solo da pi o solo da k la stima restituita sia pari a 0 o 1 rispettivamente
+(entro la seconda cifra decimale). Forse è meglio non tagliare alla seconda cifra
+ma permettere valori stimati entro un certo intervallo (es. 3 sigma)?
+
+Ora come ora il test è nella cartella apposita ma NON MI FUNZIONA L'IMPORT dei moduli
+da un'altra cartella. Per verificare che il test funziona ho dovuto metterlo nella
+cartella template_fit, cambiargli nome e poi chiamarlo semplicemente con python
 
 
 
