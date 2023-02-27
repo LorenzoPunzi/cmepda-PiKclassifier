@@ -9,9 +9,10 @@ import ROOT
 import uproot
 import numpy as np
 import matplotlib.pyplot as plt
+from merge_variables import mergevar
 
 
-def loadvars(file_pi, file_k, tree, vars, flag_column = True):
+def loadvars(file_pi, file_k, tree, vars, flag_column=True):
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files. The LAST column of the output array contains a flag (0
@@ -28,10 +29,6 @@ def loadvars(file_pi, file_k, tree, vars, flag_column = True):
     *vars: string
         Tuple containing names of the variables requested
     """
-
-    # In generale la sintassi è un po' da migliorare/snellire. Attenzione però
-    # che loadvars è chiamato da diverse altre funzioni che potrebbero quindi
-    # non più funzionare
 
     if (len(vars) == 0):
         # We should put an error here
@@ -58,57 +55,46 @@ def loadvars(file_pi, file_k, tree, vars, flag_column = True):
     return v_pi, v_k
 
 
-def include_merged_variables(initial_arrays, newvar_names, for_training=False, for_testing=False):
+def include_merged_variables(filepaths, tree, initial_arrays, new_variables):
     """
     """
 
-    n_new_vars = len(newvar_names)
-    n_old_vars = len(initial_arrays[0][0, :])
+    n_old_vars = len(initial_arrays[2][0, :])
     new_arrays = []
 
-    if for_training:
-        # Control on array length
-        l0_pi = len(initial_arrays[0][:, 0])
-        l0_k = len(initial_arrays[1][:, 0])
-        if not l0_pi == l0_k:
-            length = min(l0_pi, l0_k)
-        else:
-            length = l0_pi
+    l0_pi = len(initial_arrays[0][:, 0])
+    l0_k = len(initial_arrays[1][:, 0])
+    if not l0_pi == l0_k:
+        length = min(l0_pi, l0_k)
+    else:
+        length = l0_pi
 
-        strings = ['txt/newvars/' + newvar_names[idx] + '_merged'
-                   + '__mc.txt' for idx in range(n_new_vars)]
-        print(strings)
-        list_pi, list_k = [], []
-        for st in strings:
-            v_pi, v_k = np.loadtxt(st, unpack=True)
-            list_pi.append(v_pi[:length]), list_k.append(v_k[:length])
-            print(list_pi[-1].shape, list_k[-1].shape)
-        for col in range(n_old_vars):
-            list_pi.append(initial_arrays[0][:length, col])
-            list_k.append(initial_arrays[1][:length, col])
-            print(list_pi[-1].shape, list_k[-1].shape)
-        new_arrays = [np.stack(list_pi, axis=1), np.stack(list_k, axis=1)]
-        print('All good train_array')
+    list_pi, list_k, list_data = [], [], []
 
-    if for_testing:
-        strings = ['txt/newvars/' + newvar_names[idx] + '_merged'
-                   + '__data.txt' for idx in range(n_new_vars)]
-        print(strings)
-        list_data = []
-        for st in strings:
-            v_data = np.loadtxt(st, unpack=True)
-            list_data.append(v_data)
-        for col in range(n_old_vars):
-            list_data.append(initial_arrays[0][:, col])
-        new_arrays = [np.stack(list_data, axis=1)]
-        print('All good testing_array')
+    for newvars in new_variables:
+        merged_arrays, m, KS_stats = mergevar(
+            filepaths, tree, newvars, savefig=False, savetxt=False)
+        list_pi.append(merged_arrays[0][:length])
+        list_k.append(merged_arrays[1][:length])
+        list_data.append(merged_arrays[2])
+
+    for col in range(n_old_vars):
+        list_pi.append(initial_arrays[0][:length, col])
+        list_k.append(initial_arrays[1][:length, col])
+        list_data.append(initial_arrays[2][:, col])
+
+    # Appending also the flag column to mc arrays
+    list_pi.append(initial_arrays[0][:length, -1])
+    list_k.append(initial_arrays[1][:length, -1])
+
+    new_arrays = [np.stack(list_pi, axis=1), np.stack(list_k, axis=1),
+                  np.stack(list_data, axis=1)]
 
     return new_arrays
 
 
 def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
-                    for_training=True, for_testing=True, mixing=False,
-                    newvars=[]):
+                    for_training=True, for_testing=True, new_variables=[]):
     """
     Generates arrays for ML treatment (training and testing) and saves them in
     .txt files
@@ -137,49 +123,54 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
     else:
         print('Errore nell istanziamento di array_generator()')
         pass
-    # Da capire cosa non va se una delle due flag for_XX è messa FALSE
 
     train_array, test_array = np.zeros(len(vars)), np.zeros(len(vars))
 
+    '''
     if (mixing and len(newvars == 0)):
         newvars = ['M0_MKpi_M0_MpiK', 'M0_MKK_M0_p', 'M0_Mpipi_M0_p',
                    'M0_MKK_M0_MpiK', 'M0_Mpipi_M0_MKpi']
+    '''
 
-    if for_training:
+    if not new_variables:
+        if for_training:
+            v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k, tree, vars)
+            train_array = np.concatenate(
+                (v_mc_pi[:int(Ntrain/2), :], v_mc_k[:int(Ntrain/2), :]), axis=0)
+            np.random.shuffle(train_array)
+            print(train_array.shape)
+        if for_testing:
+            v_data, _ = loadvars(filepath_data, filepath_data, tree, vars,
+                                 flag_column=False)  # Non mette la flag alla fine perché sono dati
+            test_array = v_data[:Ndata, :]
+            print(test_array.shape)
+
+    # If a mixing is requested, both the training and the testing arrays are
+    # modified, with obviously the same mixing
+    elif new_variables and len(filepaths) == 3:
         v1, v2 = loadvars(filepath_pi, filepath_k, tree, vars)
-        if mixing:
-            [v_mc_pi, v_mc_k] = include_merged_variables(
-                [v1, v2], for_training=True, newvar_names=newvars)
-        else:
-            v_mc_pi, v_mc_k = v1, v2
+        v_data, _ = loadvars(filepath_data, filepath_data,
+                             tree, vars, flag_column=False)
+        initial_arrays = [v1, v2, v_data]
+        [v_mc_pi, v_mc_k, v_data_new] = include_merged_variables(
+            filepaths, tree, initial_arrays, new_variables)
         train_array = np.concatenate(
             (v_mc_pi[:int(Ntrain/2), :], v_mc_k[:int(Ntrain/2), :]), axis=0)
-        np.random.shuffle(train_array)
-        print(train_array.shape)
-        # np.savetxt("txt/training_array.txt", train_array)
-
-    if for_testing:
-        v0, _ = loadvars(filepath_data, filepath_data, tree, vars, flag_column=False) # Non mette la flag alla fine perché sono dati
-        if mixing:
-            [v_data] = include_merged_variables([v0], for_testing=True,
-                                                newvar_names=newvars)
-        else:
-            v_data = v0
-        # Selezioniamo solo le colonne utili (non l'ultima, che consisteva in
-        # un insieme di 0)
-        test_array = v_data[:Ndata, :]
-        # print(test_array.shape)
-        # print(test_array[:, -1])
-        # np.savetxt("txt/data_array_prova.txt", v_testing)
+        test_array = v_data_new[:Ndata, :]
+    else:
+        pass
 
     return train_array, test_array
 
-def get_filepaths(filenames = ['tree_B0PiPi.root','tree_B0sKK.root', 'tree_Bhh_data.root']):
+
+def get_filepaths(filenames=['tree_B0PiPi.root', 'tree_B0sKK.root', 'tree_Bhh_data.root']):
 
     current_path = os.path.dirname(__file__)
     rel_path = '../root_files'
-    filepaths = [os.path.join(current_path, rel_path, file) for file in filenames]
+    filepaths = [os.path.join(current_path, rel_path, file)
+                 for file in filenames]
     return filepaths
+
 
 if __name__ == '__main__':
     t1 = time.time()
@@ -192,16 +183,25 @@ if __name__ == '__main__':
     filepaths = [os.path.join(
         current_path, rel_path, file) for file in filenames]
 
-    file_pi, file_k, file_data = filepaths # Questa riga serve??
+    file_pi, file_k, file_data = filepaths
+
+    combinations = [('M0_MKpi', 'M0_MpiK'), ('M0_MKK', 'M0_p'), ('M0_Mpipi', 'M0_p'),
+                    ('M0_MKK', 'M0_MpiK'), ('M0_Mpipi', 'M0_MKpi')]
 
     print(len(filepaths))
     tree = 't_M0pipi;1'
-    var = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p',
-           'M0_pt', 'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2')
+    vars = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt',
+            'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0',
+            'h2_thetaC1', 'h2_thetaC2')
 
-    v_train, v_test = array_generator(filepaths, tree, var, mixing=False, Ntrain=280000)
-    np.savetxt('txt/train_array_prova.txt', v_train)
-    np.savetxt('txt/data_array_prova.txt', v_test)
+    v_train, v_test = array_generator(filepaths, tree, vars,
+                                      Ntrain=10000, Ndata=1000,
+                                      new_variables=[combinations[0]])
+
+    # np.savetxt('txt/train_array_prova.txt', v_train)
+    # np.savetxt('txt/data_array_prova.txt', v_test)
+
+    print(np.shape(v_test))
 
     t2 = time.time()
 
