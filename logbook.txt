@@ -408,6 +408,10 @@ Aggiornato mcut, aggiungendo la possibilità di runnare la roc (ho dato ora ques
 
 Ho aggiunto anche l'opzione di flatten degli array che vengono da loadvars quando viene loaded solo una variable, dato che sennò di default vengono restituiti come vettori colonna. Chiamando loadvars così da mcut.py il mcut sembra essere nel posto giusto (molto verso destra dato che il 95% deve stare sotto), invece di circa a metà distribuzione come faceva ieri sera.
 
+Ho trasformato il main di mcut.py in una funzione var_cut() che fa un taglio simile in generale in funzione di una qualsiasi variabile. Ho cambiato la find_cut() function così che siano distinti specificity mode e inverted mode, il latter ora significa fare un taglio verso il BASSO. Dunque ora non c'è più bisogno di chiamare con array scambiati come sopra.
+
+
+
 
 
 

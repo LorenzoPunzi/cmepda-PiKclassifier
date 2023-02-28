@@ -65,7 +65,7 @@ def roc(pi_array,k_array, inverse_mode = False, makefig = True, eff_line = 0):
                     )
         plt.axline((0,0),(1,1), linestyle = '--', label = 'AUC = 0.5')
         plt.legend()
-        current_path = os.path.dirname(__file__)
+        current_path = os.path.dirname(__file__) # !!! How to make it so it saves in the /fig folder of the directory from which the function is CALLED, not the one where nnoutputfit.py IS.
         rel_path = './fig'
         figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
         plt.savefig(figurepath)

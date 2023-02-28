@@ -14,18 +14,18 @@ def var_cut(tree = 't_M0pipi;1', cut_var = 'M0_Mpipi', efficiency = 0.95, filena
     filepath_pi, filepath_k, filepath_data = get_filepaths(filenames)
     M_pi, M_k = loadvars(filepath_pi, filepath_k, tree, [cut_var], flag_column=False)
 
-    mcut, misid = find_cut(M_k, M_pi, eff,inverse_mode=inverse_mode, specificity_mode=specificity_mode)
+    mcut, misid = find_cut(M_pi, M_k, eff,inverse_mode=inverse_mode, specificity_mode=specificity_mode)
 
     plt.figure('Cut on ' + cut_var)
-    plt.hist(M_pi, bins=300, range=(5.0,5.4), histtype='step',
-                 color='red', label=cut_var + ' for Pions')
-    plt.hist(M_k, bins=300, range=(5.0,5.4), histtype='step',
+    plt.hist(M_pi, bins=300, range=(5.0,5.6), histtype='step', 
+                 color='red', label=cut_var + ' for Pions') # !!! (range)
+    plt.hist(M_k, bins=300, range=(5.0,5.6), histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
     plt.axvline(x=mcut, color='green', label=cut_var + ' cut for '
                 + str(eff)+' efficiency')
     plt.draw()
     plt.xlabel(cut_var)
-    plt.ylabel('Events per ?????')  # MAKE IT BETTER
+    plt.ylabel('Events per ?????')  # !!! (binwidth)
     plt.legend()
     plt.savefig('./fig/mcut_'+cut_var+'.pdf')
 
@@ -33,6 +33,7 @@ def var_cut(tree = 't_M0pipi;1', cut_var = 'M0_Mpipi', efficiency = 0.95, filena
     rocx, rocy, auc = roc(M_pi, M_k, eff_line = eff, inverse_mode= inverse_mode, makefig = draw_roc)
     
     print(f'mcut is {mcut} for {eff} efficiency')
+    print(f'misid is {misid} for {eff} efficiency')
 
     M_data, _ = loadvars(filepath_data, filepath_data, tree, [cut_var], flag_column=False)
     f = ((M_data < mcut).sum()/M_data.size-misid)/(eff-misid)
