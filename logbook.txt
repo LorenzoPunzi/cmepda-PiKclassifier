@@ -364,6 +364,48 @@ Ora come ora il test è nella cartella apposita ma NON MI FUNZIONA L'IMPORT dei 
 da un'altra cartella. Per verificare che il test funziona ho dovuto metterlo nella
 cartella template_fit, cambiargli nome e poi chiamarlo semplicemente con python
 
+27/02/23 (Lorenzo e Ruben):
+
+Abbiamo finito di scrivere la ROC con sklearn e la relativa AUD. Abbiamo inoltre dato i tre angoli cherenkov dell'altra particella in pasto alla rete, ottenendo una separazione ancora più netta. Abbiamo ricreato i txt, stavolta prendendo il massimo di eventi possibili dai root MC generati attualmente (generati la settimana del 13/02), cioè 140000 Pi e 140000 K.
+
+Ci siamo accorti di un doppio errore che fino a che Ruben non cambiasse
+array_generator() non si era notato: prima i data.txt avevano comunque una
+colonna di flag tutta a 1, adesso array_generator taglia l'ultima colonna al
+data.txt, che quindi hanno una colonna in meno del train.txt. Su eval_dnn()
+Lorenzo aveva scritto la funzione dando per scontato che non ci fosse l'ultima
+colonna per i data.txt (che invece fin'ora c'era), però aveva sbagliato a
+chiamare la funzione dal main quando evaluava i dati, chiamandoli come i MC, in
+cui si da per scontato che abbiano la colonna di flag. Questi due effetti quindi
+si cancellavano. Ora che array_generator taglia l'ultima colonna dei data.txt e
+però è stato corretto l'errore, le cose di nuovo funzionano e ma non perché due
+cose sbagliate si cancellano a vicenda.
+
+
+INCONTRO RIZZI:
+
+- Va bene quello che abbiamo fatto fin'ora
+- Ha senso la nostra idea di usare un'efficienza dei RICH (sensata, chiedere a qualcuno LHCb) in generazione dei MC per non rendere troppo OP la rete.  
+- Per migliorare la stabilità della rete potremmo provare batch rinormalization, dropout o diminuire il learning rate
+- Come immaginavamo non è per forza un male se la rete produce cose diverse a ogni training, l'idea è che uno a un certo punto lo fissa il training e fa il resto 
+- Potremmo fare un boosted decision tree e disegnarne la ROC
+- Potremmo fare con la Mpipi o Mkk una cosa analoga a quanto fatto con la y della rete, un taglo con certa efficienza, e vederne la ROC
+- Potremmo fare il template fit (a training fissato) delle pdf delle y in uscita dalla rete
+- Per valutare le sistematiche possiamo provare pdf diversi oppure....
+
+
+27/02/23 (Lorenzo):
+
+Ho fatto mcut.py che però va runnato in inverse_mode e con ordine di array scambiato perché il cut deve essere verso Mhh<mcut per selezionare i K. Nel farlo ho cambiato alcune cose
+
+- loadvars adesso ha un opzione in più per NON appenedere la colonna di flag per quando non serve, come in questo caso. Ho dovuto perciò cambiare anche array_generator che chiamava loadvars di conseguenza, semplificandolo (non Bisogna più rimuovere esplicitamente la colonna finale ai data.txt)
+- Invece dei relative imports, che rompevano nel chiamare lo script da shell, ho usato absolute imports, e per fare ciò ho dovuto mettere cmepda-PiKclassifier nel mio PYTHONPATH. Ho modificato quindi più file .py del progetto con absolute imports
+- Per semplicità ho creato la funzione get_filepaths() in import functions così da rendere veloce l'acquisizione dei paths dei .root files e quindi il conseguente loading delle variabili
+
+
+
+
+
+
 
 
 
