@@ -454,3 +454,7 @@ Ho aggiunto anche l'opzione di flatten degli array che vengono da loadvars quand
 * How should the function modules be organized? Should we use only one module with all the functions? Or group related ones together?
 
 * Can we/ should we use multiprocessing in one point or another?
+
+* Is it bad practice to give a same names to options in different functions that call other functions? e.g. func(...inverse_mode = inverse_mode...)
+
+* Is the way plot_options = [] is handled in eval_dnn() (as of 27/02) bad practice?

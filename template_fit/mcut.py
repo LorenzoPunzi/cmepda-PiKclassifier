@@ -1,23 +1,20 @@
 """
 Estimates f using a cut on Mhh only
 """
-import os
 import numpy as np
 from matplotlib import pyplot as plt
-from sklearn import metrics
 from data.import_functions import loadvars , get_filepaths
 from machine_learning.nnoutputfit import find_cut , roc
 
+def var_cut(tree = 't_M0pipi;1', cut_var = 'M0_Mpipi', efficiency = 0.95, filenames=['tree_B0PiPi.root', 'tree_B0sKK.root', 'tree_Bhh_data.root'], inverse_mode = False, specificity_mode = False, draw_roc = True):
+    """
+    """
 
-if __name__ == '__main__':
+    eff = efficiency
+    filepath_pi, filepath_k, filepath_data = get_filepaths(filenames)
+    M_pi, M_k = loadvars(filepath_pi, filepath_k, tree, [cut_var], flag_column=False)
 
-    cut_var = 'M0_Mpipi'
-    eff = 0.95
-
-    filepath_pi, filepath_k, _ = get_filepaths()
-    M_pi, M_k = loadvars(filepath_pi, filepath_k, 't_M0pipi;1', [cut_var], flag_column=False)
-
-    mcut, misid = find_cut(M_k, M_pi, eff,inverse_mode=True)
+    mcut, misid = find_cut(M_k, M_pi, eff,inverse_mode=inverse_mode, specificity_mode=specificity_mode)
 
     plt.figure('Cut on ' + cut_var)
     plt.hist(M_pi, bins=300, range=(5.0,5.4), histtype='step',
@@ -32,8 +29,20 @@ if __name__ == '__main__':
     plt.legend()
     plt.savefig('./fig/mcut_'+cut_var+'.pdf')
 
-    roc(M_pi, M_k, effpnt = eff, inverse_mode= True)
+    
+    rocx, rocy, auc = roc(M_pi, M_k, eff_line = eff, inverse_mode= inverse_mode, makefig = draw_roc)
+    
     print(f'mcut is {mcut} for {eff} efficiency')
+
+    M_data, _ = loadvars(filepath_data, filepath_data, tree, [cut_var], flag_column=False)
+    f = ((M_data < mcut).sum()/M_data.size-misid)/(eff-misid)
+    print(f'The estimated fraction of K events is {f}')
+
+    return f, rocx, rocy, auc
+
+if __name__ == '__main__':
+
+    var_cut(efficiency = 0.95, inverse_mode = True, specificity_mode = False, draw_roc = True)
 
     plt.show()
 
