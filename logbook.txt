@@ -400,7 +400,7 @@ Ho fatto mcut.py che però va runnato in inverse_mode e con ordine di array scam
 - loadvars adesso ha un opzione in più per NON appenedere la colonna di flag per quando non serve, come in questo caso. Ho dovuto perciò cambiare anche array_generator che chiamava loadvars di conseguenza, semplificandolo (non Bisogna più rimuovere esplicitamente la colonna finale ai data.txt)
 - Invece dei relative imports, che rompevano nel chiamare lo script da shell, ho usato absolute imports, e per fare ciò ho dovuto mettere cmepda-PiKclassifier nel mio PYTHONPATH. Ho modificato quindi più file .py del progetto con absolute imports
 - Per semplicità ho creato la funzione get_filepaths() in import functions così da rendere veloce l'acquisizione dei paths dei .root files e quindi il conseguente loading delle variabili
-
+- Ho aggiunto __init__.py alla root directory per eventuali usi di package futuri
 
 
 
