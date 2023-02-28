@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn import metrics
 from data.import_functions import loadvars , get_filepaths
-from machine_learning.nnoutputfit import find_cut , rocsklearn
+from machine_learning.nnoutputfit import find_cut , roc
 
 
 if __name__ == '__main__':
@@ -16,7 +16,9 @@ if __name__ == '__main__':
 
     filepath_pi, filepath_k, _ = get_filepaths()
     M_pi, M_k = loadvars(filepath_pi, filepath_k, 't_M0pipi;1', [cut_var], flag_column=False)
+
     mcut, misid = find_cut(M_k, M_pi, eff,inverse_mode=True)
+
     plt.figure('Cut on ' + cut_var)
     plt.hist(M_pi, bins=300, range=(5.0,5.4), histtype='step',
                  color='red', label=cut_var + ' for Pions')
@@ -30,8 +32,8 @@ if __name__ == '__main__':
     plt.legend()
     plt.savefig('./fig/mcut_'+cut_var+'.pdf')
 
-    rocsklearn(M_pi,M_k, effpnt = eff)
-
+    roc(M_pi, M_k, effpnt = eff, inverse_mode= True)
+    print(f'mcut is {mcut} for {eff} efficiency')
 
     plt.show()
 

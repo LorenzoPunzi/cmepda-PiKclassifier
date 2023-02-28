@@ -9,10 +9,10 @@ import ROOT
 import uproot
 import numpy as np
 import matplotlib.pyplot as plt
-from merge_variables import mergevar
+from data.merge_variables import mergevar
 
 
-def loadvars(file_pi, file_k, tree, vars, flag_column=True):
+def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files. The LAST column of the output array contains a flag (0
@@ -51,6 +51,10 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=True):
         list_k.append(flag_k)
 
     v_pi, v_k = np.stack(list_pi, axis=1), np.stack(list_k, axis=1)
+
+    if (len(vars) == 1 and flatten1d == True): 
+        v_pi, v_k = v_pi.flatten(), v_k.flatten() # Otherwise becomes a 1D column vector when 1D
+    
 
     return v_pi, v_k
 

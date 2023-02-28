@@ -19,8 +19,8 @@ def find_cut(pi_array, k_array, efficiency, inverse_mode=False):
     # .sum() sums how many True there are in the masked (xx_array>y)
     return y, misid
 
-
-def roc(pi_array, k_array, eff_span=(0.5, 0.95, 50)):
+"""
+def roc_homebrew(pi_array, k_array, eff_span=(0.5, 0.95, 50)):
     rocpnts = [((pi_array > y).sum()/pi_array.size, (k_array
                 > y).sum()/k_array.size) for y in np.linspace(*eff_span)]
     rocx, rocy = zip(*rocpnts)
@@ -35,15 +35,20 @@ def roc(pi_array, k_array, eff_span=(0.5, 0.95, 50)):
     rel_path = './fig'
     figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
     plt.savefig(figurepath)
-
-def rocsklearn(pi_array,k_array, effpnt = 0):
+"""
+    
+def roc(pi_array,k_array, effpnt = 0, inverse_mode = False):
     true_array = np.concatenate((np.zeros(pi_array.size),np.ones(k_array.size)))
     y_array = np.concatenate((pi_array,k_array))
     rocx, rocy, _ = metrics.roc_curve(true_array,y_array)
     auc = metrics.roc_auc_score(true_array,y_array)
-    print(f'AUC of the ROC is {auc}')
     plt.figure('ROC')
-    plt.plot(rocx,rocy, label= 'ROC curve', color='red')
+    if inverse_mode : # Not very DRY...
+        plt.plot(np.ones(rocx.size)-rocx,np.ones(rocy.size)-rocy, label= 'ROC curve in inverse', color='red')
+        print(f'AUC of the ROC is {1-auc}')
+    else:
+        plt.plot(rocx,rocy, label= 'ROC curve', color='red')
+        print(f'AUC of the ROC is {auc}')
     plt.xlabel('False Positive Probability')
     plt.xlim(0,1)
     plt.ylabel('True Positive Probability')
@@ -56,7 +61,7 @@ def rocsklearn(pi_array,k_array, effpnt = 0):
     plt.legend()
     current_path = os.path.dirname(__file__)
     rel_path = './fig'
-    figurepath = os.path.join(current_path, rel_path, 'roc_sklearn.pdf')
+    figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
     plt.savefig(figurepath)
 
 
@@ -77,7 +82,7 @@ if __name__ == '__main__':
                 + str(efficiency)+' efficiency')
     plt.legend()
     plt.savefig('./fig/ycut.pdf')
-    rocsklearn(pi_eval, k_eval, effpnt = 0.95)
+    roc(pi_eval, k_eval, effpnt = 0.95)
 
     print(f'y cut is {y_cut} , misid is {misid}')
     f = ((data_eval > y_cut).sum()/data_eval.size-misid)/(efficiency-misid)

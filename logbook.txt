@@ -402,6 +402,13 @@ Ho fatto mcut.py che però va runnato in inverse_mode e con ordine di array scam
 - Per semplicità ho creato la funzione get_filepaths() in import functions così da rendere veloce l'acquisizione dei paths dei .root files e quindi il conseguente loading delle variabili
 - Ho aggiunto __init__.py alla root directory per eventuali usi di package futuri
 
+28/02/23 (Lorenzo):
+
+Aggiornato mcut, aggiungendo la possibilità di runnare la roc (ho dato ora questo nome alle previous rocsklearn e cambiato in roc_hombrew la nostra) in inverse mode e chiamandola così da mcut.py. Questo inverse mode manda tutto in 1-xxx perché il taglio qui è verso il BASSO, non verso l'altro come al solito (e come fatto per la dnn stessa).
+
+Ho aggiunto anche l'opzione di flatten degli array che vengono da loadvars quando viene loaded solo una variable, dato che sennò di default vengono restituiti come vettori colonna. Chiamando loadvars così da mcut.py il mcut sembra essere nel posto giusto (molto verso destra dato che il 95% deve stare sotto), invece di circa a metà distribuzione come faceva ieri sera.
+
+
 
 
 
