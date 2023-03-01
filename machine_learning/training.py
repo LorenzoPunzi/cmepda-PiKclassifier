@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from keras.layers import Dense, Input
 from keras.models import Model
 from machine_learning.dnn_utils import dnn_settings
+from data.import_functions import get_txtpaths
 
 
 def train_dnn(training_set, settings):
@@ -50,7 +51,7 @@ def train_dnn(training_set, settings):
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, f_print=False):
+def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
     """
     """
     prediction_array = dnn.predict(
@@ -67,28 +68,15 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, f_print=False):
         plt.savefig('./fig/predict_'+plotname+'.pdf')
         plt.draw()
 
-    if f_print:
-        f_pred = np.sum(prediction_array)
-        print(f'The predicted K fraction is : {f_pred/len(prediction_array)}')
-        print('Max prediction :', np.max(prediction_array))
-        print('Min prediction :', np.min(prediction_array))
 
     return prediction_array
 
 
-def dnn(input_files, settings, txt_path='../data/txt'):
+def dnn(txt_names, settings, txt_path='../data/txt', f_print = True):
     """
     """
     print(settings.layers)
-    [trainarrayname, dataarrayname] = input_files
-
-    # Perché questo lavoro con le directories si fa qua e non nel main? Risulta
-    # necessario o comodo per qualcosa di specifico?
-    current_path = os.path.dirname(__file__)
-    train_array_path = os.path.join(
-        current_path, txt_path, trainarrayname)
-    data_array_path = os.path.join(
-        current_path, txt_path, dataarrayname)
+    train_array_path, data_array_path = get_txtpaths(filenames=txt_names, rel_path=txt_path)
 
     training_set = np.loadtxt(train_array_path)
     pi_set = np.array([training_set[i, :] for i in range(
@@ -104,7 +92,13 @@ def dnn(input_files, settings, txt_path='../data/txt'):
     K_eval = eval_dnn(deepnn, K_set, flag_data=False,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'])
     pred_array = eval_dnn(deepnn, data_set, flag_data=True,
-                          plot_opt=['Dataeval', 'blue', 'Evaluated data'], f_print=True)
+                          plot_opt=['Dataeval', 'blue', 'Evaluated data'])
+    
+    if f_print:
+        f_pred = np.sum(pred_array)
+        print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
+        print('Max prediction :', np.max(pred_array))
+        print('Min prediction :', np.min(pred_array))
 
     return pi_eval, K_eval, pred_array
 

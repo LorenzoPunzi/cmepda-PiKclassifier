@@ -410,6 +410,10 @@ Ho aggiunto anche l'opzione di flatten degli array che vengono da loadvars quand
 
 Ho trasformato il main di mcut.py in una funzione var_cut() che fa un taglio simile in generale in funzione di una qualsiasi variabile. Ho cambiato la find_cut() function così che siano distinti specificity mode e inverted mode, il latter ora significa fare un taglio verso il BASSO. Dunque ora non c'è più bisogno di chiamare con array scambiati come sopra.
 
+Per semplicità ho creato la funzione get_txtpaths() in import functions così da rendere veloce l'acquisizione dei paths dei .txt files per le reti (get_filepaths-->get_rootpaths)
+
+Added dtc which creates a decisiontreeclassifier with sklearn and trains it with a certain part of the known mc and evaluates it on the data and the remaining part of the mc to calculate efficiency and misid. This tran/test separation is necessary because it seems to perfectly predict the mc dataset used to train the tree itself, so it's sensless to use that same dataset to measure eff and misid (gives 1.0 and 0.0 respectively). This gives an estimated fraction of 0.457, eff = 0.91 and misid = 0.09.
+
 
 
 
@@ -462,3 +466,5 @@ Ho trasformato il main di mcut.py in una funzione var_cut() che fa un taglio sim
 * Is it bad practice to give a same names to options in different functions that call other functions? e.g. func(...inverse_mode = inverse_mode...)
 
 * Is the way plot_options = [] is handled in eval_dnn() (as of 27/02) bad practice?
+
+* In dnn can we calculate pi_eval and K_eval with the same MC data used for the training of the dnn itself (we are doing so at 28/02)? In the decisiontreeclass we separate the two things...

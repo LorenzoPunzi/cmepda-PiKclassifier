@@ -167,10 +167,16 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
     return train_array, test_array
 
 
-def get_filepaths(filenames=['tree_B0PiPi.root', 'tree_B0sKK.root', 'tree_Bhh_data.root']):
+def get_rootpaths(filenames=['tree_B0PiPi.root', 'tree_B0sKK.root', 'tree_Bhh_data.root'],rel_path = '../root_files'):
 
     current_path = os.path.dirname(__file__)
-    rel_path = '../root_files'
+    filepaths = [os.path.join(current_path, rel_path, file)
+                 for file in filenames]
+    return filepaths
+
+def get_txtpaths(filenames=['train_array_prova.txt', 'data_array_prova.txt'], rel_path = '../data/txt'):
+
+    current_path = os.path.dirname(__file__)
     filepaths = [os.path.join(current_path, rel_path, file)
                  for file in filenames]
     return filepaths
