@@ -6,8 +6,9 @@ import time
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from keras.layers import Dense, Input
+from keras.layers import Dense, Input, Normalization, AlphaDropout
 from keras.models import Model
+from keras.optimizers import Adam
 from machine_learning.dnn_utils import dnn_settings
 from data.import_functions import get_txtpaths
 
@@ -15,8 +16,7 @@ from data.import_functions import get_txtpaths
 def train_dnn(training_set, settings):
     """
     """
-    np.random.seed(int(time.time()))
-
+    seed = np.random.seed(int(time.time()))
     pid = training_set[:, -1]
     features = training_set[:, :-1]
     print(np.shape(features))
@@ -24,13 +24,23 @@ def train_dnn(training_set, settings):
 
     neurons = settings.layers
 
+    if settings.batchnorm:
+        bnorm_layer = Normalization(axis=1, mean=0, variance=10)
+        # layer.adapt(features)
+        features = bnorm_layer(features)
+
+    if not settings.dropout == 0:
+        dr_layer = AlphaDropout(settings.dropout, seed=seed)
+        features = dr_layer(features, training=True)
+
+    optimizer = Adam(learning_rate=settings.learning_rate)
     inputlayer = Input(shape=(np.shape(features)[1],))
     hiddenlayer = Dense(neurons[0], activation='relu')(inputlayer)
     for i in neurons[1:]:
         hiddenlayer = Dense(i, activation='relu')(hiddenlayer)
     outputlayer = Dense(1, activation='sigmoid')(hiddenlayer)
     deepnn = Model(inputs=inputlayer, outputs=outputlayer)
-    deepnn.compile(loss='binary_crossentropy', optimizer='adam')
+    deepnn.compile(loss='binary_crossentropy', optimizer=optimizer)
     deepnn.summary()
 
     history = deepnn.fit(features, pid, validation_split=0.5,
@@ -68,15 +78,15 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
         plt.savefig('./fig/predict_'+plotname+'.pdf')
         plt.draw()
 
-
     return prediction_array
 
 
-def dnn(txt_names, settings, txt_path='../data/txt', f_print = True):
+def dnn(txt_names, settings, txt_path='../data/txt', f_print=True):
     """
     """
     print(settings.layers)
-    train_array_path, data_array_path = get_txtpaths(filenames=txt_names, rel_path=txt_path)
+    train_array_path, data_array_path = get_txtpaths(
+        filenames=txt_names, rel_path=txt_path)
 
     training_set = np.loadtxt(train_array_path)
     pi_set = np.array([training_set[i, :] for i in range(
@@ -93,7 +103,7 @@ def dnn(txt_names, settings, txt_path='../data/txt', f_print = True):
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'])
     pred_array = eval_dnn(deepnn, data_set, flag_data=True,
                           plot_opt=['Dataeval', 'blue', 'Evaluated data'])
-    
+
     if f_print:
         f_pred = np.sum(pred_array)
         print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
@@ -111,6 +121,10 @@ if __name__ == '__main__':
     settings.layers = [60, 45, 30, 15]
     settings.batch_size = 128
     settings.epochnum = 200
+    settings.verbose = 2
+    settings.batchnorm = False
+    # settings.dropout = 0.005
+    settings.learning_rate = 5e-5
 
     pi_eval, K_eval, pred_array = dnn(input_files, settings)
     # plt.show()

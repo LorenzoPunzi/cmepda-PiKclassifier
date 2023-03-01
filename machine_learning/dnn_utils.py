@@ -6,10 +6,12 @@ class dnn_settings:
     def __init__(self):
         self._layers = [20, 20, 15, 10]
         self._epochnum = 200
+        self._learning_rate = 0.001
         self._batch_size = 128
+        self._batchnorm = False
+        self._dropout = 0
         self._verbose = 1
         self._showhistory = True
-        # self._plotoptions = []
 
     @property
     def layers(self):
@@ -20,8 +22,20 @@ class dnn_settings:
         return self._epochnum
 
     @property
+    def learning_rate(self):
+        return self._learning_rate
+
+    @property
     def batch_size(self):
         return self._batch_size
+
+    @property
+    def batchnorm(self):
+        return self._batchnorm
+
+    @property
+    def dropout(self):
+        return self._dropout
 
     @property
     def verbose(self):
@@ -30,11 +44,6 @@ class dnn_settings:
     @property
     def showhistory(self):
         return self._showhistory
-
-    # Not necessary, the options are passed in the functions in another way
-    # @property
-    # def plotoptions(self):
-    #     return self._plotoptions
 
     @layers.setter
     def layers(self, neurons_list):
@@ -48,12 +57,33 @@ class dnn_settings:
         if not int(epochs) == 0:
             self._epochnum = int(epochs)
 
+    @learning_rate.setter
+    def learning_rate(self, lr):
+        if lr > 0:
+            self._learning_rate = lr
+        else:
+            print('ERROR: the learning rate must be > 0')
+
     @batch_size.setter
     def batch_size(self, batch):
         if not int(batch) == 0:
             self._batch_size = int(batch)
         else:
             print('ERROR: the "batch size" value cannot be 0')
+
+    @batchnorm.setter
+    def batchnorm(self, bnorm):
+        if type(bnorm) is bool:
+            self._batchnorm = bnorm
+        else:
+            print('ERROR: "batchnorm" method must be a boolean value')
+
+    @dropout.setter
+    def dropout(self, dr):
+        if dr >= 0:
+            self._dropout = dr
+        else:
+            print('ERROR: dropout rate must be >= 0')
 
     @verbose.setter
     def verbose(self, verb):
