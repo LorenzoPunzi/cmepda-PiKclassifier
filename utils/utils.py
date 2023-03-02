@@ -1,3 +1,10 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from machine_learning.deepnn import dnn
+from machine_learning.dnn_utils import dnn_settings
+import os
+from sklearn import metrics
+
 
 class dnn_settings:
     """
@@ -100,7 +107,55 @@ class dnn_settings:
             print('ERROR: "showhistory" method must be a boolean value')
 
 
-if __name__ == '__main__':
-    a = dnn_settings()
-    a.verbose = 3
-    print(a.verbose)
+
+
+
+def find_cut(pi_array, k_array, efficiency, specificity_mode=False, inverse_mode=False):
+
+    if inverse_mode:
+        efficiency = 1-efficiency
+    cut = -np.sort(-k_array)[int(efficiency*(len(k_array)-1))
+                             ] if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
+    if inverse_mode:  # !!!! NOT DRY
+        misid = (pi_array < cut).sum(
+        )/pi_array.size if not specificity_mode else (k_array < cut).sum()/k_array.size
+    else:
+        misid = (pi_array > cut).sum(
+        )/pi_array.size if not specificity_mode else (k_array > cut).sum()/k_array.size
+
+    # .sum() sums how many True there are in the masked (xx_array>y)
+
+    return cut, misid
+
+
+def roc(pi_array, k_array, inverse_mode=False, makefig=True, eff_line=0):
+    true_array = np.concatenate(
+        (np.zeros(pi_array.size), np.ones(k_array.size)))
+    y_array = np.concatenate((pi_array, k_array))
+    rocx, rocy, _ = metrics.roc_curve(true_array, y_array)
+    auc = metrics.roc_auc_score(true_array, y_array)
+    if inverse_mode:
+        rocx, rocy = np.ones(rocx.size)-rocx, np.ones(rocy.size)-rocy
+        auc = 1-auc
+    if makefig:
+        plt.figure('ROC')
+        plt.plot(rocx, rocy, label='ROC curve', color='red')
+        print(f'AUC of the ROC is {auc}')
+        plt.xlabel('False Positive Probability')
+        plt.xlim(0, 1)
+        plt.ylabel('True Positive Probability')
+        plt.ylim(0, 1)
+        plt.draw()
+        if eff_line:
+            plt.axhline(y=eff_line, color='green', linestyle='--', label='efficiency chosen at '+str(eff_line)
+                        )
+        plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
+        plt.legend()
+        # !!! How to make it so it saves in the /fig folder of the directory from which the function is CALLED, not the one where nnoutputfit.py IS.
+        current_path = os.path.dirname(__file__)
+        rel_path = './fig'
+        figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
+        plt.savefig(figurepath)
+
+    return rocx, rocy, auc
+

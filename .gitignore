@@ -131,6 +131,9 @@ dmypy.json
 # Root Files
 root_files/
 
+# Auxiliary txt files
+data/txt/
+
 # Library compilation utils
 *.pcm
 *.d
@@ -138,3 +141,6 @@ template_fit/fit_functions
 
 # Personal notebook files
 domande_ruben.txt
+
+# Trash Folder
+trash_folder/

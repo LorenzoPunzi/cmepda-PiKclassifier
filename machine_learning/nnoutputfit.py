@@ -4,7 +4,7 @@ Analyses the output dnn() function in training.py
 
 import numpy as np
 import matplotlib.pyplot as plt
-from machine_learning.training import dnn
+from machine_learning.deepnn import dnn
 from machine_learning.dnn_utils import dnn_settings
 import os
 from sklearn import metrics
