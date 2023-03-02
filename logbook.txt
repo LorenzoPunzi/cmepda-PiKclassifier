@@ -384,11 +384,12 @@ cose sbagliate si cancellano a vicenda.
 INCONTRO RIZZI:
 
 - Va bene quello che abbiamo fatto fin'ora
-- Ha senso la nostra idea di usare un'efficienza dei RICH (sensata, chiedere a qualcuno LHCb) in generazione dei MC per non rendere troppo OP la rete.  
-- Per migliorare la stabilità della rete potremmo provare batch rinormalization, dropout o diminuire il learning rate
 - Come immaginavamo non è per forza un male se la rete produce cose diverse a ogni training, l'idea è che uno a un certo punto lo fissa il training e fa il resto 
+    DA FARE:
+- Ha senso la nostra idea di usare un'efficienza dei RICH (sensata, chiedere a qualcuno LHCb) in generazione dei MC per non rendere troppo OP la rete.  
+- Per migliorare la stabilità della rete potremmo provare batch rinormalization, dropout o diminuire il learning rate X
 - Potremmo fare un boosted decision tree e disegnarne la ROC
-- Potremmo fare con la Mpipi o Mkk una cosa analoga a quanto fatto con la y della rete, un taglo con certa efficienza, e vederne la ROC
+- Potremmo fare con la Mpipi o Mkk una cosa analoga a quanto fatto con la y della rete, un taglo con certa efficienza, e vederne la ROC X
 - Potremmo fare il template fit (a training fissato) delle pdf delle y in uscita dalla rete
 - Per valutare le sistematiche possiamo provare pdf diversi oppure....
 

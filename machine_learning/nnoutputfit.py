@@ -16,7 +16,7 @@ def find_cut(pi_array, k_array, efficiency, specificity_mode=False, inverse_mode
         efficiency = 1-efficiency
     cut = -np.sort(-k_array)[int(efficiency*(len(k_array)-1))
                              ] if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
-    if inverse_mode:  # NOT DRY
+    if inverse_mode:  # !!!! NOT DRY
         misid = (pi_array < cut).sum(
         )/pi_array.size if not specificity_mode else (k_array < cut).sum()/k_array.size
     else:
@@ -84,12 +84,12 @@ if __name__ == '__main__':
     settings = dnn_settings()
     settings.layers = [75, 60, 45, 30, 20]
     settings.batch_size = 128
-    settings.epochnum = 400
+    settings.epochnum = 200
     settings.verbose = 2
-    settings.learning_rate = 5e-5
+    settings.learning_rate = 5e-4
 
     pi_eval, k_eval, data_eval = dnn(
-        ['train_array_prova.txt', 'data_array_prova.txt'], settings)
+        ['train_array_prova_eff.txt', 'data_array_prova.txt'], settings)
     efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)

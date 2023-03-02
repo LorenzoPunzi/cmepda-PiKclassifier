@@ -74,6 +74,7 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
                  color=plot_opt[1], label=plot_opt[2])
         plt.xlabel('y')
         plt.ylabel('Events per 1/300')  # MAKE IT BETTER
+        #plt.yscale('log')
         plt.legend()
         plt.savefig('./fig/predict_'+plotname+'.pdf')
         plt.draw()
@@ -115,7 +116,7 @@ def dnn(txt_names, settings, txt_path='../data/txt', f_print=True):
 
 if __name__ == '__main__':
 
-    input_files = ['train_array_prova.txt', 'data_array_prova.txt']
+    input_files = ['train_array_prova_eff.txt', 'data_array_prova.txt']
 
     settings = dnn_settings()
     settings.layers = [60, 45, 30, 15]

@@ -187,8 +187,8 @@ if __name__ == '__main__':
 
     current_path = os.path.dirname(__file__)
     rel_path = '../root_files'
-    filenames = ['tree_B0PiPi.root',
-                 'tree_B0sKK.root', 'tree_Bhh_data.root']
+    filenames = ['tree_B0PiPi_eff.root',
+                 'tree_B0sKK_eff.root', 'tree_Bhh_data.root']
 
     filepaths = [os.path.join(
         current_path, rel_path, file) for file in filenames]
@@ -205,11 +205,11 @@ if __name__ == '__main__':
             'h2_thetaC1', 'h2_thetaC2')
 
     v_train, v_test = array_generator(filepaths, tree, vars,
-                                      Ntrain=10000, Ndata=1000,
-                                      new_variables=[combinations[0]])
+                                      Ntrain=560000,
+                                      new_variables=[])
 
-    # np.savetxt('txt/train_array_prova.txt', v_train)
-    # np.savetxt('txt/data_array_prova.txt', v_test)
+    np.savetxt('txt/train_array_prova_eff.txt', v_train)
+    #np.savetxt('txt/data_array_prova.txt', v_test)
 
     print(np.shape(v_test))
 

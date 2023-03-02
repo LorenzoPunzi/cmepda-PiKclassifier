@@ -6,7 +6,7 @@ import numpy as np
 from data.import_functions import get_txtpaths
 from sklearn.model_selection import train_test_split
 
-def dectreeclass(txt_names = ['train_array_prova.txt', 'data_array_prova.txt'], txt_path='../data/txt'):
+def dt_classifier(txt_names = ['train_array_prova.txt', 'data_array_prova.txt'], txt_path='../data/txt'):
     """
     """
 
@@ -38,7 +38,7 @@ def dectreeclass(txt_names = ['train_array_prova.txt', 'data_array_prova.txt'], 
 
 if __name__ == '__main__':
 
-    predicted_array, eff, misid = dectreeclass()
+    predicted_array, eff, misid = dt_classifier()
 
     print(f'Efficiency = {eff}')
     print(f'Misidentification probability = {misid}')
