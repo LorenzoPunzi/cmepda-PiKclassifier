@@ -1,7 +1,3 @@
-"""
-Analyses the output dnn() function in training.py
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 from machine_learning.deepnn import dnn
@@ -26,25 +22,6 @@ def find_cut(pi_array, k_array, efficiency, specificity_mode=False, inverse_mode
     # .sum() sums how many True there are in the masked (xx_array>y)
 
     return cut, misid
-
-
-"""
-def roc_homebrew(pi_array, k_array, eff_span=(0.5, 0.95, 50)):
-    rocpnts = [((pi_array > y).sum()/pi_array.size, (k_array
-                > y).sum()/k_array.size) for y in np.linspace(*eff_span)]
-    rocx, rocy = zip(*rocpnts)
-    plt.figure('roc')
-    plt.plot(rocx, rocy)
-    plt.xlabel('False Positive Probability')
-    plt.ylabel('True Positive Probability')
-    plt.xlim(0,1)
-    plt.ylim(0,1)
-    plt.draw()
-    current_path = os.path.dirname(__file__)
-    rel_path = './fig'
-    figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
-    plt.savefig(figurepath)
-"""
 
 
 def roc(pi_array, k_array, inverse_mode=False, makefig=True, eff_line=0):
@@ -79,28 +56,16 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=True, eff_line=0):
     return rocx, rocy, auc
 
 
-if __name__ == '__main__':
+def get_rootpaths(filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root'],rel_path = '../root_files'):
 
-    settings = dnn_settings()
-    settings.layers = [75, 60, 45, 30, 20]
-    settings.batch_size = 128
-    settings.epochnum = 400
-    settings.verbose = 2
-    settings.learning_rate = 5e-5
+    current_path = os.path.dirname(__file__)
+    filepaths = [os.path.join(current_path, rel_path, file)
+                 for file in filenames]
+    return filepaths
 
-    pi_eval, k_eval, data_eval = dnn(
-        ['train_array.txt', 'data_array.txt'], settings)
-    efficiency = 0.95
+def get_txtpaths(filenames=['train_array.txt', 'data_array.txt'], rel_path = '../data/txt'):
 
-    y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
-    plt.axvline(x=y_cut, color='green', label='y cut for '
-                + str(efficiency)+' efficiency')
-    plt.legend()
-    plt.savefig('./fig/ycut.pdf')
-    _, _, _ = roc(pi_eval, k_eval, eff_line=efficiency)
-
-    print(f'y cut is {y_cut} , misid is {misid}')
-    f = ((data_eval > y_cut).sum()/data_eval.size-misid)/(efficiency-misid)
-    print(f'The estimated fraction of K events is {f}')
-
-    plt.show()
+    current_path = os.path.dirname(__file__)
+    filepaths = [os.path.join(current_path, rel_path, file)
+                 for file in filenames]
+    return filepaths

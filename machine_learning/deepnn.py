@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from keras.layers import Dense, Input, Normalization, AlphaDropout
 from keras.models import Model
 from keras.optimizers import Adam
-from machine_learning.dnn_utils import dnn_settings
-from data.import_functions import get_txtpaths
+from utilities.dnn_settings import dnn_settings
+from utilities.utils import find_cut , roc , get_txtpaths
 
 
 def train_dnn(training_set, settings):
@@ -116,16 +116,27 @@ def dnn(txt_names, settings, txt_path='../data/txt', f_print=False):
 
 if __name__ == '__main__':
 
-    input_files = ['train_array.txt', 'data_array.txt']
-
     settings = dnn_settings()
-    settings.layers = [60, 45, 30, 15]
+    settings.layers = [75, 60, 45, 30, 20]
     settings.batch_size = 128
-    settings.epochnum = 200
+    settings.epochnum = 400
     settings.verbose = 2
     settings.batchnorm = False
-    # settings.dropout = 0.005
+    settings.dropout = 0.005
     settings.learning_rate = 5e-5
 
-    pi_eval, K_eval, pred_array = dnn(input_files, settings)
-    # plt.show()
+    pi_eval, k_eval, data_eval = dnn(['train_array.txt', 'data_array.txt'], settings)
+    efficiency = 0.95
+
+    y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
+    plt.axvline(x=y_cut, color='green', label='y cut for '
+                + str(efficiency)+' efficiency')
+    plt.legend()
+    plt.savefig('./fig/ycut.pdf')
+    _, _, _ = roc(pi_eval, k_eval, eff_line=efficiency)
+
+    print(f'y cut is {y_cut} , misid is {misid}')
+    f = ((data_eval > y_cut).sum()/data_eval.size-misid)/(efficiency-misid)
+    print(f'The estimated fraction of K events is {f}')
+
+    plt.show()
