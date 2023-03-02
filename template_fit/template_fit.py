@@ -90,12 +90,12 @@ def fit_templates(dataframes, var, img_name="fig/Fit_data.png",
 
 if __name__ == "__main__":
     current_path = os.path.dirname(__file__)
-    filenames = ['tree_B0PiPi.root',
-                 'tree_B0sKK.root', 'tree_Bhh_data.root']
+    filenames = ['B0PiPi.root',
+                 'B0sKK.root', 'Bhh_data.root']
     rel_path = '../root_files'
     filepaths = [os.path.join(current_path, rel_path, file)
                  for file in filenames]
-    tree = 't_M0pipi;1'
+    tree = 'tree;1'
     var = 'M0_Mpipi'
 
     dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]

@@ -6,7 +6,7 @@ import numpy as np
 from data.import_functions import get_txtpaths
 from sklearn.model_selection import train_test_split
 
-def dt_classifier(txt_names = ['train_array_prova.txt', 'data_array_prova.txt'], txt_path='../data/txt'):
+def dt_classifier(txt_names = ['train_array.txt', 'data_array.txt'], txt_path='../data/txt'):
     """
     """
 

@@ -432,6 +432,22 @@ Fatta un'analisi con 5 neuroni, 400 epoche e lr=5e-5 (eff=0.95):
 	
 
 
+01/03/2023 (Lorenzo e Ruben):
+
+
+
+
+
+02/03/2023 (Lorenzo e Ruben):
+
+
+CODE DA FARE:
+
+- errors
+- tests
+- docs
+- rivedere i !!!
+
 
 
 

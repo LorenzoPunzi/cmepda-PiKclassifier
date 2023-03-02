@@ -84,12 +84,12 @@ if __name__ == '__main__':
     settings = dnn_settings()
     settings.layers = [75, 60, 45, 30, 20]
     settings.batch_size = 128
-    settings.epochnum = 200
+    settings.epochnum = 400
     settings.verbose = 2
-    settings.learning_rate = 5e-4
+    settings.learning_rate = 5e-5
 
     pi_eval, k_eval, data_eval = dnn(
-        ['train_array_prova_eff.txt', 'data_array_prova.txt'], settings)
+        ['train_array.txt', 'data_array.txt'], settings)
     efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)

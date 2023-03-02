@@ -3,37 +3,37 @@
 import ROOT
 import uproot
 import os
-from data.import_functions import loadvars
 import numpy as np
-import matplotlib.pyplot as plt
+import time 
 
-
+t1 = time.time()
 current_path = os.path.dirname(__file__)
 rel_path = 'root_files'
 filenames_in = ['toyMC_B0PiPi.root', 'toyMC_B0sKK.root']
-filenames_out = ['tree_B0PiPi_MC.root', 'tree_B0sKK_MC.root',
-                 'tree_Pi_MC.root', 'tree_K_MC.root', 'tree_Bhh_data.root']
+filenames_out = ['B0PiPi_MC.root', 'B0sKK_MC.root','Bhh_data.root']
 tree = 't_M0pipi;1'
 
-filepaths = [os.path.join(current_path, rel_path, file)
+filepaths_in = [os.path.join(current_path, rel_path, file)
              for file in filenames_in]
-dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]
+dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths_in]
 
-n_evts_mc_pi = dataframes[0].Count().GetValue()
-n_evts_mc_k = dataframes[1].Count().GetValue()
+filepaths_out = [os.path.join(current_path, rel_path, file)
+             for file in filenames_out]
 
-num_MC = 100000  # Number of events in each MC
-num_data = 10000  # Number of data events
+n_evts_toymc_pi = dataframes[0].Count().GetValue()
+n_evts_toymc_k = dataframes[1].Count().GetValue()
 
-f = 0.42  # Fraction of Kaons in data file
+num_MC = 250000  # Number of generated MC events
+num_data = 50000  # Number of generated data events
+
+f = 0.42  # Ideal fraction of Kaons in generated data file
+
 num_species = [int((1-f)*num_data), int(f*num_data)]
 num_pions, num_kaons = num_species
-# num_kaons = int(f*num_data)
-# num_pions = num_data - num_kaons
-print(num_data)
-print(num_pions+num_kaons)
 
-if (n_evts_mc_pi < num_MC + num_pions) or (n_evts_mc_k < num_MC + num_kaons):
+print(f'Actual fraction of Kaons = {num_kaons/num_data}')
+
+if (n_evts_toymc_pi < num_MC + num_pions) or (n_evts_toymc_k < num_MC + num_kaons):
     print("ERROREE")
     pass
 
@@ -44,27 +44,27 @@ vars = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt',
 dataframes[0] = dataframes[0].Define("flag", "0")
 dataframes[1] = dataframes[1].Define("flag", "1")
 
-tmp_df_mc_pi = dataframes[0].Range(num_MC)
-tmp_df_mc_pi.Snapshot("tree_mc", filenames_out[0], vars)
+df_mc_pi = dataframes[0].Range(num_MC) # takes the first num_MC events of the input toyMC files
+df_mc_pi.Snapshot("tree", filepaths_out[0], vars) # creates a .root file with the chosen vars as branches
 
-tmp_df_mc_k = dataframes[1].Range(num_MC)
-tmp_df_mc_k.Snapshot("tree_mc", filenames_out[1], vars)
+df_mc_k = dataframes[1].Range(num_MC)
+df_mc_k.Snapshot("tree", filepaths_out[1], vars)
 
 
-tmp_df_data_pi = dataframes[0].Range(num_MC, num_MC+num_species[0])
+df_data_pi = dataframes[0].Range(num_MC, num_MC+num_species[0]) # takes the rest of the input toyMC to be used as data
 # tmp_df_data_pi.Snapshot("tree_data", filenames_out[2], vars)
 
-tmp_df_data_k = dataframes[1].Range(num_MC, num_MC+num_species[1])
+df_data_k = dataframes[1].Range(num_MC, num_MC+num_species[1])
 # tmp_df_data_k.Snapshot("tree_data", filenames_out[3], vars)
 
 
 var_list = []
 
-file = uproot.recreate("tree_data_prova.root")
+file = uproot.recreate(filepaths_out[2])
 
 for idx in range(len(vars)):
-    v_temp_pi = tmp_df_data_pi.AsNumpy()[vars[idx]]
-    v_temp_k = tmp_df_data_k.AsNumpy()[vars[idx]]
+    v_temp_pi = df_data_pi.AsNumpy()[vars[idx]]
+    v_temp_k = df_data_k.AsNumpy()[vars[idx]]
     v_temp = np.concatenate((v_temp_pi, v_temp_k), axis=0)
     var_list.append(v_temp)
 
@@ -74,8 +74,8 @@ print(np.shape(var_array))
 np.random.shuffle(var_array)
 
 var_dictionary = {}
-for idx in range(len(vars)):
-    var_dictionary.update({vars[idx]: var_array[:, idx]})
+for idx in range(len(vars)-1):
+    var_dictionary.update({vars[idx]: var_array[:, idx]}) # !!! Could be made more DRY since it's the same as AsNumpy() above ?
 
 file["tree"] = var_dictionary
 
@@ -88,45 +88,6 @@ plt.savefig("prova.png")
 file["tree"].show()
 file["tree"].close()
 
+t2 = time.time()
 
-'''
-v1 = dataframes[0].Range(num_MC).AsNumpy()["flag"]
-print(v1)
-v2 = dataframes[1].Range(num_MC).AsNumpy()["flag"]
-print(v2)
-
-vec = np.concatenate((v1, v2), axis=0)
-vec = vec[99990:100010]
-print(type(vec))
-print(vec)
-
-
-# v1, v2 = loadvars(filenames_out[2], filenames_out[3],
-#                   "tree_data", vars, flag_column=False)
-
-
-v = np.concatenate((v1, v2), axis=0)
-np.random.shuffle(v)
-
-
-'''
-
-'''
-
-
-t.Fill()
-t.Write()
-f.Close()
-
-
-
-
-for idx in range(len(vars)):
-    var_dictionary.update({vars[idx]: v[:, idx]})
-
-v_prova = dataframes[0].Range(num_MC, num_MC+num_species[0]).AsNumpy()
-
-
-
-
-'''
+print(f'Time elapsed = {t2-t1} s')

@@ -117,7 +117,6 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
     for_training, for_testing: bool
         Option that selects which dataset has to be created
     """
-    print(len(filepaths))
     if (for_training and for_testing):
         filepath_pi, filepath_k, filepath_data = filepaths
     elif (len(filepaths) == 2 and for_training):
@@ -142,12 +141,10 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
             train_array = np.concatenate(
                 (v_mc_pi[:int(Ntrain/2), :], v_mc_k[:int(Ntrain/2), :]), axis=0)
             np.random.shuffle(train_array)
-            print(train_array.shape)
         if for_testing:
             v_data, _ = loadvars(filepath_data, filepath_data, tree, vars,
                                  flag_column=False)  # Non mette la flag alla fine perché sono dati
             test_array = v_data[:Ndata, :]
-            print(test_array.shape)
 
     # If a mixing is requested, both the training and the testing arrays are
     # modified, with obviously the same mixing
@@ -167,14 +164,14 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
     return train_array, test_array
 
 
-def get_rootpaths(filenames=['tree_B0PiPi.root', 'tree_B0sKK.root', 'tree_Bhh_data.root'],rel_path = '../root_files'):
+def get_rootpaths(filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root'],rel_path = '../root_files'):
 
     current_path = os.path.dirname(__file__)
     filepaths = [os.path.join(current_path, rel_path, file)
                  for file in filenames]
     return filepaths
 
-def get_txtpaths(filenames=['train_array_prova.txt', 'data_array_prova.txt'], rel_path = '../data/txt'):
+def get_txtpaths(filenames=['train_array.txt', 'data_array.txt'], rel_path = '../data/txt'):
 
     current_path = os.path.dirname(__file__)
     filepaths = [os.path.join(current_path, rel_path, file)
@@ -187,8 +184,8 @@ if __name__ == '__main__':
 
     current_path = os.path.dirname(__file__)
     rel_path = '../root_files'
-    filenames = ['tree_B0PiPi_eff.root',
-                 'tree_B0sKK_eff.root', 'tree_Bhh_data.root']
+    filenames = ['B0PiPi_MC.root',
+                 'B0sKK_MC.root', 'Bhh_data.root']
 
     filepaths = [os.path.join(
         current_path, rel_path, file) for file in filenames]
@@ -198,8 +195,7 @@ if __name__ == '__main__':
     combinations = [('M0_MKpi', 'M0_MpiK'), ('M0_MKK', 'M0_p'), ('M0_Mpipi', 'M0_p'),
                     ('M0_MKK', 'M0_MpiK'), ('M0_Mpipi', 'M0_MKpi')]
 
-    print(len(filepaths))
-    tree = 't_M0pipi;1'
+    tree = 'tree;1'
     vars = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt',
             'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0',
             'h2_thetaC1', 'h2_thetaC2')
@@ -208,10 +204,9 @@ if __name__ == '__main__':
                                       Ntrain=560000,
                                       new_variables=[])
 
-    np.savetxt('txt/train_array_prova_eff.txt', v_train)
-    #np.savetxt('txt/data_array_prova.txt', v_test)
+    np.savetxt('txt/train_array.txt', v_train)
+    np.savetxt('txt/data_array.txt', v_test)
 
-    print(np.shape(v_test))
 
     t2 = time.time()
 
