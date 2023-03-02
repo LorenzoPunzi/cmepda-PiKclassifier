@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # Root Files
-root_files/
+data/root_files/
 
 # Auxiliary txt files
 data/txt/

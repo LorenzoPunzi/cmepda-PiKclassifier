@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from machine_learning.deepnn import dnn
-from machine_learning.dnn_utils import dnn_settings
 import os
 from sklearn import metrics
 
@@ -56,7 +54,7 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=True, eff_line=0):
     return rocx, rocy, auc
 
 
-def get_rootpaths(filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root'],rel_path = '../root_files'):
+def get_rootpaths(filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root'],rel_path = '../data/root_files'):
 
     current_path = os.path.dirname(__file__)
     filepaths = [os.path.join(current_path, rel_path, file)

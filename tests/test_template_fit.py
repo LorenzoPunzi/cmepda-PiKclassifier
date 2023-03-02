@@ -23,7 +23,7 @@ class TestTemplateFit(unittest.TestCase):
         print('Running only_pions test')
         res = fit_templates([df_pi, df_k, df_pi], var, LowLim=5.02, UpLim=5.42)
         estim_f = round(res.Parameters()[1], 2)
-        self.assertAlmostEqual(estim_f, 0)
+        self.assertAlmostEqual(estim_f, 0) # !!!! Update with delta
 
     def test_onlykaons(self):
         """
@@ -31,7 +31,7 @@ class TestTemplateFit(unittest.TestCase):
         print('Running only_kaons test')
         res = fit_templates([df_pi, df_k, df_k], var, LowLim=5.02, UpLim=5.42)
         estim_f = round(res.Parameters()[1], 2)
-        self.assertAlmostEqual(estim_f, 1)
+        self.assertAlmostEqual(estim_f, 1) # !!!! Update with delta
 
 
 if __name__ == '__main__':

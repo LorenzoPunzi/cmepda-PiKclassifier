@@ -453,6 +453,8 @@ COSE DA FARE:
 - rivedere i !!!!
 - parser
 - relative path for get_xxx functions
+- upgrade dtc
+
 
 
 

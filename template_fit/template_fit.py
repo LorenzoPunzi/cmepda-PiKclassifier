@@ -5,9 +5,9 @@ population present in the dataset Bhh_data.root
 
 import time
 import ROOT
-import os
 import numpy as np
 from template_functions import DoubleGaussian, GaussJohnson
+from utilities.utils import get_rootpaths
 
 
 def fit_on_montecarlo(df, var, fitfunc, img_name="template.png", Nbins=1000,
@@ -41,13 +41,13 @@ def fit_on_montecarlo(df, var, fitfunc, img_name="template.png", Nbins=1000,
     return exit_pars
 
 
-def fit_templates(dataframes, var, img_name="fig/Fit_data.png",
+def fit_templates(filepaths, var, img_name="fig/Fit_data.png",
                   Nbins=1000, LowLim=5.02, UpLim=5.42,
                   h_name="M0_MPiPi", h_title="M_pipi distribution (data)",
                   savefigs=[False, False, False]):
     """
     """
-    df_mc1, df_mc2, df_data = dataframes
+    df_mc1, df_mc2, df_data = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]
 
     templ_pars_pi = fit_on_montecarlo(df_mc1, var, DoubleGaussian(5.02, 5.42),
                                       img_name='fig/template_fit_pi.png',
@@ -89,18 +89,12 @@ def fit_templates(dataframes, var, img_name="fig/Fit_data.png",
 
 
 if __name__ == "__main__":
-    current_path = os.path.dirname(__file__)
-    filenames = ['B0PiPi.root',
-                 'B0sKK.root', 'Bhh_data.root']
-    rel_path = '../root_files'
-    filepaths = [os.path.join(current_path, rel_path, file)
-                 for file in filenames]
+
+    filepaths = get_rootpaths()
     tree = 'tree;1'
     var = 'M0_Mpipi'
 
-    dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]
-
-    results = fit_templates(dataframes, var)
+    results = fit_templates(filepaths, var)
 
     print(" ")
     print(

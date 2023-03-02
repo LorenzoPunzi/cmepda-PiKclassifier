@@ -8,8 +8,8 @@ import time
 import ROOT
 import uproot
 import numpy as np
-import matplotlib.pyplot as plt
-from data.merge_variables import mergevar
+from utilities.merge_variables import mergevar
+from utilities.utils import get_rootpaths
 
 
 def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
@@ -169,13 +169,7 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
 if __name__ == '__main__':
     t1 = time.time()
 
-    current_path = os.path.dirname(__file__)
-    rel_path = '../root_files'
-    filenames = ['B0PiPi_MC.root',
-                 'B0sKK_MC.root', 'Bhh_data.root']
-
-    filepaths = [os.path.join(
-        current_path, rel_path, file) for file in filenames]
+    filepaths = get_rootpaths()
 
     file_pi, file_k, file_data = filepaths
 
