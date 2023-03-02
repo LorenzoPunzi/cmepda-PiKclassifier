@@ -5,7 +5,7 @@ Tests some functions inside import_functions.py
 import unittest
 import numpy as np
 import matplotlib.pyplot as plt
-from data.import_functions import loadvars, include_merged_variables
+from utilities.import_datasets import loadvars, include_merged_variables
 import os
 
 

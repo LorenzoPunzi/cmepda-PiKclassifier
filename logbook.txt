@@ -447,13 +447,14 @@ Cam
 
 COSE DA FARE:
 
-- exceptions
-- tests
-- docs
+- exceptions (lorenzo)
+- tests (lorenzo+ruben)
+- docs (lorenzo+ruben)
 - rivedere i !!!!
-- parser
-- relative path for get_xxx functions
-- upgrade dtc
+- parser/main (insieme)
+- relative path for get_xxx functions (insieme)
+- upgrade dtc (Lorenzo)
+- CI (ruben)
 
 
 
