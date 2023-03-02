@@ -3,7 +3,7 @@ Estimates f using a cut on Mhh only
 """
 import numpy as np
 from matplotlib import pyplot as plt
-from utilities.utils import get_rootpaths , find_cut , roc
+from utilities.utils import default_rootpaths , find_cut , roc
 from utilities.import_datasets import loadvars
 
 def var_cut(tree = 'tree;1', cut_var = 'M0_Mpipi', efficiency = 0.95, filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root'], inverse_mode = False, specificity_mode = False, draw_roc = True):
@@ -11,7 +11,7 @@ def var_cut(tree = 'tree;1', cut_var = 'M0_Mpipi', efficiency = 0.95, filenames=
     """
 
     eff = efficiency
-    filepath_pi, filepath_k, filepath_data = get_rootpaths(filenames)
+    filepath_pi, filepath_k, filepath_data = default_rootpaths(filenames)
     M_pi, M_k = loadvars(filepath_pi, filepath_k, tree, [cut_var], flag_column=False)
 
     mcut, misid = find_cut(M_pi, M_k, eff,inverse_mode=inverse_mode, specificity_mode=specificity_mode)

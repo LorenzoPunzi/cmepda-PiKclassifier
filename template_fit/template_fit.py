@@ -7,7 +7,7 @@ import time
 import ROOT
 import numpy as np
 from template_functions import DoubleGaussian, GaussJohnson
-from utilities.utils import get_rootpaths
+from utilities.utils import default_rootpaths
 
 
 def fit_on_montecarlo(df, var, fitfunc, img_name="template.png", Nbins=1000,
@@ -90,7 +90,7 @@ def fit_templates(filepaths, var, img_name="fig/Fit_data.png",
 
 if __name__ == "__main__":
 
-    filepaths = get_rootpaths()
+    filepaths = default_rootpaths()
     tree = 'tree;1'
     var = 'M0_Mpipi'
 

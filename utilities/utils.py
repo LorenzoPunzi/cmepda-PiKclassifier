@@ -54,16 +54,20 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=True, eff_line=0):
     return rocx, rocy, auc
 
 
-def get_rootpaths(filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root'],rel_path = '../data/root_files'):
+def default_rootpaths():
 
     current_path = os.path.dirname(__file__)
+    rel_path = '../data/root_files'
+    filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root']
     filepaths = [os.path.join(current_path, rel_path, file)
                  for file in filenames]
     return filepaths
 
-def get_txtpaths(filenames=['train_array.txt', 'data_array.txt'], rel_path = '../data/txt'):
+def default_txtpaths():
 
     current_path = os.path.dirname(__file__)
+    rel_path = '../data/txt'
+    filenames=['train_array.txt', 'data_array.txt']
     filepaths = [os.path.join(current_path, rel_path, file)
                  for file in filenames]
     return filepaths

@@ -9,7 +9,7 @@ import ROOT
 import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
-from utilities.utils import get_rootpaths
+from utilities.utils import default_rootpaths
 
 
 def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
@@ -169,7 +169,7 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
 if __name__ == '__main__':
     t1 = time.time()
 
-    filepaths = get_rootpaths()
+    filepaths = default_rootpaths()
 
     file_pi, file_k, file_data = filepaths
 

@@ -4,7 +4,7 @@
 from sklearn import tree
 import numpy as np
 from sklearn.model_selection import train_test_split
-from utilities.utils import get_txtpaths
+from utilities.utils import default_txtpaths
 
 def dt_classifier(txt_names = ['train_array.txt', 'data_array.txt'], txt_path='../data/txt'):
     """
@@ -13,7 +13,7 @@ def dt_classifier(txt_names = ['train_array.txt', 'data_array.txt'], txt_path='.
     # Perché questo lavoro con le directories si fa qua e non nel main? Risulta
     # necessario o comodo per qualcosa di specifico?
 
-    mc_array_path, data_array_path = get_txtpaths(filenames=txt_names, rel_path=txt_path)
+    mc_array_path, data_array_path = default_txtpaths(filenames=txt_names, rel_path=txt_path)
 
     mc_set , data_set = np.loadtxt(mc_array_path), np.loadtxt(data_array_path)
 

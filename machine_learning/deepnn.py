@@ -10,7 +10,7 @@ from keras.layers import Dense, Input, Normalization, AlphaDropout
 from keras.models import Model
 from keras.optimizers import Adam
 from utilities.dnn_settings import dnn_settings
-from utilities.utils import find_cut , roc , get_txtpaths
+from utilities.utils import find_cut , roc , default_txtpaths
 
 
 def train_dnn(training_set, settings):
@@ -86,7 +86,8 @@ def dnn(txt_names, settings, txt_path='../data/txt', f_print=False):
     """
     """
     print(settings.layers)
-    train_array_path, data_array_path = get_txtpaths(
+    train_array_path, data_array_path = default_txtpaths
+(
         filenames=txt_names, rel_path=txt_path)
 
     training_set = np.loadtxt(train_array_path)
