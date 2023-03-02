@@ -3,8 +3,8 @@
 """
 from sklearn import tree
 import numpy as np
-from data.import_functions import get_txtpaths
 from sklearn.model_selection import train_test_split
+from utilities.utils import get_txtpaths
 
 def dt_classifier(txt_names = ['train_array.txt', 'data_array.txt'], txt_path='../data/txt'):
     """

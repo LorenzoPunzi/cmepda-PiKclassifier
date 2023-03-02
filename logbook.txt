@@ -452,6 +452,7 @@ COSE DA FARE:
 - docs
 - rivedere i !!!!
 - parser
+- relative path for get_xxx functions
 
 
 
