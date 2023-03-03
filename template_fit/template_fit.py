@@ -3,7 +3,6 @@ Module that performs an estimate of the fraction f of kaons in the mixed pi-k
 population present in the dataset Bhh_data.root
 """
 
-import time
 import ROOT
 import numpy as np
 from template_functions import DoubleGaussian, GaussJohnson

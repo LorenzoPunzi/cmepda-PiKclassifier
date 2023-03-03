@@ -58,9 +58,9 @@ def default_rootpaths():
 
     current_path = os.path.dirname(__file__)
     rel_path = '../data/root_files'
-    filenames=['B0PiPi.root', 'B0sKK.root', 'Bhh_data.root']
-    filepaths = [os.path.join(current_path, rel_path, file)
-                 for file in filenames]
+    filenames=['B0PiPi_MC.root', 'B0sKK_MC.root', 'Bhh_data.root']
+    filepaths = tuple([os.path.join(current_path, rel_path, file)
+                 for file in filenames])
     return filepaths
 
 def default_txtpaths():
@@ -68,6 +68,9 @@ def default_txtpaths():
     current_path = os.path.dirname(__file__)
     rel_path = '../data/txt'
     filenames=['train_array.txt', 'data_array.txt']
-    filepaths = [os.path.join(current_path, rel_path, file)
-                 for file in filenames]
+    filepaths = tuple([os.path.join(current_path, rel_path, file)
+                 for file in filenames])
     return filepaths
+
+def default_vars():
+    return ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt','M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0','h2_thetaC1', 'h2_thetaC2')

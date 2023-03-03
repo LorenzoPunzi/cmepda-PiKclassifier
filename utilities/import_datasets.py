@@ -9,7 +9,7 @@ import ROOT
 import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
-from utilities.utils import default_rootpaths
+from utilities.utils import default_rootpaths , default_vars
 
 
 def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
@@ -59,7 +59,7 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
     return v_pi, v_k
 
 
-def include_merged_variables(filepaths, tree, initial_arrays, new_variables):
+def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     """
     """
 
@@ -77,7 +77,7 @@ def include_merged_variables(filepaths, tree, initial_arrays, new_variables):
 
     for newvars in new_variables:
         merged_arrays, m, KS_stats = mergevar(
-            filepaths, tree, newvars, savefig=False, savetxt=False)
+            rootpaths, tree, newvars, savefig=False, savetxt=False)
         list_pi.append(merged_arrays[0][:length])
         list_k.append(merged_arrays[1][:length])
         list_data.append(merged_arrays[2])
@@ -97,7 +97,7 @@ def include_merged_variables(filepaths, tree, initial_arrays, new_variables):
     return new_arrays
 
 
-def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
+def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
                     for_training=True, for_testing=True, new_variables=[]):
     """
     Generates arrays for ML treatment (training and testing) and saves them in
@@ -105,24 +105,24 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
 
     Parameters
     ----------
-    filepaths: list of strings
+    rootpaths: list of strings
         Paths of tree files that are used. By default, it must contain the MC
         file for Pi and K and the file of mixed data (in this order)
     tree: string
         Name of the TTree in the files
     *vars: string
         Names of variables included in the analysis
-    Ntrain, Ndata: int
+    n_mc, n_data: int
         Number of total events requested for training and for testing
     for_training, for_testing: bool
         Option that selects which dataset has to be created
     """
     if (for_training and for_testing):
-        filepath_pi, filepath_k, filepath_data = filepaths
-    elif (len(filepaths) == 2 and for_training):
-        filepath_pi, filepath_k = filepaths
-    elif (len(filepaths) == 1 and for_testing):
-        filepath_data = filepaths[0]
+        filepath_pi, filepath_k, filepath_data = rootpaths
+    elif (len(rootpaths) == 2 and for_training):
+        filepath_pi, filepath_k = rootpaths
+    elif (len(rootpaths) == 1 and for_testing):
+        filepath_data = rootpaths[0]
     else:
         print('Errore nell istanziamento di array_generator()')
         pass
@@ -139,25 +139,25 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
         if for_training:
             v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k, tree, vars)
             train_array = np.concatenate(
-                (v_mc_pi[:int(Ntrain/2), :], v_mc_k[:int(Ntrain/2), :]), axis=0)
+                (v_mc_pi[:int(n_mc/2), :], v_mc_k[:int(n_mc/2), :]), axis=0)
             np.random.shuffle(train_array)
         if for_testing:
             v_data, _ = loadvars(filepath_data, filepath_data, tree, vars,
                                  flag_column=False)  # Non mette la flag alla fine perché sono dati
-            test_array = v_data[:Ndata, :]
+            test_array = v_data[:n_data, :]
 
     # If a mixing is requested, both the training and the testing arrays are
     # modified, with obviously the same mixing
-    elif new_variables and len(filepaths) == 3:
+    elif new_variables and len(rootpaths) == 3:
         v1, v2 = loadvars(filepath_pi, filepath_k, tree, vars)
         v_data, _ = loadvars(filepath_data, filepath_data,
                              tree, vars, flag_column=False)
         initial_arrays = [v1, v2, v_data]
         [v_mc_pi, v_mc_k, v_data_new] = include_merged_variables(
-            filepaths, tree, initial_arrays, new_variables)
+            rootpaths, tree, initial_arrays, new_variables)
         train_array = np.concatenate(
-            (v_mc_pi[:int(Ntrain/2), :], v_mc_k[:int(Ntrain/2), :]), axis=0)
-        test_array = v_data_new[:Ndata, :]
+            (v_mc_pi[:int(n_mc/2), :], v_mc_k[:int(n_mc/2), :]), axis=0)
+        test_array = v_data_new[:n_data, :]
     else:
         pass
 
@@ -169,24 +169,21 @@ def array_generator(filepaths, tree, vars, Ntrain=100000, Ndata=15000,
 if __name__ == '__main__':
     t1 = time.time()
 
-    filepaths = default_rootpaths()
+    rootpaths = default_rootpaths()
 
-    file_pi, file_k, file_data = filepaths
+    file_pi, file_k, file_data = rootpaths
 
     combinations = [('M0_MKpi', 'M0_MpiK'), ('M0_MKK', 'M0_p'), ('M0_Mpipi', 'M0_p'),
                     ('M0_MKK', 'M0_MpiK'), ('M0_Mpipi', 'M0_MKpi')]
 
     tree = 'tree;1'
-    vars = ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt',
-            'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0',
-            'h2_thetaC1', 'h2_thetaC2')
 
-    v_train, v_test = array_generator(filepaths, tree, vars,
-                                      Ntrain=560000,
+    v_train, v_test = array_generator(rootpaths, tree, vars = default_vars(),
+                                      n_mc=560000,
                                       new_variables=[])
 
-    np.savetxt('txt/train_array.txt', v_train)
-    np.savetxt('txt/data_array.txt', v_test)
+    #np.savetxt('txt/train_array.txt', v_train)
+    #np.savetxt('txt/data_array.txt', v_test)
 
 
     t2 = time.time()

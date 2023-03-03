@@ -86,9 +86,7 @@ def dnn(txt_names, settings, txt_path='../data/txt', f_print=False):
     """
     """
     print(settings.layers)
-    train_array_path, data_array_path = default_txtpaths
-(
-        filenames=txt_names, rel_path=txt_path)
+    train_array_path, data_array_path = default_txtpaths()
 
     training_set = np.loadtxt(train_array_path)
     pi_set = np.array([training_set[i, :] for i in range(
