@@ -434,14 +434,34 @@ Fatta un'analisi con 5 neuroni, 400 epoche e lr=5e-5 (eff=0.95):
 
 01/03/2023 (Lorenzo e Ruben):
 
+Abbiamo aggiunto requirements.txt con pip .... tenendo solo i pacchetti che ci sembra di aver usato, manca ROOT !!!
 
-Cambiato training.py --> deepnn.py
-Creato utilities che ha tutta una serie di funzioni prese in giro da script preesistenti
+Abbiamo generato nuovi array di MC con efficienze dei RICH (cambiando toy_Bgen.C) a 0.95 per ora, e fortunatamente non sono scomparsi i picchi a 0 e 1 rispettivi in templ_eval della nn
+
 
 
 02/03/2023 (Lorenzo e Ruben):
 
-Cam
+Cambiato training.py --> deepnn.py
+Creato utilities che ha tutta una serie di funzioni prese in giro da script preesistenti, che abbiamo eliminato se non più necessari 
+import_functions.py --> import_datasets.py
+
+Abbiamo fatto un sacco di pulizia in generale oltre a rivedere e correggere il generate_datasets.py
+
+02/03/2023 (Lorenzo):
+generate_datasets.py-->gen_from_toy.py
+
+Ho cmabiato il dtc(), dandole molto più opzioni così che la funzione possa buildare sia da path root dati sia da path txt dati. Di default prende train_array.txt dato che è più veloce.
+
+Ho aggiunto anche l'opzione di far stampare su un txt il tree generato dal classificatore, perché la figura veniva impossibile da displayare, troppo grossa, pesante e con troppi branches illeggibili.
+
+Ho cambiato varie liste a giro (in particolare i rootpaths e quindi quello che resituisce default_rootpaths) con delle tuples, che sono più space e più time efficient. Bisognerebbe farlo in generale ove possibile credo !!!!
+
+03/03/2023 (Lorenzo):
+
+Ho pensato che il problema di loadare roba con relative paths... non è un problema after all, perché alla fine serve solo per chiamare poi funzioni come uproot.xx o np.loadtxt, che GIA funzionano bene se gli da un path relativo alla certella da cui vuoi importare il module: ho provato questa cosa chiamando array_generator da una python shell in root_files e dandogli a mano i path dei root_files (che qui non hanno ../data/root_files/xxx) e sure enough funziona perfettamente!
+
+Ho provato a variare il decision tree, creando anche un REGRESSOR oltre che un classifier, provando a trattare la y come una FEATURE e non una flag (unsupervised invece che supervised). Soo che così impara TROPPO bene e quindi mi sputa in uscita per il "validation" sample che ci creiamo solo 0 o 1, non azzeccandoci sempre ma non è quello il punto, il punto è che non sputa fuori uno spettro tra 0 e 1 per le due specie come deepnn come avevo sperato. Quindi nisba.
 
 
 
@@ -452,7 +472,7 @@ COSE DA FARE:
 - docs (lorenzo+ruben)
 - rivedere i !!!!
 - parser/main (insieme)
-- relative path for get_xxx functions (insieme)
+- relative path for get_xxx functions (insieme) x
 - upgrade dtc (Lorenzo)
 - CI (ruben)
 

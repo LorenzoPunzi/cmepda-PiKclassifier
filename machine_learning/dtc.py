@@ -8,8 +8,7 @@ from sklearn.model_selection import train_test_split
 from utilities.utils import default_txtpaths , default_vars
 from utilities.import_datasets import array_generator
 
-
-def dt_classifier(source = ('txt', default_txtpaths()), n_mc = 560000, n_data = 50000, root_tree = 'tree;1', vars = default_vars(), print_tree = 'printed_dtc', test_size = 0.3):
+def dt_classifier(source = ('txt', default_txtpaths()), n_mc = 560000, n_data = 50000, root_tree = 'tree;1', vars = default_vars(), print_tree = 'printed_dtc', test_size = 0.3 , min_leaf_samp = 1, crit = 'gini'):
     """
     """
     # Perché questo lavoro con le directories si fa qua e non nel main? Risulta
@@ -23,12 +22,17 @@ def dt_classifier(source = ('txt', default_txtpaths()), n_mc = 560000, n_data = 
         print('ERROR: invalid source for dt_classifier')
     
 
-    dtc = tree.DecisionTreeClassifier()
+    dtc = tree.DecisionTreeClassifier(criterion = crit, min_samples_leaf=min_leaf_samp)
 
     X_train, X_test, y_train, y_test = train_test_split(mc_set[:,:-1], mc_set[:,-1], test_size=test_size, random_state=1)
     dtc = dtc.fit(X_train, y_train)
 
-    
+    n_nodes = dtc.tree_.node_count
+    max_depth = dtc.tree_.max_depth
+
+    print(f'Number of nodes = {n_nodes}')
+    print(f'Max depth = {max_depth}')
+
 
     pi_test = np.array([X_test[i, :] for i in range(
         np.shape(X_test)[0]) if y_test[i] == 0])
@@ -43,13 +47,32 @@ def dt_classifier(source = ('txt', default_txtpaths()), n_mc = 560000, n_data = 
     if print_tree:
         tree_diagram = tree.export_text(dtc, feature_names = vars)
         file = open(print_tree + '.txt', 'w')
+        file.write(f'Number of nodes = {n_nodes} \n')
+        file.write(f'Max depth = {max_depth} \n \n')
         file.write(tree_diagram)
         file.close()
-    
-
-    #tree.plot_tree(dtc)
 
     return pred_array, efficiency, misid
+    
+"""
+    dtr = tree.DecisionTreeRegressor()
+    dtr = dtr.fit(X_train, y_train)
+
+    r_pred_array, r_pi_eval, r_K_eval = dtr.predict(data_set), dtr.predict(pi_test), dtr.predict(K_test)
+
+    r_efficiency = (r_K_eval == 1).sum()/r_K_eval.size
+    r_misid = (r_pi_eval == 1).sum()/r_pi_eval.size
+
+    print(f'Regressor Efficiency = {r_efficiency}')
+    print(f'Regressor Misidentification probability = {r_misid}')
+    print(f'The Regressor predicted K fraction is : {r_pred_array.sum()/len(r_pred_array)}')
+
+    plt.hist(r_K_eval,bins=3000,histtype='step', color='blue')
+    plt.hist(r_pi_eval,bins=3000,histtype='step',color = 'red')
+
+"""
+
+    
 
 if __name__ == '__main__':
 
@@ -59,5 +82,5 @@ if __name__ == '__main__':
     print(f'Misidentification probability = {misid}')
     print(f'The predicted K fraction is : {predicted_array.sum()/len(predicted_array)}')
 
-    #plt.show()
+    plt.show()
 
