@@ -10,7 +10,9 @@ from keras.layers import Dense, Input, Normalization, AlphaDropout
 from keras.models import Model
 from keras.optimizers import Adam
 from utilities.dnn_settings import dnn_settings
-from utilities.utils import find_cut , roc , default_txtpaths
+from utilities.utils import find_cut , roc , default_txtpaths, plot_rocs
+from var_cut.var_cut import var_cut
+from machine_learning.dtc import dt_classifier
 
 
 def train_dnn(training_set, settings):
@@ -56,7 +58,6 @@ def train_dnn(training_set, settings):
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
         plt.savefig(os.path.join('fig', "epochs.pdf"))
-        plt.show()
 
     return deepnn
 
@@ -82,11 +83,11 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
     return prediction_array
 
 
-def dnn(txt_names, settings, txt_path='../data/txt', f_print=False):
+def dnn(settings, txtpaths=default_txtpaths(), f_print=False):
     """
     """
     print(settings.layers)
-    train_array_path, data_array_path = default_txtpaths()
+    train_array_path, data_array_path = txtpaths
 
     training_set = np.loadtxt(train_array_path)
     pi_set = np.array([training_set[i, :] for i in range(
@@ -118,24 +119,36 @@ if __name__ == '__main__':
     settings = dnn_settings()
     settings.layers = [75, 60, 45, 30, 20]
     settings.batch_size = 128
-    settings.epochnum = 400
+    settings.epochnum = 10
     settings.verbose = 2
     settings.batchnorm = False
     settings.dropout = 0.005
-    settings.learning_rate = 5e-5
+    settings.learning_rate = 5e-4
+    settings.showhistory =False
 
-    pi_eval, k_eval, data_eval = dnn(['train_array.txt', 'data_array.txt'], settings)
+    pi_eval, k_eval, data_eval = dnn(settings)
     efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
     plt.axvline(x=y_cut, color='green', label='y cut for '
                 + str(efficiency)+' efficiency')
     plt.legend()
-    plt.savefig('./fig/ycut.pdf')
-    _, _, _ = roc(pi_eval, k_eval, eff_line=efficiency)
+    plt.savefig('fig/ycut.pdf')
+
+
+    rocdnnx, rocdnny, aucdnn = roc(pi_eval, k_eval, eff_line=efficiency, makefig=False)
+    _, rocvarcutx, rocvarcuty, aucvarcut = var_cut(drawfig=False, draw_roc=False)
+    _, dtcy, dtcx = dt_classifier(print_tree='')
+
+    print(dtcx,dtcy)
+
+
+    plot_rocs(rocx_array=[rocdnnx,rocvarcutx],rocy_array=[rocdnny,rocvarcuty],auc_array=[aucdnn,aucvarcut],inverse_mode_array=(False,True),roc_labels=('deep nn','cut on M0_Mpipi'),roc_linestyles=('-','-'),roc_colors=('red','green'),x_pnts=(dtcx,),y_pnts=(dtcy,),point_labels=('decision tree classifier',))
 
     print(f'y cut is {y_cut} , misid is {misid}')
     f = ((data_eval > y_cut).sum()/data_eval.size-misid)/(efficiency-misid)
     print(f'The estimated fraction of K events is {f}')
+    
+
 
     plt.show()

@@ -6,7 +6,7 @@ to show which features have different distribution in the two cases
 import numpy as np
 import corner
 from matplotlib import pyplot as plt
-from import_functions import loadvars
+from utilities.import_datasets import loadvars
 import sys
 
 
