@@ -4,8 +4,38 @@ import os
 from sklearn import metrics
 
 
-def find_cut(pi_array, k_array, efficiency, specificity_mode=False, inverse_mode=False):
+def default_rootpaths():
+    """
+    """
+    current_path = os.path.dirname(__file__)
+    rel_path = '../data/root_files'
+    rootnames = ['B0PiPi_MC.root', 'B0sKK_MC.root', 'Bhh_data.root']
+    rootpaths = tuple([os.path.join(current_path, rel_path, file)
+                       for file in rootnames])
+    return rootpaths
 
+
+def default_txtpaths():
+    """
+    """
+    current_path = os.path.dirname(__file__)
+    rel_path = '../data/txt'
+    txtnames = ['train_array.txt', 'data_array.txt']
+    txtpaths = tuple([os.path.join(current_path, rel_path, file)
+                      for file in txtnames])
+    return txtpaths
+
+
+def default_vars():
+    return ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt',
+            'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2',
+            'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2')
+
+
+def find_cut(pi_array, k_array, efficiency,
+             specificity_mode=False, inverse_mode=False):
+    """
+    """
     if inverse_mode:
         efficiency = 1-efficiency
     cut = -np.sort(-k_array)[int(efficiency*(len(k_array)-1))
@@ -23,6 +53,8 @@ def find_cut(pi_array, k_array, efficiency, specificity_mode=False, inverse_mode
 
 
 def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff_line=0):
+    """
+    """
     true_array = np.concatenate(
         (np.zeros(pi_array.size), np.ones(k_array.size)))
     y_array = np.concatenate((pi_array, k_array))
@@ -53,8 +85,12 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff_line=0):
 
     return rocx, rocy, auc
 
-def plot_rocs(rocx_array, rocy_array, auc_array, inverse_mode_array, roc_labels, roc_linestyles, roc_colors, x_pnts = (), y_pnts = (), point_labels = (''), figuretitle = 'ROC', figname='roc'):
 
+def plot_rocs(rocx_array, rocy_array, auc_array, inverse_mode_array,
+              roc_labels, roc_linestyles, roc_colors, x_pnts=(), y_pnts=(),
+              point_labels=(''), figuretitle='ROC', figname='roc'):
+    """
+    """
     plt.figure(figuretitle)
     plt.xlabel('False Positive Probability')
     plt.xlim(0, 1)
@@ -62,36 +98,16 @@ def plot_rocs(rocx_array, rocy_array, auc_array, inverse_mode_array, roc_labels,
     plt.ylim(0, 1)
     for idx in range(len(rocx_array)):
         if inverse_mode_array[idx]:
-            rocx_array[idx], rocy_array[idx] = np.ones(rocx_array[idx].size)-rocx_array[idx], np.ones(rocy_array[idx].size)-rocy_array[idx]
+            rocx_array[idx], rocy_array[idx] = np.ones(
+                rocx_array[idx].size)-rocx_array[idx], np.ones(rocy_array[idx].size)-rocy_array[idx]
             auc_array[idx] = 1-auc_array[idx]
-        plt.plot(rocx_array[idx], rocy_array[idx], label=roc_labels[idx], color=roc_colors[idx], linestyle=roc_linestyles[idx])
+        plt.plot(rocx_array[idx], rocy_array[idx], label=roc_labels[idx],
+                 color=roc_colors[idx], linestyle=roc_linestyles[idx])
     for idx in range(len(x_pnts)):
-        plt.plot((x_pnts[idx]),(y_pnts[idx]), label = point_labels[idx], marker='o')
-    
+        plt.plot((x_pnts[idx]), (y_pnts[idx]),
+                 label=point_labels[idx], marker='o')
+
     plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
     plt.legend()
-    plt.draw() 
-    plt.savefig('fig/'+ figname+'.pdf')
-
-
-
-def default_rootpaths():
-
-    current_path = os.path.dirname(__file__)
-    rel_path = '../data/root_files'
-    rootnames=['B0PiPi_MC.root', 'B0sKK_MC.root', 'Bhh_data.root']
-    rootpaths = tuple([os.path.join(current_path, rel_path, file)
-                 for file in rootnames])
-    return rootpaths
-
-def default_txtpaths():
-
-    current_path = os.path.dirname(__file__)
-    rel_path = '../data/txt'
-    txtnames=['train_array.txt', 'data_array.txt']
-    txtpaths = tuple([os.path.join(current_path, rel_path, file)
-                 for file in txtnames])
-    return txtpaths
-
-def default_vars():
-    return ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt','M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2', 'h2_thetaC0','h2_thetaC1', 'h2_thetaC2')
+    plt.draw()
+    plt.savefig('fig/' + figname+'.pdf')

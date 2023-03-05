@@ -384,9 +384,9 @@ cose sbagliate si cancellano a vicenda.
 INCONTRO RIZZI:
 
 - Va bene quello che abbiamo fatto fin'ora
-- Come immaginavamo non è per forza un male se la rete produce cose diverse a ogni training, l'idea è che uno a un certo punto lo fissa il training e fa il resto 
+- Come immaginavamo non è per forza un male se la rete produce cose diverse a ogni training, l'idea è che uno a un certo punto lo fissa il training e fa il resto
     DA FARE:
-- Ha senso la nostra idea di usare un'efficienza dei RICH (sensata, chiedere a qualcuno LHCb) in generazione dei MC per non rendere troppo OP la rete.  
+- Ha senso la nostra idea di usare un'efficienza dei RICH (sensata, chiedere a qualcuno LHCb) in generazione dei MC per non rendere troppo OP la rete.
 - Per migliorare la stabilità della rete potremmo provare batch rinormalization, dropout o diminuire il learning rate X
 - Potremmo fare un boosted decision tree e disegnarne la ROC
 - Potremmo fare con la Mpipi o Mkk una cosa analoga a quanto fatto con la y della rete, un taglo con certa efficienza, e vederne la ROC X
@@ -420,7 +420,7 @@ Added dtc which creates a decisiontreeclassifier with sklearn and trains it with
 01/03/2023 (Ruben)
 
 Varie prove sulle opzioni della dnn (fatte con un sample ridotto per semplicità):
-  - Batch normalization: non chiarissima la documentazione, ci sono le opzioni di "axis" e "adapt" che vanno gestite bene, per non togliere informazione. Dobbiamo comunque tenere a mente che potrebbe non essere troppo conveniente modificare le variabili in input, dato che potremmo 
+  - Batch normalization: non chiarissima la documentazione, ci sono le opzioni di "axis" e "adapt" che vanno gestite bene, per non togliere informazione. Dobbiamo comunque tenere a mente che potrebbe non essere troppo conveniente modificare le variabili in input, dato che potremmo
 perdere informazioni preziose (ad esempio sulle code)
   - Dropout: fatti vari tentativi con 4 valori diversi, la situazione non è migliorata molto; potrebbe comunque essere comodo tenere un valore piccolo di dropout per evitare overfitting nel caso di un numero maggiore di epoche su sample più grandi
   - Learning rate: opzione più interessante, riducendo il valore di default di un fattore 10 o 20 non si osservano più spike enormi nella validation loss (che comunque oscilla ma ci sta) e la training loss scende tranquilla. Per i tentativi con lr=1e-4 e lr=5e-4 è stato usato il dataset "esteso".
@@ -429,7 +429,7 @@ Queste tre opzioni sono state aggiunte alla classe "dnn_settings" in caso di nec
 
 Fatta un'analisi con 5 neuroni, 400 epoche e lr=5e-5 (eff=0.95):
 	fraction = 0.4455, ycut=0.442, misid=0.10, AOC=0.98
-	
+
 
 
 01/03/2023 (Lorenzo e Ruben):
@@ -443,26 +443,63 @@ Abbiamo generato nuovi array di MC con efficienze dei RICH (cambiando toy_Bgen.C
 02/03/2023 (Lorenzo e Ruben):
 
 Cambiato training.py --> deepnn.py
-Creato utilities che ha tutta una serie di funzioni prese in giro da script preesistenti, che abbiamo eliminato se non più necessari 
+Creato utilities che ha tutta una serie di funzioni prese in giro da script preesistenti,
+che abbiamo eliminato se non più necessari
 import_functions.py --> import_datasets.py
 
 Abbiamo fatto un sacco di pulizia in generale oltre a rivedere e correggere il generate_datasets.py
 
+
 02/03/2023 (Lorenzo):
 generate_datasets.py-->gen_from_toy.py
 
-Ho cmabiato il dtc(), dandole molto più opzioni così che la funzione possa buildare sia da path root dati sia da path txt dati. Di default prende train_array.txt dato che è più veloce.
+Ho cambiato il dtc(), dandole molto più opzioni così che la funzione possa buildare
+sia da path root dati sia da path txt dati. Di default prende train_array.txt dato
+che è più veloce.
 
-Ho aggiunto anche l'opzione di far stampare su un txt il tree generato dal classificatore, perché la figura veniva impossibile da displayare, troppo grossa, pesante e con troppi branches illeggibili.
+Ho aggiunto anche l'opzione di far stampare su un txt il tree generato dal classificatore,
+perché la figura veniva impossibile da displayare, troppo grossa, pesante e con
+troppi branches illeggibili.
 
-Ho cambiato varie liste a giro (in particolare i rootpaths e quindi quello che resituisce default_rootpaths) con delle tuples, che sono più space e più time efficient. Bisognerebbe farlo in generale ove possibile credo !!!!
+Ho cambiato varie liste a giro (in particolare i rootpaths e quindi quello che resituisce
+default_rootpaths) con delle tuples, che sono più space e più time efficient.
+Bisognerebbe farlo in generale ove possibile credo !!!! (okie dokie)
+
 
 03/03/2023 (Lorenzo):
 
-Ho pensato che il problema di loadare roba con relative paths... non è un problema after all, perché alla fine serve solo per chiamare poi funzioni come uproot.xx o np.loadtxt, che GIA funzionano bene se gli da un path relativo alla certella da cui vuoi importare il module: ho provato questa cosa chiamando array_generator da una python shell in root_files e dandogli a mano i path dei root_files (che qui non hanno ../data/root_files/xxx) e sure enough funziona perfettamente!
+Ho pensato che il problema di loadare roba con relative paths... non è un problema
+after all, perché alla fine serve solo per chiamare poi funzioni come uproot.xx
+o np.loadtxt, che GIA funzionano bene se gli da un path relativo alla cartella da
+cui vuoi importare il module: ho provato questa cosa chiamando array_generator da
+una python shell in root_files e dandogli a mano i path dei root_files (che qui
+non hanno ../data/root_files/xxx) e sure enough funziona perfettamente!
 
-Ho provato a variare il decision tree, creando anche un REGRESSOR oltre che un classifier, provando a trattare la y come una FEATURE e non una flag (unsupervised invece che supervised). Soo che così impara TROPPO bene e quindi mi sputa in uscita per il "validation" sample che ci creiamo solo 0 o 1, non azzeccandoci sempre ma non è quello il punto, il punto è che non sputa fuori uno spettro tra 0 e 1 per le due specie come deepnn come avevo sperato. Quindi nisba.
+Ho provato a variare il decision tree, creando anche un REGRESSOR oltre che un classifier,
+provando a trattare la y come una FEATURE e non una flag (unsupervised invece che
+supervised). Solo che così impara TROPPO bene e quindi mi sputa in uscita per il
+"validation" sample che ci creiamo solo 0 o 1, non azzeccandoci sempre ma non è
+quello il punto, il punto è che non sputa fuori uno spettro tra 0 e 1 per le due
+specie come deepnn come avevo sperato. Quindi nisba. F
 
+
+04/03/2023 (Ruben):
+
+Iniziato a lavorare sul main creando il parser e settando un primo insieme di opzioni.
+L'idea con cui ho strutturato il codice dopo il parser è fare un bel ciclo FOR
+su tutti gli elementi della lista "type" (che raccoglie i tipi di analisi richiesta
+dall'utente); all'interno del ciclo for diversi "if" selezionano il tipo di analisi
+da fare e chiamano la funzione corrispondente. Nel caso type = ["all"], le analisi
+vengono fatte in ordine tranquillamente.
+
+Una volta "compilato" il parser bisogna mettere qualche controllino per evitare
+che vengano portate avanti richieste incoerenti ()
+
+Ho provato a fare il template fit con questo metodo, il programma gira e il fit
+viene effettuato, ma mi si sono sballati i fit sui templates, quindi escono
+p-values non proprio belli :(
+
+Se riesco a trovarmi un po' di tempo domani implemento anche gli altri metodi.
 
 
 COSE DA FARE:

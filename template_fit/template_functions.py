@@ -3,7 +3,7 @@
 
 import ROOT
 import os
-import numpy as np
+# import numpy as np
 
 
 def InitializeFunctionsLibrary():
@@ -11,7 +11,9 @@ def InitializeFunctionsLibrary():
     Function that loads into the Python environment the shared library
     containing the fit functions.
     """
-    load_head = ROOT.gInterpreter.Declare('#include "fit_functions.h"')
+    current_path = os.path.dirname(__file__)
+    header_path = os.path.join(current_path, 'fit_functions.h')
+    load_head = ROOT.gInterpreter.Declare('#include "'+header_path+'"')
     if not load_head:
         print("ERROR in header load")
         quit()

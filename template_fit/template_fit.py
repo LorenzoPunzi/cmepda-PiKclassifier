@@ -5,7 +5,7 @@ population present in the dataset Bhh_data.root
 
 import ROOT
 import numpy as np
-from template_functions import DoubleGaussian, GaussJohnson
+from template_fit.template_functions import DoubleGaussian, GaussJohnson
 from utilities.utils import default_rootpaths
 
 
@@ -40,13 +40,14 @@ def fit_on_montecarlo(df, var, fitfunc, img_name="template.png", Nbins=1000,
     return exit_pars
 
 
-def fit_templates(filepaths, var, img_name="fig/Fit_data.png",
+def fit_templates(filepaths, tree, var, img_name="fig/Fit_data.png",
                   Nbins=1000, LowLim=5.02, UpLim=5.42,
                   h_name="M0_MPiPi", h_title="M_pipi distribution (data)",
                   savefigs=[False, False, False]):
     """
     """
-    df_mc1, df_mc2, df_data = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]
+    dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]
+    df_mc1, df_mc2, df_data = dataframes
 
     templ_pars_pi = fit_on_montecarlo(df_mc1, var, DoubleGaussian(5.02, 5.42),
                                       img_name='fig/template_fit_pi.png',
@@ -78,8 +79,7 @@ def fit_templates(filepaths, var, img_name="fig/Fit_data.png",
     else:
         fitvar = h.Fit(f_data, "SQLRN")
 
-    print(" ")
-    print("Data - fit results:")
+    print("\nFit stats:")
     print(f'  Chi2 = {fitvar.Chi2()}')
     print(f'  Ndof = {fitvar.Ndf()}')
     print(f'  Prob = {fitvar.Prob()}')
