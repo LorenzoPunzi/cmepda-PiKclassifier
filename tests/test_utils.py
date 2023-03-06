@@ -68,6 +68,7 @@ class TestRoc(unittest.TestCase):
         rel_path = './fig'
         figurepath = os.path.join(current_path, rel_path, 'test_linspace_roc.pdf')
         plt.savefig(figurepath)
+
         
 
 if __name__ == '__main__':
