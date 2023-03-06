@@ -2,7 +2,6 @@
 """
 import ROOT
 import uproot
-import os
 import numpy as np
 import time
 from utilities.utils import default_vars, default_rootpaths
