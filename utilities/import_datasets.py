@@ -9,10 +9,11 @@ import ROOT
 import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
-from utilities.utils import default_rootpaths , default_vars
+from utilities.utils import default_rootpaths, default_vars
+from utilities.exceptions import InvalidArrayGenRequest
 
 
-def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
+def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d=True):
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files. The LAST column of the output array contains a flag (0
@@ -52,9 +53,9 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d = True):
 
     v_pi, v_k = np.stack(list_pi, axis=1), np.stack(list_k, axis=1)
 
-    if (len(vars) == 1 and flatten1d == True): 
-        v_pi, v_k = v_pi.flatten(), v_k.flatten() # Otherwise becomes a 1D column vector when 1D
-    
+    if (len(vars) == 1 and flatten1d is True):
+        # Otherwise becomes a 1D column vector when 1D
+        v_pi, v_k = v_pi.flatten(), v_k.flatten()
 
     return v_pi, v_k
 
@@ -100,8 +101,7 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
 def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
                     for_training=True, for_testing=True, new_variables=[]):
     """
-    Generates arrays for ML treatment (training and testing) and saves them in
-    .txt files
+    Generates arrays for ML treatment (training and testing)
 
     Parameters
     ----------
@@ -110,22 +110,26 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
         file for Pi and K and the file of mixed data (in this order)
     tree: string
         Name of the TTree in the files
-    *vars: string
+    vars: tuple
         Names of variables included in the analysis
     n_mc, n_data: int
         Number of total events requested for training and for testing
     for_training, for_testing: bool
         Option that selects which dataset has to be created
     """
-    if (for_training and for_testing):
-        filepath_pi, filepath_k, filepath_data = rootpaths
-    elif (len(rootpaths) == 2 and for_training):
-        filepath_pi, filepath_k = rootpaths
-    elif (len(rootpaths) == 1 and for_testing):
-        filepath_data = rootpaths[0]
-    else:
-        print('Errore nell istanziamento di array_generator()')
-        pass
+    try:
+        if (for_training and for_testing and len(rootpaths) == 3):
+            filepath_pi, filepath_k, filepath_data = rootpaths
+        elif (for_training and len(rootpaths) == 2):
+            filepath_pi, filepath_k = rootpaths
+        elif (for_testing and len(rootpaths) == 1):
+            filepath_data = rootpaths[0]
+        else:
+            raise InvalidArrayGenRequest(
+                for_training, for_testing, len(rootpaths))
+    except InvalidArrayGenRequest as err:
+        print(err)
+        exit()
 
     train_array, test_array = np.zeros(len(vars)), np.zeros(len(vars))
 
@@ -164,8 +168,6 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
     return train_array, test_array
 
 
-
-
 if __name__ == '__main__':
     t1 = time.time()
 
@@ -178,13 +180,12 @@ if __name__ == '__main__':
 
     tree = 'tree;1'
 
-    v_mc, v_data = array_generator(rootpaths, tree, vars = default_vars(),
-                                      n_mc=560000,
-                                      new_variables=[])
+    v_mc, v_data = array_generator(rootpaths, tree, vars=default_vars(),
+                                   n_mc=560000,
+                                   new_variables=[])
 
     #np.savetxt('txt/train_array.txt', v_mc)
     #np.savetxt('txt/data_array.txt', v_data)
-
 
     t2 = time.time()
 
