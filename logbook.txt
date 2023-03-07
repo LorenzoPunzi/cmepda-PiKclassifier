@@ -502,6 +502,15 @@ p-values non proprio belli :(
 Se riesco a trovarmi un po' di tempo domani implemento anche gli altri metodi.
 
 
+
+
+06/03/2023 (Lorenzo):
+
+Ho creato dei test per utils (Find_cut e roc) e per import_datasets (loadvars e array_generator)
+
+!!!! In array_generator quando si vuole N eventi si prendono i PRIMI N (o N/2), ma potrebbero esserci dei problemi se si volesse chiamare questa funzione molte volte di eguito sullo stesso campione no? Così sarebbe sempre lo STESSO set di eventi preso, seppur in ordine ogni volta diverso per lo scrambling a VALLE.
+
+
 COSE DA FARE:
 
 - exceptions (lorenzo)

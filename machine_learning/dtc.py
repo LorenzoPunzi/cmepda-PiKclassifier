@@ -7,19 +7,24 @@ from sklearn import tree
 from sklearn.model_selection import train_test_split
 from utilities.utils import default_txtpaths , default_vars
 from utilities.import_datasets import array_generator
+from utilities.exceptions import InvalidSourceError
 
 def dt_classifier(source = ('txt', default_txtpaths()), n_mc = 560000, n_data = 50000, root_tree = 'tree;1', vars = default_vars(), print_tree = 'printed_dtc', test_size = 0.3 , min_leaf_samp = 1, crit = 'gini'):
     """
     """
     # Perché questo lavoro con le directories si fa qua e non nel main? Risulta
     # necessario o comodo per qualcosa di specifico?
-    if source[0] == 'txt':
-        mc_array_path, data_array_path = source[1] if source[1] else default_txtpaths()
-        mc_set , data_set = np.loadtxt(mc_array_path), np.loadtxt(data_array_path)
-    elif source[1] == 'root':
-        mc_set , data_set = array_generator(rootpaths=source[1], tree=root_tree, vars=vars, n_mc=n_mc, n_data=n_data)
-    else:
-        print('ERROR: invalid source for dt_classifier')
+    try:
+        if source[0] == 'txt':
+            mc_array_path, data_array_path = source[1] if source[1] else default_txtpaths()
+            mc_set , data_set = np.loadtxt(mc_array_path), np.loadtxt(data_array_path)
+        elif source[0] == 'root':
+            mc_set , data_set = array_generator(rootpaths=source[1], tree=root_tree, vars=vars, n_mc=n_mc, n_data=n_data)
+        else:
+            raise InvalidSourceError(source[0])
+    except InvalidSourceError as err:
+        print(err)
+        exit()
     
 
     dtc = tree.DecisionTreeClassifier(criterion = crit, min_samples_leaf=min_leaf_samp)
@@ -30,8 +35,8 @@ def dt_classifier(source = ('txt', default_txtpaths()), n_mc = 560000, n_data = 
     n_nodes = dtc.tree_.node_count
     max_depth = dtc.tree_.max_depth
 
-    print(f'Number of nodes = {n_nodes}')
-    print(f'Max depth = {max_depth}')
+    print(f'Number of nodes of the generated decision tree classifier = {n_nodes}')
+    print(f'Max depth of the generated decision tree classifier = {max_depth}')
 
 
     pi_test = np.array([X_test[i, :] for i in range(
