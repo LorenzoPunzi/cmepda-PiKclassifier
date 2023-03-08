@@ -4,8 +4,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from utilities.dnn_settings import dnn_settings
-from machine_learning.deepnn import train_dnn , eval_dnn
-from utilities.utils import default_txtpaths
+from machine_learning.deepnn import dnn
+from utilities.utils import find_cut
+
 
 
 
@@ -21,7 +22,23 @@ if __name__ == '__main__':
     settings.learning_rate = 5e-4
     settings.showhistory =False
 
-    train_array_path, data_array_path = default_txtpaths
-    training_set, data_set = np.loadtxt(train_array_path), np.loadtxt(data_array_path)
-    deepnn = train_dnn(training_set, settings)
+    pi_eval, k_eval, data_eval = dnn(settings)
+    efficiency = 0.95
+
+    y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
+    plt.axvline(x=y_cut, color='green', label='y cut for '
+                + str(efficiency)+' efficiency')
+    plt.legend()
+    plt.savefig('fig/ycut.pdf')
+
+    subdata = np.split(data_eval,100)
+
+    fractions = [((dat > y_cut).sum()/dat.size-misid)/(efficiency-misid) for dat in subdata]
+
+    plt.figure('Fraction distribution')
+    plt.hist(fractions,bins=300, histtype='step')
+    plt.savefig('fig/fractionsdnn.py')
+    plt.show()
+
+
     
