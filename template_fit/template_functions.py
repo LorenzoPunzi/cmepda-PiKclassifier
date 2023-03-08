@@ -3,10 +3,11 @@
 
 import ROOT
 import os
+import sys
 from utilities.exceptions import LoadHeadError
 
 
-def InitializeFunctionsLibrary():
+def initialize_library():
     """
     Function that loads into the Python environment the shared library
     containing the fit functions.
@@ -19,9 +20,9 @@ def InitializeFunctionsLibrary():
             raise LoadHeadError(header_path)
     except LoadHeadError as err:
         print(err)
-        exit()
+        sys.exit()
     success = ROOT.gSystem.CompileMacro('fit_functions.cpp', opt="ks")
-    if not success: #!!!! Make it better
+    if not success:  # !!!! Make it better
         lib_file = ''
         for root, dirnames, filenames in os.walk("."):
             for filename in filenames:
@@ -34,7 +35,7 @@ def InitializeFunctionsLibrary():
             ROOT.gSystem.Load(lib_file)
 
 
-def BreitWigner(LowLim, UpLim, funcname='BW', pars=(2000, 5.28, 0.5)):
+def BreitWigner(func_limits, funcname='BW', pars=(2000, 5.28, 0.5)):
     """
     Returns a TF1 function corresponding to a relativistic Breit-Wigner.
     The parameters are written in C++ ROOT style and represent the following
@@ -62,19 +63,19 @@ def BreitWigner(LowLim, UpLim, funcname='BW', pars=(2000, 5.28, 0.5)):
     str = '[0]*6e-4*0.9*' + arg_kappa + \
         '/(' + arg_denom_1 + '+ [1]*[1]*[2]*[2])'
 
-    function = ROOT.TF1(funcname, str, LowLim, UpLim, 3)
+    function = ROOT.TF1(funcname, str, func_limits[0], func_limits[1], 3)
     print(type(function))
 
     [function.SetParameter(k, pars[k]) for k in range(3)]
     function.SetParLimits(0, 0., 1e10)
-    function.SetParLimits(1, LowLim, UpLim)
-    function.SetParLimits(2, 0., UpLim-LowLim)
+    function.SetParLimits(1, func_limits[0], func_limits[1])
+    function.SetParLimits(2, 0., func_limits[0], func_limits[1])
 
     return function
 
 
-def DoubleGaussian(LowLim, UpLim, funcname='DoubleGaussian',
-                   pars=(1.4e5, 0.6, 5.28, 0.04, 5.29, 0.02)):
+def DoubleGaussian(func_limits, funcname='DoubleGaussian',
+                   pars=(1e5, 0.14, 5.28, 0.08, 5.29, 0.02)):
     """
     Returns a TF1 function corresponding to a weighted sum of two Gaussians;
     its expression is written in a C++ shared library and is imported in the
@@ -91,23 +92,24 @@ def DoubleGaussian(LowLim, UpLim, funcname='DoubleGaussian',
     pars: tuple of double
         Initial parameters given to the function
     """
-    InitializeFunctionsLibrary()
+    initialize_library()
 
-    function = ROOT.TF1(funcname, ROOT.DoubleGaussian, LowLim, UpLim, 6)
+    function = ROOT.TF1(funcname, ROOT.DoubleGaussian,
+                        func_limits[0], func_limits[1], 6)
 
     [function.SetParameter(k, pars[k]) for k in range(6)]
 
     function.SetParLimits(1, 0, 1)
-    function.SetParLimits(2, LowLim, UpLim)
-    function.SetParLimits(3, 0, UpLim-LowLim)
-    function.SetParLimits(4, LowLim, UpLim)
-    function.SetParLimits(5, 0, UpLim-LowLim)
+    function.SetParLimits(2, func_limits[0], func_limits[1])
+    function.SetParLimits(3, 0, func_limits[1]-func_limits[0])
+    function.SetParLimits(4, func_limits[0], func_limits[1])
+    function.SetParLimits(5, 0, func_limits[1]-func_limits[0])
 
     return function
 
 
-def GaussJohnson(LowLim, UpLim, funcname='Gauss+Johnson',
-                 pars=(1.4e05, 0.99, 1.75, 0.043, 5.29, 0.85, 5.19, 0.06)):
+def GaussJohnson(func_limits, funcname='Gauss+Johnson',
+                 pars=(1e05, 0.96, 1.7, 0.6, 5.29, 0.7, 5.18, 0.05)):
     """
     Returns a TF1 function corresponding to a weighted sum of a Johnson and a
     Gaussian; its expression is written in a C++ shared library and is imported
@@ -124,15 +126,16 @@ def GaussJohnson(LowLim, UpLim, funcname='Gauss+Johnson',
     pars: tuple of double
         Initial parameters given to the function
     """
-    InitializeFunctionsLibrary()
+    initialize_library()
 
-    function = ROOT.TF1(funcname, ROOT.GaussJohnson, LowLim, UpLim, 8)
+    function = ROOT.TF1(funcname, ROOT.GaussJohnson,
+                        func_limits[0], func_limits[1], 8)
+
     [function.SetParameter(k, pars[k]) for k in range(8)]
-
     function.SetParLimits(1, 0, 1)
     [function.SetParLimits(k, 0., 10.) for k in range(2, 6)]
-    function.SetParLimits(6, LowLim, UpLim)
-    function.SetParLimits(7, 0, UpLim-LowLim)
+    function.SetParLimits(6, func_limits[0], func_limits[1])
+    function.SetParLimits(7, 0, func_limits[1]-func_limits[0])
 
     return function
 
