@@ -11,7 +11,7 @@ class InvalidSourceError(ValueError):
         super().__init__(self.message)
 
 
-class InvalidArrayGenRequest():
+class InvalidArrayGenRequestError(ValueError):
     def __init__(self, for_training, for_testing, length):
         if (for_training and for_testing):
             self.message = "To create both the tranining and testing " \
@@ -27,3 +27,11 @@ class InvalidArrayGenRequest():
             self.message = "UNEXPECTED ERROR: a deep review of the code is " \
                            "suggested."
         super().__init__(self.message)
+
+class InvalidPlotOptionsError(ValueError):
+
+    def __init__(self,plotoptions):
+        self.plotoptions = plotoptions
+        self.message = []
+        if type(plotoptions[0]) is (not int and not str):
+            self.message.append('The first argument of plot options must be a string or an integer!')

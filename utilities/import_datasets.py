@@ -10,7 +10,7 @@ import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
 from utilities.utils import default_rootpaths, default_vars
-from utilities.exceptions import InvalidArrayGenRequest
+from utilities.exceptions import InvalidArrayGenRequestError
 
 
 def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d=True):
@@ -127,7 +127,7 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
         else:
             raise InvalidArrayGenRequest(
                 for_training, for_testing, len(rootpaths))
-    except InvalidArrayGenRequest as err:
+    except InvalidArrayGenRequestError as err:
         print(err)
         exit()
 
