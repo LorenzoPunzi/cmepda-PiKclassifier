@@ -1,21 +1,27 @@
 """
-Trains a DNN with a numpy array with variable data columns to distinguish between pions and Kaons given multiple variables (features) on which to train simultaneously
+Trains a DNN with a numpy array with variable data columns to
+distinguish between pions and Kaons given multiple variables (features)
+on which to train simultaneously
 """
 
 import time
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.layers import Dense, Input, Normalization, AlphaDropout
 from keras.models import Model
 from keras.optimizers import Adam
+from utilities.import_datasets import array_generator
 from utilities.dnn_settings import dnn_settings
-from utilities.utils import find_cut , roc , default_txtpaths, plot_rocs
-from var_cut.var_cut import var_cut
+from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
+                            find_cut, roc, plot_rocs
+from utilities.exceptions import InvalidSourceError
 from machine_learning.dtc import dt_classifier
+from var_cut.var_cut import var_cut
 
 
-def train_dnn(training_set, settings):
+def train_dnn(training_set, settings, savefig=True):
     """
     """
     seed = np.random.seed(int(time.time()))
@@ -49,11 +55,10 @@ def train_dnn(training_set, settings):
                          epochs=settings.epochnum, verbose=settings.verbose,
                          batch_size=settings.batch_size)
 
-    if settings.showhistory:
+    if savefig:
         plt.figure('Losses')
         plt.xlabel('Epoch')
         plt.ylabel('Binary CrossEntropy Loss')
-
         plt.plot(history.history['val_loss'], label='Validation Loss')
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
@@ -62,18 +67,20 @@ def train_dnn(training_set, settings):
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
+def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
     """
     """
-    prediction_array = dnn.predict(
-        eval_set) if flag_data else dnn.predict(eval_set[:, :-1])
-    prediction_array = prediction_array.flatten()
-    if plot_opt: #!!!! is this good?
+    prediction_array = dnn.predict(eval_set).flatten() \
+        if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
+    # prediction_array = prediction_array.flatten()
+    if savefig and len(plot_opt) == 3:
+        nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
-        plt.hist(prediction_array, bins=300, histtype='step', color=plot_opt[1], label=plot_opt[2])
+        plt.hist(prediction_array, bins=nbins, histtype='step',
+                 color=plot_opt[1], label=plot_opt[2])
         plt.xlabel('y')
-        plt.ylabel('Events per 1/300')  # !!!! MAKE IT BETTER
+        plt.ylabel(f'Events per 1/{nbins}')  # MAKE IT BETTER
         plt.yscale('log')
         plt.legend()
         plt.savefig('./fig/predict_'+plotname+'.pdf')
@@ -82,35 +89,45 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
     return prediction_array
 
 
-def dnn(settings, txtpaths=default_txtpaths(), f_print=False):
+def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
+        vars=default_vars(), n_mc=560000, n_data=50000, settings=dnn_settings(),
+        savefigs=True):
     """
     """
-    print(settings.layers)
-    train_array_path, data_array_path = txtpaths
+    try:
+        if source[0] == 'txt':
+            mc_array_path, data_array_path = source[1] if source[1] \
+                else default_txtpaths()
+            training_set, data_set = np.loadtxt(mc_array_path), \
+                np.loadtxt(data_array_path)
+        elif source[0] == 'root':
+            training_set, data_set = array_generator(rootpaths=source[1],
+                                                     tree=root_tree, vars=vars,
+                                                     n_mc=n_mc, n_data=n_data)
+        else:
+            raise InvalidSourceError(source[0])
+    except InvalidSourceError as err:
+        print(err)
+        sys.exit()
 
-    training_set = np.loadtxt(train_array_path)
     pi_set = np.array([training_set[i, :] for i in range(
         np.shape(training_set)[0]) if training_set[i, -1] == 0])
-    K_set = np.array([training_set[i, :] for i in range(
+    k_set = np.array([training_set[i, :] for i in range(
         np.shape(training_set)[0]) if training_set[i, -1] == 1])
-    data_set = np.loadtxt(data_array_path)
 
-    deepnn = train_dnn(training_set, settings)
+    deepnn = train_dnn(training_set, settings, savefig=savefigs)
 
-    pi_eval = eval_dnn(deepnn, pi_set, flag_data=False,
+    pi_eval = eval_dnn(deepnn, pi_set, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'])
-    K_eval = eval_dnn(deepnn, K_set, flag_data=False,
+    k_eval = eval_dnn(deepnn, k_set, flag_data=False, savefig=savefigs,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'])
-    pred_array = eval_dnn(deepnn, data_set, flag_data=True,
+    pred_array = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
                           plot_opt=['Dataeval', 'blue', 'Evaluated data'])
 
-    if f_print:
-        f_pred = np.sum(pred_array)
-        print(f'The predicted K fraction is : {f_pred/len(pred_array)}')
-        print('Max prediction :', np.max(pred_array))
-        print('Min prediction :', np.min(pred_array))
+    print('Max prediction :', np.max(pred_array))
+    print('Min prediction :', np.min(pred_array))
 
-    return pi_eval, K_eval, pred_array
+    return pi_eval, k_eval, pred_array
 
 
 if __name__ == '__main__':
@@ -118,14 +135,14 @@ if __name__ == '__main__':
     settings = dnn_settings()
     settings.layers = [75, 60, 45, 30, 20]
     settings.batch_size = 128
-    settings.epochnum = 10
+    settings.epochnum = 200
     settings.verbose = 2
     settings.batchnorm = False
-    settings.dropout = 0.005
-    settings.learning_rate = 5e-4
-    settings.showhistory =False
+    # settings.dropout = 0.005
+    settings.learning_rate = 5e-5
+    settings.showhistory = False
 
-    pi_eval, k_eval, data_eval = dnn(settings)
+    pi_eval, k_eval, data_eval = dnn(settings=settings)
     efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
@@ -134,20 +151,27 @@ if __name__ == '__main__':
     plt.legend()
     plt.savefig('fig/ycut.pdf')
 
+    rocdnnx, rocdnny, aucdnn = roc(pi_eval, k_eval, eff=efficiency,
+                                   inverse_mode=False, makefig=True,
+                                   name="dnn_roc")
 
-    rocdnnx, rocdnny, aucdnn = roc(pi_eval, k_eval, eff_line=efficiency, makefig=False)
-    _, rocvarcutx, rocvarcuty, aucvarcut = var_cut(drawfig=False, draw_roc=False)
+    '''
+    rocvarcutx, rocvarcuty, aucvarcut = var_cut(drawfig=False, draw_roc=False)
     _, dtcy, dtcx = dt_classifier(print_tree='')
 
-    print(dtcx,dtcy)
+    print(dtcx, dtcy)
 
-
-    plot_rocs(rocx_array=[rocdnnx,rocvarcutx],rocy_array=[rocdnny,rocvarcuty],auc_array=[aucdnn,aucvarcut],inverse_mode_array=(False,True),roc_labels=('deep nn','cut on M0_Mpipi'),roc_linestyles=('-','-'),roc_colors=('red','green'),x_pnts=(dtcx,),y_pnts=(dtcy,),point_labels=('decision tree classifier',))
+    plot_rocs(rocx_array=[rocdnnx, rocvarcutx],
+              rocy_array=[rocdnny, rocvarcuty], auc_array=[aucdnn, aucvarcut],
+              inverse_mode_array=(False, True),
+              roc_labels=('deep nn', 'cut on M0_Mpipi'),
+              roc_linestyles=('-', '-'), roc_colors=('red', 'green'),
+              x_pnts=(dtcx,), y_pnts=(dtcy,),
+              point_labels=('decision tree classifier',))
+    '''
 
     print(f'y cut is {y_cut} , misid is {misid}')
     f = ((data_eval > y_cut).sum()/data_eval.size-misid)/(efficiency-misid)
     print(f'The estimated fraction of K events is {f}')
-    
-
 
     plt.show()
