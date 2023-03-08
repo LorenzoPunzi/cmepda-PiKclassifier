@@ -1,6 +1,7 @@
 """
 """
 
+
 class dnn_settings:
     """
     """
@@ -100,4 +101,3 @@ class dnn_settings:
             self._showhistory = show
         else:
             print('ERROR: "showhistory" method must be a boolean value')
-

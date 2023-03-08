@@ -10,16 +10,15 @@ from utilities.utils import default_vars, default_rootpaths
 def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
                                '../data/root_files/toyMC_B0sKK.root'),
                  filepaths_out=default_rootpaths(), tree='t_M0pipi;1',
-                 num_mc=250000, num_data=50000, f=0.42, vars=default_vars()):
-
-    vars = vars + ('flag',)
-
+                 num_mc=100000, num_data=30000, f=0.42, vars=default_vars()):
+    """
+    """
     dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths_in]
 
-    n_evts_toymc_pi = dataframes[0].Count()
-    n_evts_toymc_pi = n_evts_toymc_pi.GetValue()
-    n_evts_toymc_k = dataframes[1].Count()
-    n_evts_toymc_k = n_evts_toymc_k.GetValue()
+    n_evts_toymc_pi = dataframes[0].Count().GetValue()
+    #n_evts_toymc_pi = n_evts_toymc_pi.
+    n_evts_toymc_k = dataframes[1].Count().GetValue()
+    #n_evts_toymc_k = n_evts_toymc_k
 
     print(n_evts_toymc_pi, n_evts_toymc_k)
 
@@ -28,12 +27,16 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
 
     print(f'Actual fraction of Kaons = {num_kaons/num_data}')
 
+    # Imporre una condizione che sia di "default" e che dipenda unicamente dal
+    # numero di eventi nei tree in ingresso
+    # if num_mc == 0 and num_data == 0:
+
     if (n_evts_toymc_pi < num_mc + num_pions) or (n_evts_toymc_k < num_mc + num_kaons):
         print("ERROREE")
         quit()
 
-    dataframes[0] = dataframes[0].Define("flag", "0")
-    dataframes[1] = dataframes[1].Define("flag", "1")
+    # dataframes[0] = dataframes[0].Define("flag", "0")
+    # dataframes[1] = dataframes[1].Define("flag", "1")
 
     # takes the first num_mc events of the input toyMC files
     df_mc_pi = dataframes[0].Range(num_mc)
@@ -66,7 +69,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     np.random.shuffle(var_array)
 
     var_dictionary = {}
-    for idx in range(len(vars)-1):
+    for idx in range(len(vars)):
         var_dictionary.update({vars[idx]: var_array[:, idx]})
         # !!! Could be made more DRY since it's the same as AsNumpy() above? Why are we not using RDataFrame here as well?
         # The transformation df -> numpy array -> new ttree is necessary because

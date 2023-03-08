@@ -12,7 +12,7 @@ class InvalidSourceError(ValueError):
 
 
 class InvalidArrayGenRequestError(ValueError):
-    def __init__(self, for_training, for_testing, length):
+    def __init__(self, for_training, for_testing):
         if (for_training and for_testing):
             self.message = "To create both the tranining and testing " \
                            "datasets, the file paths (.root) of both the two "\
@@ -27,6 +27,7 @@ class InvalidArrayGenRequestError(ValueError):
             self.message = "UNEXPECTED ERROR: a deep review of the code is " \
                            "suggested."
         super().__init__(self.message)
+
 
 class LoadHeadError(Exception):
 
