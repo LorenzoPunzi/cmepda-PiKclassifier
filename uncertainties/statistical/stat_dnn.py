@@ -35,9 +35,9 @@ if __name__ == '__main__':
 
     fractions = [((dat > y_cut).sum()/dat.size-misid)/(efficiency-misid) for dat in subdata]
 
-    plt.figure('Fraction distribution')
+    plt.figure('Fraction distribution for deepnn')
     plt.hist(fractions,bins=300, histtype='step')
-    plt.savefig('fig/fractionsdnn.py')
+    plt.savefig('fig/fractionsdnn.pdf')
     plt.show()
 
 
