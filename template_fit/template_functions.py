@@ -3,7 +3,7 @@
 
 import ROOT
 import os
-# import numpy as np
+from utilities.exceptions import LoadHeadError
 
 
 def InitializeFunctionsLibrary():
@@ -13,12 +13,15 @@ def InitializeFunctionsLibrary():
     """
     current_path = os.path.dirname(__file__)
     header_path = os.path.join(current_path, 'fit_functions.h')
-    load_head = ROOT.gInterpreter.Declare('#include "'+header_path+'"')
-    if not load_head:
-        print("ERROR in header load")
-        quit()
+    try:
+        load_head = ROOT.gInterpreter.Declare('#include "'+header_path+'"')
+        if not load_head:
+            raise LoadHeadError(header_path)
+    except LoadHeadError as err:
+        print(err)
+        exit()
     success = ROOT.gSystem.CompileMacro('fit_functions.cpp', opt="ks")
-    if not success:
+    if not success: #!!!! Make it better
         lib_file = ''
         for root, dirnames, filenames in os.walk("."):
             for filename in filenames:

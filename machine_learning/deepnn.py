@@ -13,7 +13,6 @@ from utilities.dnn_settings import dnn_settings
 from utilities.utils import find_cut , roc , default_txtpaths, plot_rocs
 from var_cut.var_cut import var_cut
 from machine_learning.dtc import dt_classifier
-from utilities.exceptions import InvalidPlotOptionsError
 
 
 def train_dnn(training_set, settings):
@@ -70,20 +69,15 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True):
         eval_set) if flag_data else dnn.predict(eval_set[:, :-1])
     prediction_array = prediction_array.flatten()
     if plot_opt: #!!!! is this good?
-        try:
-            plotname = plot_opt[0]
-            plt.figure(plotname)
-            plt.hist(prediction_array, bins=300, histtype='step',
-                        color=plot_opt[1], label=plot_opt[2])
-            plt.xlabel('y')
-            plt.ylabel('Events per 1/300')  # !!!! MAKE IT BETTER
-            plt.yscale('log')
-            plt.legend()
-            plt.savefig('./fig/predict_'+plotname+'.pdf')
-            plt.draw()
-        except InvalidPlotOptionsError as err:
-            print(err)
-            exit()
+        plotname = plot_opt[0]
+        plt.figure(plotname)
+        plt.hist(prediction_array, bins=300, histtype='step', color=plot_opt[1], label=plot_opt[2])
+        plt.xlabel('y')
+        plt.ylabel('Events per 1/300')  # !!!! MAKE IT BETTER
+        plt.yscale('log')
+        plt.legend()
+        plt.savefig('./fig/predict_'+plotname+'.pdf')
+        plt.draw()
 
     return prediction_array
 

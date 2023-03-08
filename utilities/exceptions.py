@@ -28,10 +28,9 @@ class InvalidArrayGenRequestError(ValueError):
                            "suggested."
         super().__init__(self.message)
 
-class InvalidPlotOptionsError(ValueError):
+class LoadHeadError(Exception):
 
-    def __init__(self,plotoptions):
-        self.plotoptions = plotoptions
-        self.message = []
-        if type(plotoptions[0]) is (not int and not str):
-            self.message.append('The first argument of plot options must be a string or an integer!')
+    def __init__(self, headder_path):
+        self.header_path = header_path
+        self.message = f"Could not load header at path \'{self.header_path}\'"
+        super().__init__(self.message)
