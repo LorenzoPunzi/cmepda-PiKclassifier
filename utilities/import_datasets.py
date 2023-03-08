@@ -185,11 +185,11 @@ if __name__ == '__main__':
     tree = 'tree;1'
 
     v_mc, v_data = array_generator(rootpaths, tree, vars=default_vars(),
-                                   n_mc=560000,
+                                   n_mc=560000, n_data=100000,
                                    new_variables=[])
 
-    #np.savetxt('txt/train_array.txt', v_mc)
-    #np.savetxt('txt/data_array.txt', v_data)
+    np.savetxt('../data/txt/train_array.txt', v_mc)
+    np.savetxt('../data/txt/data_array.txt', v_data)
 
     t2 = time.time()
 
