@@ -57,6 +57,9 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=True, flatten1d=True):
         # Otherwise becomes a 1D column vector when 1D
         v_pi, v_k = v_pi.flatten(), v_k.flatten()
 
+    np.random.shuffle(v_pi) 
+    np.random.shuffle(v_k)
+
     return v_pi, v_k
 
 
@@ -125,7 +128,7 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
         elif (for_testing and len(rootpaths) == 1):
             filepath_data = rootpaths[0]
         else:
-            raise InvalidArrayGenRequest(
+            raise InvalidArrayGenRequestError(
                 for_training, for_testing, len(rootpaths))
     except InvalidArrayGenRequestError as err:
         print(err)
@@ -144,7 +147,6 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
             v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k, tree, vars)
             train_array = np.concatenate(
                 (v_mc_pi[:int(n_mc/2), :], v_mc_k[:int(n_mc/2), :]), axis=0)
-            np.random.shuffle(train_array)
         if for_testing:
             v_data, _ = loadvars(filepath_data, filepath_data, tree, vars,
                                  flag_column=False)  # Non mette la flag alla fine perché sono dati
