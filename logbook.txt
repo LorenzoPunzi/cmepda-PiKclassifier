@@ -497,7 +497,7 @@ che vengano portate avanti richieste incoerenti ()
 
 Ho provato a fare il template fit con questo metodo, il programma gira e il fit
 viene effettuato, ma mi si sono sballati i fit sui templates, quindi escono
-p-values non proprio belli :
+p-values non proprio belli (risolto)
 
 Se riesco a trovarmi un po' di tempo domani implemento anche gli altri metodi.
 
@@ -506,9 +506,34 @@ Se riesco a trovarmi un po' di tempo domani implemento anche gli altri metodi.
 
 06/03/2023 (Lorenzo):
 
-Ho creato dei test per utils (Find_cut e roc) e per import_datasets (loadvars e array_generator)
+Ho creato dei test per utils (Find_cut e roc) e per import_datasets (loadvars e
+array_generator)
 
-!!!! In array_generator quando si vuole N eventi si prendono i PRIMI N (o N/2), ma potrebbero esserci dei problemi se si volesse chiamare questa funzione molte volte di eguito sullo stesso campione no? Così sarebbe sempre lo STESSO set di eventi preso, seppur in ordine ogni volta diverso per lo scrambling a VALLE.
+!!!! In array_generator quando si vuole N eventi si prendono i PRIMI N (o N/2),
+ma potrebbero esserci dei problemi se si volesse chiamare questa funzione molte
+volte di eguito sullo stesso campione no? Così sarebbe sempre lo STESSO set di eventi
+preso, seppur in ordine ogni volta diverso per lo scrambling a VALLE.
+
+
+08/03/2023 (Ruben):
+
+Risolti i problemi con i template fit. Ho ripristinato la vecchia struttura di funzioni
+all'interno del modulo template_fit.py, in modo da poter gestire da __main__.py
+ogni opzione di ogni fit. Tra l'altro questo metodo risulta anche meno time-consuming
+dell'altro (ordine decimi di secondo, nulla di che)
+
+Portato avanti il __main__.py, ho ordinato le opzioni da passare alle funzioni
+per il template fit e per la dnn. Va un attimo cercata una quadra su quali variabili
+è utile passare al parser, ma andando avanti si sistemerà da sé. Resta da impostare
+la sezione del decision tree e del var_cut. Una cosa bellina sarebbe scrivere tutti
+i risultati su un file .txt, ci si può lavorare
+
+
+
+
+
+
+
 
 
 COSE DA FARE:

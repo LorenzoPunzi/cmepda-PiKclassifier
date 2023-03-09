@@ -31,7 +31,7 @@ class InvalidArrayGenRequestError(ValueError):
 
 class LoadHeadError(Exception):
 
-    def __init__(self, headder_path):
+    def __init__(self, header_path):
         self.header_path = header_path
         self.message = f"Could not load header at path \'{self.header_path}\'"
         super().__init__(self.message)
