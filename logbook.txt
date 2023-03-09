@@ -520,7 +520,7 @@ preso, seppur in ordine ogni volta diverso per lo scrambling a VALLE.
 Lista di varie cose fatte in questi due giorni:
 
 - Creato le prime Exceptions, in particolare per il dtc e il loadheader (che però non ho potuto testare !!!!)
-- Spostato lo shuffling degli array all'interno di loadvars, così che non si prendano sempre gli stessi eventi runnando più volte array_generator 
+- Spostato lo shuffling degli array all'interno di loadvars, così che non si prendano sempre gli stessi eventi runnando più volte array_generator
 - creato degli stat_xxx per valutare la distribuzione della f stimata per dtc e dnn
 - implementato una maniera di salvare e quindi poter poi caricare senza dover retrainare le deepnn come .json files, con pesi salvati come .h5
 
@@ -535,33 +535,48 @@ dell'altro (ordine decimi di secondo, nulla di che)
 Portato avanti il __main__.py, ho ordinato le opzioni da passare alle funzioni
 per il template fit e per la dnn. Va un attimo cercata una quadra su quali variabili
 è utile passare al parser, ma andando avanti si sistemerà da sé. Resta da impostare
-la sezione del decision tree e del var_cut. Una cosa bellina sarebbe scrivere tutti
-i risultati su un file .txt, ci si può lavorare
+la sezione del decision tree e del var_cut (FATTO). Una cosa bellina sarebbe scrivere tutti
+i risultati su un file .txt, ci si può lavorare (FATTO)
+
 
 09/03/2023 (Lorenzo):
 
-Aggiunto default_figpath così che le funzioni importate che plottano salvino nella /fig della cwd, non della directory in cui sono definite queste funzioni.
+Aggiunto default_figpath così che le funzioni importate che plottano salvino nella
+/fig della cwd, non della directory in cui sono definite queste funzioni.
 
-Messi gli attributes di dnn_settings direttamente come options nella chiamata __init__ di instanziamento della classe per pulizia e pythonicità
-
-
-
-
+Messi gli attributes di dnn_settings direttamente come options nella chiamata __init__
+di istanziamento della classe per pulizia e pythonicità
 
 
+09/03/2023 (Ruben)
+
+Completata la struttura del main con l'introduzione dei subparser: sono uno strumento
+utile per raggruppare le options, ma di contro non si può (a quanto pare) eseguire
+comandi di due subparser sulla stessa linea di comando. Quindi di fatto uno deve
+fare in sequenza "gen" e poi "analysis" (il subparser per i plot non credo abbia senso)
+
+Modifiche alla funzione gen_from_toy:
+  - aggiunte exceptions per evitare che la frazione data in input sia fuori dall'
+    intervallo [0,1] e per evitare che si richiedano più eventi di quanti ne siano
+    disponibili nei file sorgente
+  - adesso se num_mc=0 e num_data=0 il riempimento dei dataset viene "deciso" automaticamente,
+    i vincoli che si pongono per determinare la dimensione dei datasets sono spiegati
+    con un inline comment nel codice
+  - adesso il nome del tree nei file .root di output è LO STESSO di quelli in input,
+    cioè dei toyMC. Di default è stato messo quindi 't_M0pipi'
 
 
-
-COSE DA FARE:
-
-- exceptions (lorenzo) x
-- tests (lorenzo) x
-- docs (lorenzo+ruben)
-- rivedere i !!!!
-- parser/main (ruben)
-- relative path for get_xxx functions (lorenzo) x
-- upgrade dtc (lorenzo) x
-- CI (ruben)
+----------------
+| COSE DA FARE |
+----------------
+- exceptions (lorenzo)  OK
+- tests (lorenzo)       OK
+- docs (lorenzo+ruben)  DA COMPLETARE
+- rivedere i !!!!       DA FARE
+- parser/main (ruben)   DA COMPLETARE
+- relative path for get_xxx functions (lorenzo) OK
+- upgrade dtc (lorenzo) OK
+- CI (ruben)    DA CAPIRE COME FARE :|
 
 
 
