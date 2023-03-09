@@ -576,6 +576,8 @@ Modifiche alla funzione gen_from_toy:
 - parser/main (ruben)   DA COMPLETARE
 - relative path for get_xxx functions (lorenzo) OK
 - upgrade dtc (lorenzo) OK
+- Sistematiche (lorenzo+ruben)  DA FARE
+- Errori statistici (lorenzo)   ?
 - CI (ruben)    DA CAPIRE COME FARE :|
 
 
