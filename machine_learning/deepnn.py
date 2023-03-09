@@ -77,8 +77,8 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
     """
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
-    
-    if savefig and len(plot_opt) == 3: # !!!! MAKE IT BETTER
+
+    if savefig and len(plot_opt) == 3:  # !!!! MAKE IT BETTER
         nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
@@ -137,7 +137,11 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
 if __name__ == '__main__':
 
-    settings = dnn_settings(layers = [75, 60, 45, 30, 20], batch_size = 128, epochnum = 200, learning_rate = 5e-5, showhistory = False)
+    settings = dnn_settings(layers=[75, 60, 45, 30, 20],
+                            batch_size=128,
+                            epochnum=200,
+                            learning_rate=5e-5,
+                            showhistory=False)
 
     pi_eval, k_eval, data_eval = dnn(settings=settings)
     efficiency = 0.95

@@ -16,6 +16,9 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     """
     """
 
+    if tree.endswith(";1"):
+        tree = tree.replace(";1", "")
+
     try:
         if f >= 0.0 and f <= 1.0:
             pass
@@ -64,10 +67,10 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     # takes the first num_mc events of the input toyMC files
     df_mc_pi = dataframes[0].Range(num_mc)
     # creates a .root file with the chosen vars as branches
-    df_mc_pi.Snapshot("tree", filepaths_out[0], vars)
+    df_mc_pi.Snapshot(tree, filepaths_out[0], vars)
 
     df_mc_k = dataframes[1].Range(num_mc)
-    df_mc_k.Snapshot("tree", filepaths_out[1], vars)
+    df_mc_k.Snapshot(tree, filepaths_out[1], vars)
 
     # takes the rest of the input toyMC to be used as data
     df_data_pi = dataframes[0].Range(num_mc, num_mc+num_pions)
@@ -104,9 +107,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         # method, because I haven't found it in the documentation and it seems
         # less performant than other methods (https://indico.cern.ch/event/775679/contributions/3244724/attachments/1767054/2869505/RDataFrame.AsNumpy.pdf)
 
-    if tree.endswith(";1"):
-        tree = tree.replace(";1", "")
-
+    print(tree)
     file = uproot.recreate(filepaths_out[2])
     file[tree] = var_dictionary
     file[tree].show()

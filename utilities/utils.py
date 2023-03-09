@@ -34,7 +34,7 @@ def default_vars():
             'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2')
 
 
-def default_figpath(figname, dir = 'fig', figtype = 'pdf'):
+def default_figpath(figname, dir='fig', figtype='pdf'):
     wd_path = os.getcwd()
     figpath = os.path.join(wd_path, dir, figname+'.'+figtype)
     return figpath
@@ -115,23 +115,5 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
     if makefig:
         plot_rocs([rocx], [rocy], [name], ["-"],
                   ["blue"], eff=eff, figname=name)
-        '''
-        plt.figure('ROC')
-        plt.plot(rocx, rocy, label='ROC curve', color='red')
-        plt.xlabel('False Positive Probability')
-        plt.xlim(0, 1)
-        plt.ylabel('True Positive Probability')
-        plt.ylim(0, 1)
-        plt.draw()
 
-        if eff:
-            plt.axhline(y=eff_line, color='green', linestyle='--', label='efficiency chosen at '+str(eff_line)
-                        )
-        plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
-        plt.legend()
-
-        plt.savefig(default_figpath(figname))
-        
-        '''
-
-        return rocx, rocy, auc
+    return rocx, rocy, auc

@@ -109,7 +109,7 @@ def DoubleGaussian(func_limits, funcname='DoubleGaussian',
 
 
 def GaussJohnson(func_limits, funcname='Gauss+Johnson',
-                 pars=(1e05, 0.96, 1.7, 0.6, 5.29, 0.7, 5.18, 0.05)):
+                 pars=(1e05, 0.991, 1.57, 0.045, 5.29, 1.02, 5.28, 0.00043)):
     """
     Returns a TF1 function corresponding to a weighted sum of a Johnson and a
     Gaussian; its expression is written in a C++ shared library and is imported

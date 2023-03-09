@@ -9,7 +9,7 @@ from utilities.import_datasets import loadvars
 
 def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
             eff=0.95, inverse_mode=False, specificity_mode=False,
-            draw_roc=False, draw_fig=True, stat_split = 0):
+            draw_roc=False, draw_fig=True, stat_split=0):
     """
     """
     rootpath_pi, rootpath_k, rootpath_data = rootpaths
@@ -43,19 +43,19 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     print(f'{cut_var} cut is {m_cut} for {eff} efficiency')
     print(f'Misid. is {misid} for {eff} efficiency')
 
-    f = ((M_data < m_cut).sum()/M_data.size-misid)/(eff-misid) if inverse_mode else ((M_data > m_cut).sum()/M_data.size-misid)/(eff-misid)
+    f = ((M_data < m_cut).sum()/M_data.size-misid)/(eff
+                                                    - misid) if inverse_mode else ((M_data > m_cut).sum()/M_data.size-misid)/(eff-misid)
     print(f'The estimated fraction of K events is {f}')
 
     if stat_split:
-
-        subdata = np.split(M_data,stat_split)
-
-        fractions = [((dat < m_cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata] if inverse_mode else [((dat > m_cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata]
+        subdata = np.split(M_data, stat_split)
+        fractions = [((dat < m_cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata] if inverse_mode else [
+                      ((dat > m_cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata]
         plt.figure('Fraction distribution for '+cut_var+' cut')
-        plt.hist(fractions,bins=20, histtype='step')
+        plt.hist(fractions, bins=20, histtype='step')
         plt.savefig(default_figpath('fractionsvarcut'))
 
-    return rocx, rocy, auc
+    return f, misid, rocx, rocy, auc
 
 
 if __name__ == '__main__':

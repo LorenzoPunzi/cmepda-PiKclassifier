@@ -6,7 +6,9 @@ class dnn_settings:
     """
     """
 
-    def __init__(self, layers = [20, 20, 15, 10], epochnum = 200, learning_rate = 0.001, batch_size = 128, batchnorm = False, dropout = 0, verbose = 2, showhistory = True):
+    def __init__(self, layers=[20, 20, 15, 10], epochnum=200,
+                 learning_rate=0.001, batch_size=128, batchnorm=False,
+                 dropout=0, verbose=2, showhistory=True):
 
         self._layers = layers
         self._epochnum = epochnum

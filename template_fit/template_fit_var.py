@@ -56,21 +56,17 @@ def global_fit(filepath, tree, var, histo_lims=(5.0, 5.6), Nbins=1000,
     npars_1 = len(pars_mc1)
     npars_2 = len(pars_mc2)
     npars_tot = 2 + npars_1 + npars_2
-    print(npars_1, npars_2, npars_tot)
 
     df = ROOT.RDataFrame(tree, filepath)
 
     # ROO T.gStyle.SetOptStat(0)
     ROOT.gStyle.SetOptFit(11111)
     histo_title = var + ' distribution (data)'
-    print(histo_title)
     h = df.Histo1D(
         (var, histo_title, Nbins, histo_lims[0], histo_lims[1]), var)
 
     f_data = ROOT.TF1("f_data", ROOT.TemplateComposition,
                       fit_range[0], fit_range[1], npars_tot)
-    # Per tenere sotto controllo che fa TemplateComposition è meglio costruire
-    # la rispettiva funzuione in model_functions.py
 
     [f_data.FixParameter(2+k, pars_mc1[k]) for k in range(npars_1)]
     [f_data.FixParameter(2+npars_1+k, pars_mc2[k]) for k in range(npars_2)]
@@ -105,7 +101,8 @@ if __name__ == "__main__":
                                     DoubleGaussian(fit_range),
                                     img_name='fig/template_fit_pi.png',
                                     histo_title=f'{var} distribution (B0->PiPi MC)',
-                                    savefig=False)
+                                    savefig=True)
+
     templ_pars_k = fit_mc_template(filepaths[1], tree, var,
                                    GaussJohnson(fit_range),
                                    img_name='fig/template_fit_k.png',
