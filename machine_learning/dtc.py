@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from utilities.utils import default_txtpaths, default_vars, default_rootpaths
+from utilities.utils import default_txtpaths, default_vars, default_rootpaths, default_figpath
 from utilities.import_datasets import array_generator
 from utilities.exceptions import InvalidSourceError
 
@@ -13,7 +13,7 @@ from utilities.exceptions import InvalidSourceError
 def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
                   vars=default_vars(), n_mc=560000, n_data=50000,
                   print_tree='printed_dtc', test_size=0.3, min_leaf_samp=1,
-                  crit='gini'):
+                  crit='gini', stat_split = 0):
     """
     """
     try:
@@ -65,7 +65,22 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
         file.write(tree_diagram)
         file.close()
 
+    print(f'Efficiency = {efficiency}')
+    print(f'Misidentification probability = {misid}')
+    print(
+        f'The predicted K fraction is : {pred_array.sum()/len(pred_array)}')
+    
+    if stat_split:
+
+        subdata = np.split(pred_array, stat_split)
+        fractions = [data.sum()/len(data) for data in subdata]
+        plt.figure('Fraction distribution for dtc')
+        plt.hist(fractions,bins=20, histtype='step')
+        plt.savefig(default_figpath('fractionsdtc'))
+    
     return pred_array, efficiency, misid
+    
+
 
 
 """
@@ -91,9 +106,6 @@ if __name__ == '__main__':
 
     predicted_array, eff, misid = dt_classifier()
 
-    print(f'Efficiency = {eff}')
-    print(f'Misidentification probability = {misid}')
-    print(
-        f'The predicted K fraction is : {predicted_array.sum()/len(predicted_array)}')
+    
 
     plt.show()

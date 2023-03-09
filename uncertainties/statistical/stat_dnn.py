@@ -8,7 +8,8 @@ from machine_learning.deepnn import eval_dnn
 from utilities.utils import find_cut , default_txtpaths, default_figpath
 from keras.models import Model, model_from_json
 
-def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/deepnn.json',weights_path = '../../machine_learning/deepnn.h5', efficiency = 0.95):
+
+def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/deepnn.json',weights_path = '../../machine_learning/deepnn.h5', efficiency = 0.95, stat_split = 400):
 
     train_path, data_path = paths
     train_set, data_set = np.loadtxt(train_path), np.loadtxt(data_path) 
@@ -27,8 +28,8 @@ def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/dee
     pi_eval, k_eval, data_eval = eval_dnn(deepneunet, pi_set, flag_data=False), eval_dnn(deepneunet, k_set, flag_data=False), eval_dnn(deepneunet, data_set, flag_data=True)
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
-    subdata = np.split(data_eval,400)
 
+    subdata = np.split(data_eval,stat_split)
     fractions = [((dat > y_cut).sum()/dat.size-misid)/(efficiency-misid) for dat in subdata]
 
     plt.figure('Fraction distribution for deepnn')
