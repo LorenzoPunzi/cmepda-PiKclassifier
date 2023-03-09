@@ -12,7 +12,7 @@ from utilities.exceptions import IncorrectFractionError, IncorrectNumGenError
 def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
                                '../data/root_files/toyMC_B0sKK.root'),
                  filepaths_out=default_rootpaths(), tree='t_M0pipi;1',
-                 num_mc=100000, num_data=30000, f=0.42, vars=default_vars()):
+                 num_mc=0, num_data=0, f=0.42, vars=default_vars()):
     """
     """
 
