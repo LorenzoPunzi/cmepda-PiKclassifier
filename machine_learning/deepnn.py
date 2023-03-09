@@ -15,7 +15,7 @@ from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
 from utilities.dnn_settings import dnn_settings
 from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
-                            find_cut, roc, plot_rocs
+                            find_cut, roc, plot_rocs, default_figpath
 from utilities.exceptions import InvalidSourceError
 from machine_learning.dtc import dt_classifier
 from var_cut.var_cut import var_cut
@@ -62,7 +62,7 @@ def train_dnn(training_set, settings, savefig=True):
         plt.plot(history.history['val_loss'], label='Validation Loss')
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
-        plt.savefig(os.path.join('fig', "epochs.pdf"))
+        plt.savefig(default_figpath('history'))
 
     model_json = deepnn.to_json()
     with open("deepnn.json", "w") as json_file:
@@ -77,8 +77,8 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
     """
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
-    # prediction_array = prediction_array.flatten()
-    if savefig and len(plot_opt) == 3:
+    
+    if savefig and len(plot_opt) == 3: # !!!! MAKE IT BETTER
         nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
@@ -88,7 +88,7 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
         plt.ylabel(f'Events per 1/{nbins}')  # MAKE IT BETTER
         plt.yscale('log')
         plt.legend()
-        plt.savefig('./fig/predict_'+plotname+'.pdf')
+        plt.savefig(default_figpath('predict_'+plotname))
         plt.draw()
 
     return prediction_array
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     plt.axvline(x=y_cut, color='green', label='y cut for '
                 + str(efficiency)+' efficiency')
     plt.legend()
-    plt.savefig('fig/ycut.pdf')
+    plt.savefig(default_figpath('ycut'))
 
     rocdnnx, rocdnny, aucdnn = roc(pi_eval, k_eval, eff=efficiency,
                                    inverse_mode=False, makefig=True,

@@ -3,11 +3,12 @@ Generates overlapping corner plots between the specified numpy arrays in order
 to show which features have different distribution in the two cases
 """
 
-import numpy as np
+import sys
 import corner
 from matplotlib import pyplot as plt
 from utilities.import_datasets import loadvars
-import sys
+from utilities.utils import default_figpath
+
 
 
 def cornerplot(array, figname):
@@ -35,7 +36,7 @@ def overlaid_cornerplot(array_list, array_labels, figname, variable_names):
             array_list[i][:, :-1], bins=100, fig=figure, color=colors[i+7], labels=variable_names)
 
     figure.set_size_inches(9, 7)
-    plt.savefig(figname)
+    plt.savefig(default_figpath(figname))
 
 
 if __name__ == '__main__':
@@ -52,5 +53,5 @@ if __name__ == '__main__':
     mask_pi = (arr_mc_pi<999).all(axis=1)
     mask_k = (arr_mc_k<999).all(axis=1)
     overlaid_cornerplot([arr_mc_pi[mask_pi,:], arr_mc_k[mask_k,:]], ["pions", "kaons"],
-                        'fig/overlaid_cornerplot_'+'_'.join(vars)+'.pdf', vars)
+                        'corner_'+'_'.join(vars), vars)
     plt.show()

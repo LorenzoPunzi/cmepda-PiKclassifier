@@ -34,6 +34,12 @@ def default_vars():
             'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2')
 
 
+def default_figpath(figname, dir = 'fig', figtype = 'pdf'):
+    wd_path = os.getcwd()
+    figpath = os.path.join(wd_path, dir, figname+'.'+figtype)
+    return figpath
+
+
 def find_cut(pi_array, k_array, efficiency,
              specificity_mode=False, inverse_mode=False):
     """
@@ -84,7 +90,7 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
     plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
     plt.legend()
     plt.draw()
-    plt.savefig('fig/' + figname + '.pdf')
+    plt.savefig(default_figpath(figname))
 
     # !!! How to make it so it saves in the /fig folder of the directory from which the function is CALLED, not the one where nnoutputfit.py IS.
     # figpath = os.path.join(os.path.dirname(__file__), "fig")
@@ -124,11 +130,8 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
         plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
         plt.legend()
 
-        # !!! How to make it so it saves in the /fig folder of the directory from which the function is CALLED, not the one where nnoutputfit.py IS.
-        current_path = os.path.dirname(__file__)
-        rel_path = 'fig'
-        figurepath = os.path.join(current_path, rel_path, 'roc.pdf')
-        plt.savefig(figurepath)
+        plt.savefig(default_figpath(figname))
+        
         '''
 
         return rocx, rocy, auc

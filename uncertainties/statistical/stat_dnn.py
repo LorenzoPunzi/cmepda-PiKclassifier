@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from utilities.dnn_settings import dnn_settings
 from machine_learning.deepnn import dnn
-from utilities.utils import find_cut , default_txtpaths
+from utilities.utils import find_cut , default_txtpaths, default_figpath
 from keras.models import Model, model_from_json
 
 def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/deepnn.json',weights_path = '../../machine_learning/deepnn.h5', efficiency = 0.95):
@@ -33,7 +33,7 @@ def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/dee
 
     plt.figure('Fraction distribution for deepnn')
     plt.hist(fractions,bins=20, histtype='step')
-    plt.savefig('fig/fractionsdnn.pdf')
+    plt.savefig(default_figpath('fractionsdnn'))
 
 
 
