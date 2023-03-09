@@ -137,7 +137,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
 if __name__ == '__main__':
 
-    settings = dnn_settings(layers = [75, 60, 45, 30, 20], batch_size = 128, epochnum = 200, learning_rate = 5e-5 showhistory = False)
+    settings = dnn_settings(layers = [75, 60, 45, 30, 20], batch_size = 128, epochnum = 200, learning_rate = 5e-5, showhistory = False)
 
     pi_eval, k_eval, data_eval = dnn(settings=settings)
     efficiency = 0.95

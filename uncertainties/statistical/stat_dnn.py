@@ -4,7 +4,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from utilities.dnn_settings import dnn_settings
-from machine_learning.deepnn import dnn
+from machine_learning.deepnn import eval_dnn
 from utilities.utils import find_cut , default_txtpaths, default_figpath
 from keras.models import Model, model_from_json
 
@@ -24,7 +24,7 @@ def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/dee
     deepneunet = model_from_json(loaded_model_json)
     deepneunet.load_weights(weights_path)
 
-    pi_eval, k_eval, data_eval = deepneunet.predict(pi_set), deepneunet.predict(k_set), deepneunet.predict(data_set)
+    pi_eval, k_eval, data_eval = eval_dnn(deepneunet, pi_set, flag_data=False), eval_dnn(deepneunet, k_set, flag_data=False), eval_dnn(deepneunet, data_set, flag_data=True)
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
     subdata = np.split(data_eval,400)
@@ -41,7 +41,7 @@ def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/dee
 if __name__ == '__main__':
 
     """
-    settings = dnn_settings(layers = [75, 60, 45, 30, 20], batch_size = 128, epochnum = 200, learning_rate = 5e-5 showhistory = False)
+    settings = dnn_settings(layers = [75, 60, 45, 30, 20], batch_size = 128, epochnum = 200, learning_rate = 5e-5, showhistory = False)
 
     pi_eval, k_eval, data_eval = dnn(settings = settings)
     efficiency = 0.95
