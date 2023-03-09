@@ -13,23 +13,23 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     """
     """
     rootpath_pi, rootpath_k, rootpath_data = rootpaths
-    M_pi, M_k = loadvars(rootpath_pi, rootpath_k, tree,
-                         [cut_var], flag_column=False)
-    M_data, _ = loadvars(rootpath_data, rootpath_data, tree,
-                         [cut_var], flag_column=False)
+    var_pi, var_k = loadvars(rootpath_pi, rootpath_k, tree,
+                             [cut_var], flag_column=False)
+    var_data, _ = loadvars(rootpath_data, rootpath_data, tree,
+                           [cut_var], flag_column=False)
 
-    m_cut, misid = find_cut(M_pi, M_k, eff, inverse_mode=inverse_mode,
-                            specificity_mode=specificity_mode)
+    cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
+                          specificity_mode=specificity_mode)
 
     if draw_fig:
         nbins = 300
         range = (5.0, 5.6)
         plt.figure('Cut on ' + cut_var)
-        plt.hist(M_pi, nbins, range=range, histtype='step',
+        plt.hist(var_pi, nbins, range=range, histtype='step',
                  color='red', label=cut_var + ' for Pions')  # !!! (range)
-        plt.hist(M_k, nbins, range=range, histtype='step',
+        plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
-        plt.axvline(x=m_cut, color='green', label=cut_var + ' Cut for '
+        plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
                     + str(eff)+' efficiency')
         plt.draw()
         plt.xlabel(cut_var)
@@ -37,25 +37,25 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         plt.legend()
         plt.savefig(default_figpath('cut_'+cut_var))
 
-    rocx, rocy, auc = roc(M_pi, M_k, eff=eff, inverse_mode=inverse_mode,
-                          makefig=draw_roc)
+    rocx, rocy, auc = roc(var_pi, var_k, eff=eff,
+                          inverse_mode=inverse_mode, makefig=draw_roc)
 
-    print(f'{cut_var} cut is {m_cut} for {eff} efficiency')
+    print(f'{cut_var} cut is {cut} for {eff} efficiency')
     print(f'Misid. is {misid} for {eff} efficiency')
 
-    f = ((M_data < m_cut).sum()/M_data.size-misid)/(eff
-                                                    - misid) if inverse_mode else ((M_data > m_cut).sum()/M_data.size-misid)/(eff-misid)
+    f = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
+        if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
     print(f'The estimated fraction of K events is {f}')
 
     if stat_split:
-        subdata = np.split(M_data, stat_split)
-        fractions = [((dat < m_cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata] if inverse_mode else [
-                      ((dat > m_cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata]
+        subdata = np.split(var_data, stat_split)
+        fractions = [((dat < cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata] if inverse_mode \
+            else [((dat > cut).sum()/dat.size-misid)/(eff-misid) for dat in subdata]
         plt.figure('Fraction distribution for '+cut_var+' cut')
         plt.hist(fractions, bins=20, histtype='step')
         plt.savefig(default_figpath('fractionsvarcut'))
 
-    return f, misid, rocx, rocy, auc
+    return f, cut, misid, (rocx, rocy), auc
 
 
 if __name__ == '__main__':

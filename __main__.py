@@ -38,16 +38,18 @@ from var_cut.var_cut import var_cut
 # print(" ----------------------------------------------- ")
 
 
-def add_result(name, value, err=0, *note):
-    with open('results.txt', encoding='utf-8', mode='a') as file:
-        if err == 0:
-            file.write(f'    {name} = {value}  |  {note}\n')
+def add_result(name, value, *note):
+    with open(results_path, encoding='utf-8', mode='a') as file:
+        if len(note) == 0:
+            file.write(f'    {name} = {value}\n')
         else:
-            file.write(f'    {name} = {value} +- {err}  |  {note}\n')
+            file.write(f'    {name} = {value}  |  {note}\n')
 
 
-default_toyMC_path = ('data/root_files/toyMC_B0PiPi.root',
-                      'data/root_files/toyMC_B0sKK.root')
+default_toyMC_path = ('cmepda-PiKclassifier/data/root_files/toyMC_B0PiPi.root',
+                      'cmepda-PiKclassifier/data/root_files/toyMC_B0sKK.root')
+
+# default_figpath =
 
 parser = argparse.ArgumentParser(prog='PiK classifier',
                                  description='What the program does',
@@ -99,7 +101,7 @@ parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
                        help='Variable(s) on which cut evaluation is performed')
 
 parser_an.add_argument('-e', '--efficiency', default=0.90,
-                       help='Probability of correct Pi identification requested (applies only to dnn and var_cut analyses)')
+                       help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
 
 # ~~~~~~~~ Subparser for plots options ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,7 +123,9 @@ filepaths = args.rootpaths_gen
 # figpath = args.figpath
 tree = args.tree
 
-with open('results.txt', encoding='utf-8', mode='w') as f:
+results_path = 'cmepda-PiKclassifier/results.txt'
+
+with open(results_path, encoding='utf-8', mode='w') as f:
     f.write('\n Results of the analysis performed with PiK classifier package \n'
             ' ------------------------------------------------------------- \n\n')
 
@@ -159,10 +163,10 @@ if hasattr(args, "methods"):
             figures = False
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             t0 = time.time()
-            type_title = 'Template fit with ROOT'
-            with open('results.txt', encoding='utf-8', mode='a') as f:
-                f.write(f'\n\n  {type_title}: \n')
-            print(f'\n {type_title} - working...\n')
+            method_title = 'Template fit with ROOT'
+            with open(results_path, encoding='utf-8', mode='a') as file_tfit:
+                file_tfit.write(f'\n\n  {method_title}: \n')
+            print(f'\n {method_title} - working...\n')
             var = args.var_fit
 
             templ_pars_pi = fit_mc_template(
@@ -182,30 +186,31 @@ if hasattr(args, "methods"):
                              pars_mc1=templ_pars_k, pars_mc2=templ_pars_pi,
                              histo_lims=histo_lims, savefigs=figures)
 
-            add_result("K fraction", res.Parameters()[1], err=res.Errors()[1])
+            add_result(
+                "K fraction", f'{res.Parameters()[1]} +- {res.Errors()[1]}')
             add_result("Chi2", res.Chi2())
             add_result("Probability", res.Prob())
             t1 = time.time()
             print(
-                f'  {type_title} - ended successfully in {t1-t0} s \n\n')
+                f'  {method_title} - ended successfully in {t1-t0} s \n\n')
 
         if opt in ["dnn", "all"]:
             # ~~~~~~~~ Setup of the DNN - free to edit ~~~~~~~~~~~~~~~~~~~~~~~
             settings = dnn_settings()
             settings.layers = [75, 60, 45, 30, 20]
             settings.batch_size = 128
-            settings.epochnum = 100
+            settings.epochnum = 200
             settings.verbose = 2
             settings.batchnorm = False
             settings.dropout = 0.005
-            settings.learning_rate = 5e-4
+            settings.learning_rate = 5e-5
             inverse = False
             figures = False
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            type_title = 'Deep Neural Network'
-            with open('results.txt', encoding='utf-8', mode='a') as file:
-                file.write(f'\n\n  {type_title}: \n')
-            print(f'\n  {type_title} - working...\n')
+            method_title = 'Deep Neural Network'
+            with open(results_path, encoding='utf-8', mode='a') as file_dnn:
+                file_dnn.write(f'\n\n  {method_title}: \n')
+            print(f'\n  {method_title} - working...\n')
             pi_eval, k_eval, data_eval = dnn(settings=settings)
             y_cut, misid = find_cut(pi_eval, k_eval, args.efficiency)
             # plt.axvline(x=y_cut, color='green', label='y cut for '
@@ -221,27 +226,27 @@ if hasattr(args, "methods"):
             add_result("Output cut", y_cut, f'Efficiency = {args.efficiency}')
             add_result("Misid", misid, f'Efficiency = {args.efficiency}')
             add_result("AUC", aucdnn, f'Efficiency = {args.efficiency}')
-            print(f"\n  {type_title} - ended successfully! \n\n")
+            print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dtc", "all"]:
             # ~~~~~~~~ Setup of the DTC - free to edit ~~~~~~~~~~~~~~~~~~~~~~~
-            test_size = 0.3,
-            ml_samp = 1,
+            test_size = 0.3
+            ml_samp = 1
             crit = 'gini'
-            print = False
+            print_tree = False
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            dtc_title = 'Decision Tree Classifier'
-            with open('results.txt', encoding='utf-8', mode='a') as file:
-                file.write(f'\n\n  {dtc_title}: \n')
-            # print(f'\n  {dtc_title} - working...\n')
+            method_title = 'Decision Tree Classifier'
+            with open(results_path, encoding='utf-8', mode='a') as file_dtc:
+                file_dtc.write(f'\n\n  {method_title}: \n')
+            print(f'\n  {method_title} - working...\n')
             pred_array, eff, misid = dt_classifier(
                 root_tree=args.tree, vars=args.variables, test_size=test_size,
-                min_leaf_samp=ml_samp, crit=crit, print_tree=print)
+                min_leaf_samp=ml_samp, crit=crit, print_tree=print_tree)
             fraction = pred_array.sum()/len(pred_array)
             add_result("K fraction", fraction)
             add_result("Efficiency", eff)
             add_result("Misid", misid)
-            print(f"\n  {dtc_title} - ended successfully! \n\n")
+            print(f'\n  {method_title} - ended successfully! \n\n')
 
         if opt in ["vcut", "all"]:
             # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
@@ -251,8 +256,8 @@ if hasattr(args, "methods"):
             roc_figure = False
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             type_title = 'Cut on Variables Distribution'
-            with open('results.txt', encoding='utf-8', mode='a') as file:
-                file.write(f'\n\n  {type_title}: \n')
+            with open(results_path, encoding='utf-8', mode='a') as file_vcut:
+                file_vcut.write(f'\n\n  {type_title}: \n')
             print(f'\n  {type_title} - working...\n')
             fraction, misid, rocx, rocy, auc = var_cut(
                 rootpaths=filepaths, tree=tree, cut_var=args.var_cut,

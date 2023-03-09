@@ -94,9 +94,9 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
     return prediction_array
 
 
-def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
+def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
         vars=default_vars(), n_mc=560000, n_data=50000, settings=dnn_settings(),
-        savefigs=True, stat_split = 0):
+        savefigs=False, stat_split=0):
     """
     """
     try:
@@ -131,11 +131,12 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
     if stat_split:
 
-        subdata = np.split(data_eval,stat_split)
-        fractions = [((data > y_cut).sum()/data.size-misid)/(efficiency-misid) for data in subdata]
+        subdata = np.split(data_eval, stat_split)
+        fractions = [((data > y_cut).sum()/data.size-misid)
+                     / (efficiency-misid) for data in subdata]
 
         plt.figure('Fraction distribution for deepnn')
-        plt.hist(fractions,bins=20, histtype='step')
+        plt.hist(fractions, bins=20, histtype='step')
         plt.savefig(default_figpath('fractionsdnn'))
 
     return pi_eval, k_eval, pred_array

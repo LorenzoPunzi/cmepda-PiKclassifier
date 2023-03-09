@@ -45,17 +45,17 @@ def find_cut(pi_array, k_array, efficiency,
     """
     """
     if inverse_mode:
-        efficiency = 1-efficiency
-    cut = -np.sort(-k_array)[int(efficiency*(len(k_array)-1))
-                             ] if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
-    if inverse_mode:  # !!!! NOT DRY
-        misid = (pi_array < cut).sum(
-        )/pi_array.size if not specificity_mode else (k_array < cut).sum()/k_array.size
-    else:
-        misid = (pi_array > cut).sum(
-        )/pi_array.size if not specificity_mode else (k_array > cut).sum()/k_array.size
+        efficiency = 1 - efficiency
 
-    # .sum() sums how many True there are in the masked (xx_array>y)
+    cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
+        if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
+
+    if inverse_mode:  # !!!! NOT DRY
+        misid = (pi_array < cut).sum()/pi_array.size \
+            if not specificity_mode else (k_array < cut).sum()/k_array.size
+    else:
+        misid = (pi_array > cut).sum()/pi_array.size \
+            if not specificity_mode else (k_array > cut).sum()/k_array.size
 
     return cut, misid
 

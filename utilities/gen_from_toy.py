@@ -30,15 +30,16 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
 
     dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths_in]
 
-    n_evts_toymc_pi = dataframes[0].Count().GetValue()
-    n_evts_toymc_k = dataframes[1].Count().GetValue()
+    n_evts_toymc_pi = dataframes[0].Count()
+    n_evts_toymc_pi = n_evts_toymc_pi.GetValue()
+    n_evts_toymc_k = dataframes[1].Count()
+    n_evts_toymc_k = n_evts_toymc_k.GetValue()
 
     # If num_mc and num_data are BOTH set to zero, the datasets are generated
     # by taking from the toyMCs the maximum possible number of events (*) and
     # by imposing the condition num_data/(2*num_mc) = 0.1
     # (*): for the cases f<0.5 and f>=0.5 respectively, we impose the conditions
     #      n_evts_toymc_pi==num_mc+num_pions and n_evts_toymc_k==num_mc+num_kaons
-
     if num_mc == 0 and num_data == 0:
         if f < 0.5:
             num_mc = n_evts_toymc_pi/(1.2 - (0.2*f))

@@ -10,10 +10,10 @@ from utilities.import_datasets import array_generator
 from utilities.exceptions import InvalidSourceError
 
 
-def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
+def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
                   vars=default_vars(), n_mc=560000, n_data=50000,
                   print_tree='printed_dtc', test_size=0.3, min_leaf_samp=1,
-                  crit='gini', stat_split = 0):
+                  crit='gini', stat_split=0):
     """
     """
     try:
@@ -59,28 +59,24 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
 
     if print_tree:
         tree_diagram = tree.export_text(dtc, feature_names=vars)
-        file = open(print_tree + '.txt', 'w')
-        file.write(f'Number of nodes = {n_nodes} \n')
-        file.write(f'Max depth = {max_depth} \n \n')
-        file.write(tree_diagram)
-        file.close()
+        with open(print_tree + '.txt', 'w') as file:
+            file.write(f'Number of nodes = {n_nodes} \n')
+            file.write(f'Max depth = {max_depth} \n \n')
+            file.write(tree_diagram)
 
     print(f'Efficiency = {efficiency}')
     print(f'Misidentification probability = {misid}')
     print(
         f'The predicted K fraction is : {pred_array.sum()/len(pred_array)}')
-    
-    if stat_split:
 
+    if stat_split:
         subdata = np.split(pred_array, stat_split)
         fractions = [data.sum()/len(data) for data in subdata]
         plt.figure('Fraction distribution for dtc')
-        plt.hist(fractions,bins=20, histtype='step')
+        plt.hist(fractions, bins=20, histtype='step')
         plt.savefig(default_figpath('fractionsdtc'))
-    
-    return pred_array, efficiency, misid
-    
 
+    return pred_array, efficiency, misid
 
 
 """
@@ -105,7 +101,5 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
 if __name__ == '__main__':
 
     predicted_array, eff, misid = dt_classifier()
-
-    
 
     plt.show()
