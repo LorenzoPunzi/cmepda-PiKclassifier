@@ -497,7 +497,7 @@ che vengano portate avanti richieste incoerenti ()
 
 Ho provato a fare il template fit con questo metodo, il programma gira e il fit
 viene effettuato, ma mi si sono sballati i fit sui templates, quindi escono
-p-values non proprio belli :(
+p-values non proprio belli :
 
 Se riesco a trovarmi un po' di tempo domani implemento anche gli altri metodi.
 
@@ -513,13 +513,13 @@ Ho creato dei test per utils (Find_cut e roc) e per import_datasets (loadvars e 
 
 COSE DA FARE:
 
-- exceptions (lorenzo)
-- tests (lorenzo+ruben)
+- exceptions (lorenzo) x
+- tests (lorenzo+ruben) x
 - docs (lorenzo+ruben)
 - rivedere i !!!!
 - parser/main (insieme)
 - relative path for get_xxx functions (insieme) x
-- upgrade dtc (Lorenzo)
+- upgrade dtc (Lorenzo) x
 - CI (ruben)
 
 

@@ -10,7 +10,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.layers import Dense, Input, Normalization, AlphaDropout
-from keras.models import Model
+from keras.models import Model, model_from_json
 from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
 from utilities.dnn_settings import dnn_settings
@@ -63,6 +63,11 @@ def train_dnn(training_set, settings, savefig=True):
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
         plt.savefig(os.path.join('fig', "epochs.pdf"))
+
+    model_json = deepnn.to_json()
+    with open("deepnn.json", "w") as json_file:
+        json_file.write(model_json)
+    deepnn.save_weights("deepnn.h5")
 
     return deepnn
 
