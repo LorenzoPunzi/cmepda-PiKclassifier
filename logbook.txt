@@ -552,8 +552,6 @@ Messi gli attributes di dnn_settings direttamente come options nella chiamata __
 
 
 
-
-
 COSE DA FARE:
 
 - exceptions (lorenzo) x
