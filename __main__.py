@@ -43,57 +43,81 @@ parser = argparse.ArgumentParser(prog='PiK classifier',
                                  description='What the program does',
                                  epilog='Text at the bottom of help')
 
-parser.add_argument('-g', '--generate', action='store_true',
-                    help='Generates MC and mixed datasets from the toyMC')
+subparsers = parser.add_subparsers(help='Sub-command help')
 
-parser.add_argument('-rp', '--rootpaths', nargs=2, default=default_toyMC_path,
-                    help='Path of the toyMC root files taken as input')
+
+# ~~~~~~~~ Generic arguments for the main parser ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 parser.add_argument('-tr', '--tree', default='t_M0pipi;1',
-                    help='Name of the tree of the toyMC root files where the variables are stored')
+                    help='Name of the tree where the variables are stored (valid both for the toyMCs and the generated_datasets)')
 
-parser.add_argument('-rds', '--root_datasets', nargs=3, default=default_rootpaths(),
-                    help='Path of the datasets generated from the toyMC')
-
-parser.add_argument('-f', '--fraction', type=float, default=0.42,
-                    help='Fraction of Kaons in the mixed dataset you want to generate')
-
+parser.add_argument('-rpg', '--rootpaths_gen', nargs=3, default=default_rootpaths(),
+                    help='Path of the datasets on which to perform the analysis')
 
 parser.add_argument('-v', '--variables', nargs='+', default=default_vars(),
                     help='Variables you want to treat')
 
-parser.add_argument('-vfit', '--var_fit', default='M0_Mpipi',
-                    help='Variable on which template fit is performed')
 
-parser.add_argument('-vcut', '--var_cut', default='M0_Mpipi',
-                    help='Variable on which cut evaluation is performed')
+# ~~~~~~~~ Subparser for datasets generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-parser.add_argument('-t', '--type', nargs='+', default='all',
-                    choices=['tfit', 'dnn', 'dtc', 'vcut', 'all'],
-                    help='Type of the analysis to be performed')
+parser_gen = subparsers.add_parser(
+    'gen', help='Generates MC and mixed datasets from the toyMC')
 
-parser.add_argument('-cr', '--cornerplot', action='store_true',
-                    help='Choice to generate and save the cornerplot of the variables given in input')
+parser_gen.add_argument('-rpt', '--rootpaths_toy', nargs=2, default=default_toyMC_path,
+                        help='Path of the toyMC root files taken as input')
 
-parser.add_argument('-fp', '--figpath',
-                    help='Path where figures are going to be saved')
+parser_gen.add_argument('-ndat', '--num_events', nargs=2, default=0, type=int,
+                        help='Number of events in each MC dataset and in the mixed one (in this order)')
+
+parser_gen.add_argument('-f', '--fraction', type=float, default=0.42,
+                        help='Fraction of Kaons in the mixed dataset you want to generate')
+
+
+# ~~~~~~~~ Subparser for analysis options ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+parser_an = subparsers.add_parser('analysis', help='Performs the analysis')
+
+parser_an.add_argument('-t', '--type', nargs='+', default='all',
+                       choices=['tfit', 'dnn', 'dtc', 'vcut', 'all'],
+                       help='Type of the analysis to be performed. \n'
+                            'If \'all\' is called, the default variable for the ROOT template fit and the var_cut are selected')
+
+parser_an.add_argument('-vfit', '--var_fit', default='M0_Mpipi',
+                       help='Variable on which template fit is performed')
+
+parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
+                       help='Variable(s) on which cut evaluation is performed')
+
+
+# ~~~~~~~~ Subparser for plots options ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+'''
+parser_fig = subparsers.add_parser('figures', help='Saves the figures')
+
+parser_fig.add_argument('-fp', '--figpath',
+                        help='Path where figures are going to be saved')
+
+parser_fig.add_argument('-cr', '--cornerplot', action='store_true',
+                        help='Choice to generate and save the cornerplot of the variables given in input')
+'''
+
 
 args = parser.parse_args()
 
 
-filepaths = args.root_datasets
-figpath = args.figpath
+# filepaths = args.root_datasets
+# figpath = args.figpath
 tree = args.tree
 
-if args.generate:
+if hasattr(args, 'rootpaths_toy') and hasattr(args, 'num_events') and hasattr(args, 'fraction'):
     # Generates the datasets with the requested fraction of Kaons in
     # the mixed sample. If the following two quantities are BOTH set to
     # zero, the function generates the datasets with the maximum
     # possible number of events
-    NUM_MC = 0
-    NUM_DATA = 0
-    gen_from_toy(filepaths_in=tuple(args.rootpaths), tree=tree, f=args.fraction,
-                 n_mc=NUM_MC, n_data=NUM_DATA, vars=tuple(args.variables))
+    NUM_MC, NUM_DATA = args.num_events
+    print(NUM_MC, NUM_DATA)
+    gen_from_toy(filepaths_in=tuple(args.rootpaths_toy), tree=tree, f=args.fraction,
+                 num_mc=NUM_MC, num_data=NUM_DATA, vars=tuple(args.variables))
 
 
 # Initialize the appropriate analysis-methods list, also removing duplicates
@@ -169,3 +193,6 @@ for opt in analysis:
 
     if opt in ["vcut", "all"]:
         print("\nTemplate fit with ROOT - working...\n")
+
+
+print("END OF FILE")

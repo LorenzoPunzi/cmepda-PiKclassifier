@@ -47,11 +47,9 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
 
     else:
         try:
-            num_species = [int((1-f)*num_data), int(f*num_data)]
-            num_pions, num_kaons = num_species
-            if (num_pions+num_mc <= n_evts_toymc_pi) and \
-               (num_kaons+num_mc <= n_evts_toymc_k):
-                num_pions, num_kaons = int((1-f)*num_data), int(f*num_data)
+            num_pions, num_kaons = int((1-f)*num_data), int(f*num_data)
+            if num_pions+num_mc <= n_evts_toymc_pi and num_kaons+num_mc <= n_evts_toymc_k:
+                pass
             else:
                 raise IncorrectNumGenError()
         except IncorrectNumGenError as err:
