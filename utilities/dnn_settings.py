@@ -6,15 +6,16 @@ class dnn_settings:
     """
     """
 
-    def __init__(self):
-        self._layers = [20, 20, 15, 10]
-        self._epochnum = 200
-        self._learning_rate = 0.001
-        self._batch_size = 128
-        self._batchnorm = False
-        self._dropout = 0
-        self._verbose = 1
-        self._showhistory = True
+    def __init__(self, layers = [20, 20, 15, 10], epochnum = 200, learning_rate = 0.001, batch_size = 128, batchnorm = False, dropout = 0, verbose = 2, showhistory = True):
+
+        self._layers = layers
+        self._epochnum = epochnum
+        self._learning_rate = learning_rate
+        self._batch_size = batch_size
+        self._batchnorm = batchnorm
+        self._dropout = dropout
+        self._verbose = verbose
+        self._showhistory = showhistory
 
     @property
     def layers(self):

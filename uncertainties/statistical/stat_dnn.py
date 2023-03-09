@@ -41,17 +41,9 @@ def stat_dnn(paths = default_txtpaths(), json_path = '../../machine_learning/dee
 if __name__ == '__main__':
 
     """
-    settings = dnn_settings()
-    settings.layers = [75, 60, 45, 30, 20]
-    settings.batch_size = 128
-    settings.epochnum = 100
-    settings.verbose = 2
-    settings.batchnorm = False
-    settings.dropout = 0.005
-    settings.learning_rate = 5e-4
-    settings.showhistory =False
+    settings = dnn_settings(layers = [75, 60, 45, 30, 20], batch_size = 128, epochnum = 200, learning_rate = 5e-5 showhistory = False)
 
-    pi_eval, k_eval, data_eval = dnn(settings)
+    pi_eval, k_eval, data_eval = dnn(settings = settings)
     efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
