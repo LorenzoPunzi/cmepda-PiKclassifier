@@ -515,6 +515,16 @@ volte di eguito sullo stesso campione no? Così sarebbe sempre lo STESSO set di 
 preso, seppur in ordine ogni volta diverso per lo scrambling a VALLE.
 
 
+07-08/03/2023 (Lorenzo):
+
+Lista di varie cose fatte in questi due giorni:
+
+- Creato le prime Exceptions, in particolare per il dtc e il loadheader (che però non ho potuto testare !!!!)
+- Spostato lo shuffling degli array all'interno di loadvars, così che non si prendano sempre gli stessi eventi runnando più volte array_generator 
+- creato degli stat_xxx per valutare la distribuzione della f stimata per dtc e dnn
+- implementato una maniera di salvare e quindi poter poi caricare senza dover retrainare le deepnn come .json files, con pesi salvati come .h5
+
+
 08/03/2023 (Ruben):
 
 Risolti i problemi con i template fit. Ho ripristinato la vecchia struttura di funzioni
@@ -544,7 +554,7 @@ COSE DA FARE:
 - rivedere i !!!!
 - parser/main (insieme)
 - relative path for get_xxx functions (insieme) x
-- upgrade dtc (Lorenzo) x
+- upgrade dtc (lorenzo) x
 - CI (ruben)
 
 
