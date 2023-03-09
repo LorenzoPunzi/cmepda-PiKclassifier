@@ -538,6 +538,14 @@ per il template fit e per la dnn. Va un attimo cercata una quadra su quali varia
 la sezione del decision tree e del var_cut. Una cosa bellina sarebbe scrivere tutti
 i risultati su un file .txt, ci si può lavorare
 
+09/03/2023 (Lorenzo):
+
+Aggiunto default_figpath così che le funzioni importate che plottano salvino nella /fig della cwd, non della directory in cui sono definite queste funzioni.
+
+Messi gli attributes di dnn_settings direttamente come options nella chiamata __init__ di instanziamento della classe per pulizia e pythonicità
+
+
+
 
 
 
@@ -549,11 +557,11 @@ i risultati su un file .txt, ci si può lavorare
 COSE DA FARE:
 
 - exceptions (lorenzo) x
-- tests (lorenzo+ruben) x
+- tests (lorenzo) x
 - docs (lorenzo+ruben)
 - rivedere i !!!!
-- parser/main (insieme)
-- relative path for get_xxx functions (insieme) x
+- parser/main (ruben)
+- relative path for get_xxx functions (lorenzo) x
 - upgrade dtc (lorenzo) x
 - CI (ruben)
 
