@@ -547,6 +547,14 @@ Aggiunto default_figpath così che le funzioni importate che plottano salvino ne
 Messi gli attributes di dnn_settings direttamente come options nella chiamata __init__
 di istanziamento della classe per pulizia e pythonicità
 
+Ho aggiunto splitting options ai file di stat_ così che si possa decidere quando si chiama in quatni pezzi slittare
+
+Inoltre ho integrato lo stat_ nelle funzioni stesse per dt_class e var_cut, ma non per dnn perché il point di come ho costruito stat_dnn è proprio quello di non dover stare a ritrainare ogni volta la rete ma invece importarla
+
+
+
+
+
 
 09/03/2023 (Ruben)
 
@@ -577,8 +585,8 @@ Modifiche alla funzione gen_from_toy:
 - relative path for get_xxx functions (lorenzo) OK
 - upgrade dtc (lorenzo) OK
 - Sistematiche (lorenzo+ruben)  DA FARE
-- Errori statistici (lorenzo)   ?
-- CI (ruben)    DA CAPIRE COME FARE :|
+- Errori statistici (lorenzo)   QUASI FATTO SPERO
+- CI (ruben)    DA CAPIRE COME FARE :| (NOT STONKS)
 
 
 
