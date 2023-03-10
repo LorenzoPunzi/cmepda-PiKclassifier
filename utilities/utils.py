@@ -71,7 +71,7 @@ def find_cut(pi_array, k_array, efficiency,
 
 def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
               x_pnts=(), y_pnts=(), point_labels=(''), eff=0,
-              figtitle='ROC', figname='roc'):
+              figtitle='ROC', figname=''):
     """
     """
     plt.figure(figtitle)
@@ -99,7 +99,10 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
     plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
     plt.legend()
     plt.draw()
-    plt.savefig(default_figpath(figname))
+    if figname == '':
+        plt.savefig(default_figpath(figtitle))
+    else:
+        plt.savefig(figname)
 
     # !!! How to make it so it saves in the /fig folder of the directory from which the function is CALLED, not the one where nnoutputfit.py IS.
     # figpath = os.path.join(os.path.dirname(__file__), "fig")
@@ -119,10 +122,10 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
         rocx, rocy = np.ones(rocx.size)-rocx, np.ones(rocy.size)-rocy
         auc = 1 - auc
 
-    print(f'AUC of the ROC is {auc}')
+    # print(f'AUC of the ROC is {auc}')
 
     if makefig:
-        plot_rocs([rocx], [rocy], [name], ["-"],
-                  ["blue"], eff=eff, figname=name)
+        plot_rocs((rocx,), (rocy,), ("ROC",), ("-",), ("blue",), eff=eff,
+                  figname=name)
 
     return rocx, rocy, auc

@@ -200,30 +200,36 @@ if hasattr(args, "methods"):
             settings = dnn_settings()
             settings.layers = [75, 60, 45, 30, 20]
             settings.batch_size = 128
-            settings.epochnum = 200
+            settings.epochnum = 10
             settings.verbose = 2
             settings.batchnorm = False
             settings.dropout = 0.005
             settings.learning_rate = 5e-5
             inverse = False
             figures = args.figures
-            fignames = ["eval_Pions.png", "eval_Kaons.png", "eval_Data.png"]
+            fignames = ["DNN_history", "eval_Pions.png", "eval_Kaons.png",
+                        "eval_Data.png"]
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Deep Neural Network'
             with open(results_file, encoding='utf-8', mode='a') as file_dnn:
                 file_dnn.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
+
             pi_eval, k_eval, data_eval = dnn(
-                settings=settings, savefigs=figures,
-                figpaths=tuple([f'{respath}/{figname}' for figname in fignames]))
+                root_tree=tree, vars=args.variables, settings=settings,
+                savefigs=figures, figpaths=tuple([f'{respath}/{figname}'
+                                                  for figname in fignames]))
+
             y_cut, misid = find_cut(pi_eval, k_eval, args.efficiency)
             # plt.axvline(x=y_cut, color='green', label='y cut for '
             #             + str(efficiency)+' efficiency')
             # plt.legend()
             #   plt.savefig('fig/ycut.pdf')
-            rocdnnx, rocdnny, aucdnn = roc(pi_eval, k_eval, eff=args.efficiency,
-                                           inverse_mode=inverse, makefig=figures,
-                                           name="dnn_roc")
+
+            rocdnnx, rocdnny, aucdnn = roc(
+                pi_eval, k_eval, eff=args.efficiency, inverse_mode=inverse,
+                makefig=figures, name=f'{respath}/DNN_roc.png')
+
             fraction = ((data_eval > y_cut).sum()
                         / data_eval.size-misid)/(args.efficiency-misid)
             add_result("K fraction", fraction)

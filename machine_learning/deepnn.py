@@ -21,14 +21,14 @@ from machine_learning.dtc import dt_classifier
 from var_cut.var_cut import var_cut
 
 
-def train_dnn(training_set, settings, savefig=True):
+def train_dnn(training_set, settings, savefig=True, figpath=""):
     """
     """
     seed = np.random.seed(int(time.time()))
     pid = training_set[:, -1]
     features = training_set[:, :-1]
-    print(np.shape(features))
-    print(pid)
+    # print(np.shape(features))
+    # print(pid)
 
     neurons = settings.layers
 
@@ -62,7 +62,10 @@ def train_dnn(training_set, settings, savefig=True):
         plt.plot(history.history['val_loss'], label='Validation Loss')
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
-        plt.savefig(default_figpath('history'))
+        if figpath == "":
+            plt.savefig(default_figpath('history'))
+        else:
+            plt.savefig(figpath)
 
     model_json = deepnn.to_json()
     with open("deepnn.json", "w") as json_file:
@@ -72,7 +75,7 @@ def train_dnn(training_set, settings, savefig=True):
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
+def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True, figpath=""):
     """
     """
     prediction_array = dnn.predict(eval_set).flatten() \
@@ -88,7 +91,10 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
         plt.ylabel(f'Events per 1/{nbins}')  # MAKE IT BETTER
         plt.yscale('log')
         plt.legend()
-        plt.savefig(default_figpath('predict_'+plotname))
+        if figpath == "":
+            plt.savefig(default_figpath('predict_'+plotname))
+        else:
+            plt.savefig(figpath)
         plt.draw()
 
     return prediction_array
@@ -96,7 +102,7 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True):
 
 def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
         vars=default_vars(), n_mc=560000, n_data=50000, settings=dnn_settings(),
-        savefigs=False, stat_split=0):
+        savefigs=False, figpaths=("", "", "", ""), stat_split=0):
     """
     """
     try:
@@ -120,14 +126,18 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
     k_set = np.array([training_set[i, :] for i in range(
         np.shape(training_set)[0]) if training_set[i, -1] == 1])
 
-    deepnn = train_dnn(training_set, settings, savefig=savefigs)
+    deepnn = train_dnn(training_set, settings,
+                       savefig=savefigs, figpath=figpaths[0])
 
     pi_eval = eval_dnn(deepnn, pi_set, flag_data=False, savefig=savefigs,
-                       plot_opt=['Templ_eval', 'red', 'Evaluated pions'])
+                       plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
+                       figpath=figpaths[1])
     k_eval = eval_dnn(deepnn, k_set, flag_data=False, savefig=savefigs,
-                      plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'])
+                      plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
+                      figpath=figpaths[2])
     pred_array = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
-                          plot_opt=['Dataeval', 'blue', 'Evaluated data'])
+                          plot_opt=['Data_eval', 'blue', 'Evaluated data'],
+                          figpath=figpaths[3])
 
     if stat_split:
 
