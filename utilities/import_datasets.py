@@ -13,7 +13,7 @@ from utilities.utils import default_rootpaths, default_vars
 from utilities.exceptions import InvalidArrayGenRequestError
 
 
-def loadvars(file_pi, file_k, tree, vars, flag_column, flatten1d=True):
+def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     """
     Returns numpy arrays containing the requested variables, stored originally
     in MC root files. The LAST column of the output array contains a flag (0
