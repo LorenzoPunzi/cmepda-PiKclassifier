@@ -21,8 +21,9 @@ def initialize_library():
     except LoadHeadError as err:
         print(err)
         sys.exit()
+
     success = ROOT.gSystem.CompileMacro('fit_functions.cpp', opt="ks")
-    if not success:  # !!!! Make it better
+    if success is not True:  # !!!! Make it better
         lib_file = ''
         for root, dirnames, filenames in os.walk("."):
             for filename in filenames:

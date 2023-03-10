@@ -1,0 +1,29 @@
+
+ Results of the analysis performed with PiK classifier package 
+ ------------------------------------------------------------- 
+
+
+
+  Template fit with ROOT: 
+    K fraction = 0.42387163372807696 +- 0.010060218370065337
+    Chi2 = 590.3273548278761
+    Probability = 0.9826218061209627
+
+
+  Deep Neural Network: 
+    K fraction = 0.29331630481055787
+    Output cut = 0.9667463898658752  |  ('Efficiency = 0.9',)
+    Misid = 0.86868  |  ('Efficiency = 0.9',)
+    AUC = 0.7302351266  |  ('Efficiency = 0.9',)
+
+
+  Decision Tree Classifier: 
+    K fraction = 0.4343
+    Efficiency = 0.9083255690137095
+    Misid = 0.08992253238947509
+
+
+  Cut on Variables Distribution: 
+    K fraction = 0.3737341434815053  |  ('(M0_Mpipi)',)
+    Misid = 5.302165401344654  |  ('(M0_Mpipi)',)
+    AUC = 0.6327851411000001  |  ('(M0_Mpipi)',)

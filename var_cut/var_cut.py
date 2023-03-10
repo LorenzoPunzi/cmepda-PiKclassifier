@@ -9,7 +9,7 @@ from utilities.import_datasets import loadvars
 
 def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
             eff=0.95, inverse_mode=False, specificity_mode=False,
-            draw_roc=False, draw_fig=True, stat_split=0):
+            draw_roc=False, draw_fig=False, figpath='', stat_split=0):
     """
     """
     rootpath_pi, rootpath_k, rootpath_data = rootpaths
@@ -35,7 +35,10 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         plt.xlabel(cut_var)
         plt.ylabel(f'Events per {range[1]-range[0]/nbins} [{cut_var}]')
         plt.legend()
-        plt.savefig(default_figpath('cut_'+cut_var))
+        if figpath == '':
+            plt.savefig(default_figpath('cut_'+cut_var))
+        else:
+            plt.savefig(figpath+'/cut_'+cut_var+'.png')
 
     rocx, rocy, auc = roc(var_pi, var_k, eff=eff,
                           inverse_mode=inverse_mode, makefig=draw_roc)
@@ -55,7 +58,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         plt.hist(fractions, bins=20, histtype='step')
         plt.savefig(default_figpath('fractionsvarcut'))
 
-    return f, cut, misid, (rocx, rocy), auc
+    return f, cut, misid, rocx, rocy, auc
 
 
 if __name__ == '__main__':

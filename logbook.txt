@@ -547,9 +547,12 @@ Aggiunto default_figpath così che le funzioni importate che plottano salvino ne
 Messi gli attributes di dnn_settings direttamente come options nella chiamata __init__
 di istanziamento della classe per pulizia e pythonicità
 
-Ho aggiunto splitting options ai file di stat_ così che si possa decidere quando si chiama in quatni pezzi slittare
+Ho aggiunto splitting options ai file di stat_ così che si possa decidere quando s
+i chiama in quanti pezzi slittare
 
-Inoltre ho integrato lo stat_ nelle funzioni stesse per dt_class e var_cut, ma non per dnn perché il point di come ho costruito stat_dnn è proprio quello di non dover stare a ritrainare ogni volta la rete ma invece importarla
+Inoltre ho integrato lo stat_ nelle funzioni stesse per dt_class e var_cut, ma non
+per dnn perché il point di come ho costruito stat_dnn è proprio quello di non dover
+stare a ritrainare ogni volta la rete ma invece importarla
 
 
 
@@ -574,6 +577,22 @@ Modifiche alla funzione gen_from_toy:
     cioè dei toyMC. Di default è stato messo quindi 't_M0pipi'
 
 
+10/03/2023 (Ruben)
+
+Main completato, volendo si possono aggiungere le seguenti cose:
+    - prendere i parametri di una dnn GIA' ALLENATA e farli solo valutare
+    - printare il punto dato dal DTC nel plot delle roc (insieme alle altre rocs)
+
+Questione CI: file config.yml posto nella cartella .circleci è ereditato da un caso
+in cui aveva funzionato. I test passano il comando "python -m pytest", quindi credo
+non vi siano problemi da quel punto di vista. Resta il setup di circleCI (che deve
+fare Lorenzo che è l'owner della repo) e da vedere eventuali problemi di building
+che possono sorgere (e sorgeranno)
+
+
+
+
+
 ----------------
 | COSE DA FARE |
 ----------------
@@ -581,7 +600,7 @@ Modifiche alla funzione gen_from_toy:
 - tests (lorenzo)       OK
 - docs (lorenzo+ruben)  DA COMPLETARE
 - rivedere i !!!!       DA FARE
-- parser/main (ruben)   DA COMPLETARE
+- parser/main (ruben)   OK
 - relative path for get_xxx functions (lorenzo) OK
 - upgrade dtc (lorenzo) OK
 - Sistematiche (lorenzo+ruben)  DA FARE

@@ -5,7 +5,7 @@ population present in the dataset Bhh_data.root
 
 import ROOT
 import time
-from template_functions import DoubleGaussian, GaussJohnson
+from template_fit.template_functions import DoubleGaussian, GaussJohnson
 from utilities.utils import default_rootpaths
 
 
