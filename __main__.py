@@ -17,6 +17,7 @@
 
 """
 """
+import os
 import argparse
 import time
 import matplotlib.pyplot as plt
@@ -26,8 +27,8 @@ from template_fit.template_fit_var import fit_mc_template, global_fit
 from template_fit.template_functions import DoubleGaussian, GaussJohnson
 from utilities.gen_from_toy import gen_from_toy
 from utilities.dnn_settings import dnn_settings
-from utilities.utils import default_rootpaths, default_txtpaths, default_vars,\
-                            find_cut, roc, plot_rocs
+from utilities.utils import default_rootpaths, default_resultsdir, \
+                            default_vars, find_cut, roc, plot_rocs
 from var_cut.var_cut import var_cut
 
 # print(" ----------------------------------------------- ")
@@ -38,18 +39,8 @@ from var_cut.var_cut import var_cut
 # print(" ----------------------------------------------- ")
 
 
-def add_result(name, value, *note):
-    with open(results_path, encoding='utf-8', mode='a') as file:
-        if len(note) == 0:
-            file.write(f'    {name} = {value}\n')
-        else:
-            file.write(f'    {name} = {value}  |  {note}\n')
-
-
 default_toyMC_path = ('cmepda-PiKclassifier/data/root_files/toyMC_B0PiPi.root',
                       'cmepda-PiKclassifier/data/root_files/toyMC_B0sKK.root')
-
-# default_figpath =
 
 parser = argparse.ArgumentParser(prog='PiK classifier',
                                  description='What the program does',
@@ -68,6 +59,15 @@ parser.add_argument('-rpg', '--rootpaths_gen', nargs=3, default=default_rootpath
 
 parser.add_argument('-v', '--variables', nargs='+', default=default_vars(),
                     help='Variables you want to treat')
+
+parser.add_argument('-f', '--figures', action='store_true',
+                    help='Saves the generated figures')
+
+parser.add_argument('-rd', '--resdir', default=default_resultsdir(),
+                    help='Directory where to save the results')
+
+parser.add_argument('-cr', '--cornerplot', action='store_true',
+                    help='Generates and saves the cornerplot of the variables')
 
 
 # ~~~~~~~~ Subparser for datasets generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,30 +104,27 @@ parser_an.add_argument('-e', '--efficiency', default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
 
-# ~~~~~~~~ Subparser for plots options ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-'''
-parser_fig = subparsers.add_parser('figures', help='Saves the figures')
-
-parser_fig.add_argument('-fp', '--figpath',
-                        help='Path where figures are going to be saved')
-
-parser_fig.add_argument('-cr', '--cornerplot', action='store_true',
-                        help='Choice to generate and save the cornerplot of the variables given in input')
-'''
-
-
 args = parser.parse_args()
 
 filepaths = args.rootpaths_gen
-# figpath = args.figpath
 tree = args.tree
 
-results_path = 'cmepda-PiKclassifier/results.txt'
 
-with open(results_path, encoding='utf-8', mode='w') as f:
+respath = os.path.join(os.getcwd(), args.resdir)
+
+results_file = os.path.join(respath, 'results.txt')
+
+with open(results_file, encoding='utf-8', mode='w') as f:
     f.write('\n Results of the analysis performed with PiK classifier package \n'
             ' ------------------------------------------------------------- \n\n')
+
+
+def add_result(name, value, *note):
+    with open(results_file, encoding='utf-8', mode='a') as file:
+        if len(note) == 0:
+            file.write(f'    {name} = {value}\n')
+        else:
+            file.write(f'    {name} = {value}  |  {note}\n')
 
 
 if hasattr(args, 'rootpaths_toy'):
@@ -160,11 +157,14 @@ if hasattr(args, "methods"):
             fit_range = (5.02, 5.42)  # Range where the functions are fitted
             p0_pi = (1e5, 0.14, 5.28, 0.08, 5.29, 0.02)
             p0_k = (1e05, 0.991, 1.57, 0.045, 5.29, 1.02, 5.28, 0.00043)
-            figures = False
+            figures = args.figures
+            figname_templ_pi = 'Template_fit_Pi.pdf'
+            figname_templ_k = 'Template_fit_K.pdf'
+            figname_global = 'Template_fit_Data.pdf'
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             t0 = time.time()
             method_title = 'Template fit with ROOT'
-            with open(results_path, encoding='utf-8', mode='a') as file_tfit:
+            with open(results_file, encoding='utf-8', mode='a') as file_tfit:
                 file_tfit.write(f'\n\n  {method_title}: \n')
             print(f'\n {method_title} - working...\n')
             var = args.var_fit
@@ -174,17 +174,18 @@ if hasattr(args, "methods"):
                 DoubleGaussian(fit_range, pars=p0_pi),
                 Nbins=Nbins_histo, histo_lims=histo_lims,
                 histo_title=f'{var} distribution (B0->PiPi MC)',
-                savefig=figures, img_name='fig/template_fit_pi.png')
+                savefig=figures, img_name=f'{respath}/{figname_templ_pi}')
             templ_pars_k = fit_mc_template(
                 filepaths[1], args.tree, var,
                 GaussJohnson(fit_range, pars=p0_k),
                 Nbins=Nbins_histo, histo_lims=histo_lims,
                 histo_title=f'{var} distribution (B0s->KK MC)',
-                savefig=figures, img_name='fig/template_fit_k.png')
+                savefig=figures, img_name=f'{respath}/{figname_templ_k}')
 
             res = global_fit(filepaths[2], args.tree, var, Nbins=Nbins_histo,
                              pars_mc1=templ_pars_k, pars_mc2=templ_pars_pi,
-                             histo_lims=histo_lims, savefigs=figures)
+                             histo_lims=histo_lims, savefigs=figures,
+                             img_name=f'{respath}/{figname_global}')
 
             add_result(
                 "K fraction", f'{res.Parameters()[1]} +- {res.Errors()[1]}')
@@ -205,13 +206,16 @@ if hasattr(args, "methods"):
             settings.dropout = 0.005
             settings.learning_rate = 5e-5
             inverse = False
-            figures = False
+            figures = args.figures
+            fignames = ["eval_Pions.png", "eval_Kaons.png", "eval_Data.png"]
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Deep Neural Network'
-            with open(results_path, encoding='utf-8', mode='a') as file_dnn:
+            with open(results_file, encoding='utf-8', mode='a') as file_dnn:
                 file_dnn.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
-            pi_eval, k_eval, data_eval = dnn(settings=settings)
+            pi_eval, k_eval, data_eval = dnn(
+                settings=settings, savefigs=figures,
+                figpaths=tuple([f'{respath}/{figname}' for figname in fignames]))
             y_cut, misid = find_cut(pi_eval, k_eval, args.efficiency)
             # plt.axvline(x=y_cut, color='green', label='y cut for '
             #             + str(efficiency)+' efficiency')
@@ -233,10 +237,10 @@ if hasattr(args, "methods"):
             test_size = 0.3
             ml_samp = 1
             crit = 'gini'
-            print_tree = False
+            print_tree = True
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Decision Tree Classifier'
-            with open(results_path, encoding='utf-8', mode='a') as file_dtc:
+            with open(results_file, encoding='utf-8', mode='a') as file_dtc:
                 file_dtc.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
             pred_array, eff, misid = dt_classifier(
@@ -252,11 +256,11 @@ if hasattr(args, "methods"):
             # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
             inverse = False
             specificity = False
-            figure = False
-            roc_figure = False
+            figure = args.figures
+            roc_figure = args.figures
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             type_title = 'Cut on Variables Distribution'
-            with open(results_path, encoding='utf-8', mode='a') as file_vcut:
+            with open(results_file, encoding='utf-8', mode='a') as file_vcut:
                 file_vcut.write(f'\n\n  {type_title}: \n')
             print(f'\n  {type_title} - working...\n')
             fraction, misid, rocx, rocy, auc = var_cut(

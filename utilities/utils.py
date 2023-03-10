@@ -40,6 +40,15 @@ def default_figpath(figname, dir='fig', figtype='pdf'):
     return figpath
 
 
+def default_resultsdir(dir='outputs-PiKclassifier'):
+    if os.path.exists(os.getcwd()+'/'+dir):
+        pass
+    else:
+        os.mkdir(dir)
+    figpath = os.path.join(os.getcwd(), dir)
+    return figpath
+
+
 def find_cut(pi_array, k_array, efficiency,
              specificity_mode=False, inverse_mode=False):
     """
