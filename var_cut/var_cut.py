@@ -20,6 +20,11 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
 
     cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
                           specificity_mode=specificity_mode)
+    
+    if not specificity_mode and misid > eff or specificity_mode and 1-eff > misid: # !!!! test it
+        inverse_mode = not inverse_mode
+        cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
+                          specificity_mode=specificity_mode)
 
     if draw_fig:
         nbins = 300
