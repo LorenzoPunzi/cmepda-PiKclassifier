@@ -13,5 +13,8 @@ class TestVarCut(unittest.TestCase):
         """
         Test var_cut() with a two uniformly distributed histograms
         """
+        error
         
+if __name__ == '__main__':
+    unittest.main()
 
