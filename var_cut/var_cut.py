@@ -22,16 +22,17 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
                           specificity_mode=specificity_mode)
     
     if not specificity_mode and misid > eff or specificity_mode and 1-eff > misid: # !!!! test it
+        print('var_cut launched with wrong inverse_mode, inverting and running it correctly')
         inverse_mode = not inverse_mode
         cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
                           specificity_mode=specificity_mode)
 
     if draw_fig:
         nbins = 300
-        range = (5.0, 5.6)
+        range = (0, 1.5) # !!!! RANGE
         plt.figure('Cut on ' + cut_var)
         plt.hist(var_pi, nbins, range=range, histtype='step',
-                 color='red', label=cut_var + ' for Pions')  # !!! (range)
+                 color='red', label=cut_var + ' for Pions')  
         plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
         plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
@@ -53,6 +54,13 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
 
     f = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
         if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
+    
+    if specificity_mode:
+        eff,misid = misid, 1-eff
+        ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
+        if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
+
+
     print(f'The estimated fraction of K events is {f}')
 
     if stat_split:

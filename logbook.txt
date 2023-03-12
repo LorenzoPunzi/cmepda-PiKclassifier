@@ -606,6 +606,8 @@ che possono sorgere (e sorgeranno)
 - Sistematiche (lorenzo+ruben)  DA FARE
 - Errori statistici (lorenzo)   QUASI FATTO SPERO
 - CI (ruben)    DA CAPIRE COME FARE :| (NOT STONKS)
+- Range per var_cut and exception for wrong inverse mode. FRAZIONE CORRETTA IN specificity
+- Stampara a txt le frazioni dei vari metodi?
 
 
 
