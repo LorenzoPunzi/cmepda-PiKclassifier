@@ -105,7 +105,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi'
 
     roc_info = tuple([rocx, rocy, auc])
 
-    return fr, cut, misid, roc_info
+    return fr, misid, cut, roc_info
 
 
 if __name__ == '__main__':

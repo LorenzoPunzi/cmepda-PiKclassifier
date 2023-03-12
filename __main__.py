@@ -329,7 +329,7 @@ if hasattr(args, "methods"):
 
             print(args.var_cut)
             for vc in [args.var_cut]:
-                fr, misid, _, roc_info = var_cut(
+                fr, misid, cut, roc_info = var_cut(
                     rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
                     draw_roc=roc_figure, draw_fig=figure, figpath=respath,
