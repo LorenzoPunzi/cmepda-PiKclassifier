@@ -581,7 +581,7 @@ Modifiche alla funzione gen_from_toy:
 
 Main completato, volendo si possono aggiungere le seguenti cose:
     - prendere i parametri di una dnn GIA' ALLENATA e farli solo valutare
-    - printare il punto dato dal DTC nel plot delle roc (insieme alle altre rocs)
+    - printare il punto dato dal DTC nel plot delle roc (insieme alle altre rocs) (Fatto)
 
 Questione CI: file config.yml posto nella cartella .circleci è ereditato da un caso
 in cui aveva funzionato. I test passano il comando "python -m pytest", quindi credo
@@ -596,27 +596,27 @@ che possono sorgere (e sorgeranno)
 ----------------
 | COSE DA FARE |
 ----------------
-- exceptions (lorenzo)  OK
-- tests (lorenzo)       OK
+
 - docs (lorenzo+ruben)  DA COMPLETARE
 - rivedere i !!!!       DA FARE
+- Sistematiche (lorenzo+ruben)      DA FARE
+- Errori statistici (lorenzo)       QUASI FATTO (Mi sembra che ci siamo)
+- Aggiungere errori statistici per DNN nel main (ruben)     IN PROGRESS
+- CI (ruben+lorenzo)    PROVARE A COLLEGARE LA REPO SULL'APPLICAZIONE CIRCLECI E VEDERE CHE ERRORI DA'
+- SPHYNX (lorenzo)      ?
+- Range per var_cut and exception for wrong inverse mode. FRAZIONE CORRETTA IN specificity
+
+
+
+------------------------
+| COSE FATTE (DA POCO) |
+------------------------
+- exceptions (lorenzo)  OK
+- tests (lorenzo)       OK
 - parser/main (ruben)   OK
 - relative path for get_xxx functions (lorenzo) OK
 - upgrade dtc (lorenzo) OK
-- Sistematiche (lorenzo+ruben)  DA FARE
-- Errori statistici (lorenzo)   QUASI FATTO SPERO
-- CI (ruben)    DA CAPIRE COME FARE :| (NOT STONKS)
-- Range per var_cut and exception for wrong inverse mode. FRAZIONE CORRETTA IN specificity
-- Stampara a txt le frazioni dei vari metodi?
-
-
-
-
-
-
-
-
-
+- Stampare a txt le frazioni dei vari metodi    SÌ, TUTTO OK
 
 
 
