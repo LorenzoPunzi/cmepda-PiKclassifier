@@ -6,11 +6,12 @@ class dnn_settings:
     """
     """
 
-    def __init__(self, layers=[20, 20, 15, 10], epochnum=200,
-                 learning_rate=0.001, batch_size=128, batchnorm=False,
-                 dropout=0, verbose=2, showhistory=True):
+    def __init__(self, layers=[20, 20, 15, 10], val_fraction=0.5,
+                 epochnum=200, learning_rate=0.001, batch_size=128,
+                 batchnorm=False, dropout=0, verbose=2, showhistory=True):
 
         self._layers = layers
+        self._val_fraction = val_fraction
         self._epochnum = epochnum
         self._learning_rate = learning_rate
         self._batch_size = batch_size
@@ -22,6 +23,10 @@ class dnn_settings:
     @property
     def layers(self):
         return self._layers
+
+    @property
+    def val_fraction(self):
+        return self._val_fraction
 
     @property
     def epochnum(self):
@@ -56,7 +61,14 @@ class dnn_settings:
         if not len(neurons_list) == 0:
             self._layers = neurons_list
         else:
-            print('ERROR: the "epochs" value cannot be 0')
+            print('ERROR: the \"epochs\" value cannot be 0')
+
+    @val_fraction.setter
+    def val_fraction(self, frac):
+        if frac > 0 and frac < 1:
+            self._val_fraction = frac
+        else:
+            print('ERROR: invalid value given as \"validation fraction\"')
 
     @epochnum.setter
     def epochnum(self, epochs):
@@ -75,14 +87,14 @@ class dnn_settings:
         if not int(batch) == 0:
             self._batch_size = int(batch)
         else:
-            print('ERROR: the "batch size" value cannot be 0')
+            print('ERROR: the \"batch size\" value cannot be 0')
 
     @batchnorm.setter
     def batchnorm(self, bnorm):
         if type(bnorm) is bool:
             self._batchnorm = bnorm
         else:
-            print('ERROR: "batchnorm" method must be a boolean value')
+            print('ERROR: \"batchnorm\" method must be a boolean value')
 
     @dropout.setter
     def dropout(self, dr):
@@ -96,11 +108,11 @@ class dnn_settings:
         if (verb == 0 or verb == 1 or verb == 2):
             self._verbose = verb
         else:
-            print('ERROR: uncorrect value given to "verbose" method')
+            print('ERROR: uncorrect value given to \"verbose\" method')
 
     @showhistory.setter
     def showhistory(self, show):
         if type(show) == bool:
             self._showhistory = show
         else:
-            print('ERROR: "showhistory" method must be a boolean value')
+            print('ERROR: \"showhistory\" method must be a boolean value')

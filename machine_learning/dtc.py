@@ -12,8 +12,8 @@ from utilities.exceptions import InvalidSourceError
 
 def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
                   vars=default_vars(), n_mc=560000, n_data=50000,
-                  print_tree='printed_dtc', test_size=0.3, min_leaf_samp=1,
-                  crit='gini', stat_split=0):
+                  test_size=0.3, min_leaf_samp=1, crit='gini', stat_split=0,
+                  print_tree='printed_dtc', figpath=''):
     """
     """
     try:
@@ -56,6 +56,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
 
     efficiency = (k_eval == 1).sum()/k_eval.size
     misid = (pi_eval == 1).sum()/pi_eval.size
+    fraction = pred_array.sum()/len(pred_array)
 
     if print_tree:
         tree_diagram = tree.export_text(dtc, feature_names=vars)
@@ -67,16 +68,24 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
     print(f'Efficiency = {efficiency}')
     print(f'Misidentification probability = {misid}')
     print(
-        f'The predicted K fraction is : {pred_array.sum()/len(pred_array)}')
+        f'The predicted K fraction is : {fraction}')
+
+    fr = (fraction,)
 
     if stat_split:
-        subdata = np.split(pred_array, stat_split)
+        subdata = np.array_split(pred_array, stat_split)
         fractions = [data.sum()/len(data) for data in subdata]
         plt.figure('Fraction distribution for dtc')
-        plt.hist(fractions, bins=20, histtype='step')
-        plt.savefig(default_figpath('fractionsdtc'))
+        plt.hist(fractions, bins=10, histtype='step')
+        plt.axvline(x=pred_array.sum()/len(pred_array), color='green')
+        plt.savefig(default_figpath('dtc_distrib')) if figpath == '' \
+            else plt.savefig(figpath+'/dtc_distrib.png')
+        stat_err = np.sqrt(np.var(fractions, ddof=1))
+        # print(f"Mean = {np.mean(fractions, dtype=np.float64)}")
+        # print(f"Sqrt_var = {stat_err}")
+        fr = fr + (stat_err,)
 
-    return pred_array, efficiency, misid
+    return fr, efficiency, misid
 
 
 """
@@ -100,6 +109,6 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
 
 if __name__ == '__main__':
 
-    predicted_array, eff, misid = dt_classifier()
+    predicted_array, eff, misid = dt_classifier(stat_split=20)
 
     plt.show()

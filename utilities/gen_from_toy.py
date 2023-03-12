@@ -1,4 +1,6 @@
 """
+Generates the datasets needed for the analysis, starting from root files of
+toyMC events of the processes B0->PiPi and B0s->KK.
 """
 import time
 import sys
@@ -14,6 +16,32 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
                  filepaths_out=default_rootpaths(), tree='t_M0pipi;1',
                  num_mc=0, num_data=0, f=0.42, vars=default_vars()):
     """
+    Generates the datasets needed for the analysis, starting from root files of
+    toyMC events of the processes B0->PiPi and B0s->KK.
+
+        Parameters:
+            filepaths_in: list or tuple
+                Path (with name) of the toyMC files
+            filepaths_out: list or tuple
+                Path (with name) of the three output file files
+            tree: string
+                Name of the tree in the toyMC files where the events are stored
+            num_mc: int
+                Number of events in each output MC template file
+            num_data: int
+                Number of events in the output file with mixed species
+            f: double
+                Fraction of Kaon events in the mixed sample
+                Default: 0.42
+            vars: list or tuple
+                Variables stored in the toyMC files that are stored in the
+                output datasets.
+
+        Returns:
+            Two datasets that have the role of templates for the analysis and
+            one file containing the required mixed fraction of events. The
+            events in toyMC files are selected uniquely, to ensure indipendence
+            in the three files generated.
     """
 
     if tree.endswith(";1"):
@@ -37,14 +65,16 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
 
     # If num_mc and num_data are BOTH set to zero, the datasets are generated
     # by taking from the toyMCs the maximum possible number of events (*) and
-    # by imposing the condition num_data/(2*num_mc) = 0.1
-    # (*): for the cases f<0.5 and f>=0.5 respectively, we impose the conditions
-    #      n_evts_toymc_pi==num_mc+num_pions and n_evts_toymc_k==num_mc+num_kaons
-    if num_mc == 0 and num_data == 0:
+    # by imposing the condition num_data/(2*num_mc) = ALPHA
+    # (*): for the cases f<0.5 and f>=0.5 respectively, we impose the following
+    #      conditions:  n_evts_toymc_pi == num_mc+num_pions.
+    #                   n_evts_toymc_k == num_mc+num_kaons
+    ALPHA = 0.2
+    if int(num_mc) == 0 and int(num_data) == 0:
         if f < 0.5:
-            num_mc = n_evts_toymc_pi/(1.2 - (0.2*f))
+            num_mc = n_evts_toymc_pi/(1 + (2*ALPHA*(1-f)))
         if f >= 0.5:
-            num_mc = n_evts_toymc_k/(1 + (0.2*f))
+            num_mc = n_evts_toymc_k/(1 + (2*ALPHA*f))
         num_pions, num_kaons = int(0.2*(1-f)*num_mc), int(0.2*f*num_mc)
         num_data = num_pions + num_kaons
         num_mc = int(num_mc)
@@ -60,8 +90,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
             print(err)
             sys.exit()
 
-    print(n_evts_toymc_pi, n_evts_toymc_k, num_data, num_mc)
-    print(num_pions, num_kaons)
+    # print(n_evts_toymc_pi, n_evts_toymc_k, num_mc, num_data)
+    # print(num_pions, num_kaons)
 
     print(f'Actual fraction of Kaons = {num_kaons/num_data}')
 

@@ -76,7 +76,7 @@ def BreitWigner(func_limits, funcname='BW', pars=(2000, 5.28, 0.5)):
 
 
 def DoubleGaussian(func_limits, funcname='DoubleGaussian',
-                   pars=(1e5, 0.14, 5.28, 0.08, 5.29, 0.02)):
+                   pars=(1e5, 0.16, 5.28, 0.08, 5.29, 0.04)):
     """
     Returns a TF1 function corresponding to a weighted sum of two Gaussians;
     its expression is written in a C++ shared library and is imported in the

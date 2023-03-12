@@ -51,7 +51,7 @@ def train_dnn(training_set, settings, savefig=True, figpath=""):
     deepnn.compile(loss='binary_crossentropy', optimizer=optimizer)
     deepnn.summary()
 
-    history = deepnn.fit(features, pid, validation_split=0.5,
+    history = deepnn.fit(features, pid, validation_split=settings.val_fraction,
                          epochs=settings.epochnum, verbose=settings.verbose,
                          batch_size=settings.batch_size)
 
@@ -139,6 +139,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
                           plot_opt=['Data_eval', 'blue', 'Evaluated data'],
                           figpath=figpaths[3])
 
+    '''
     if stat_split:
 
         subdata = np.split(data_eval, stat_split)
@@ -148,6 +149,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
         plt.figure('Fraction distribution for deepnn')
         plt.hist(fractions, bins=20, histtype='step')
         plt.savefig(default_figpath('fractionsdnn'))
+    '''
 
     return pi_eval, k_eval, pred_array
 
