@@ -93,11 +93,14 @@ parser_an = subparsers.add_parser('analysis', help='Performs the analyses')
 
 parser_an.add_argument('-m', '--methods', nargs='+', default='all',
                        choices=['tfit', 'dnn', 'dtc', 'vcut', 'all'],
-                       help='Type of the analysis to be performed. \n'
-                            'If \'all\' is called, the default variable for the ROOT template fit and the var_cut are selected')
+                       help='Type of the analysis to be performed. \
+                             If \'all\' is called, the default variable for the ROOT template fit and the var_cut are selected')
 
 parser_an.add_argument('-vfit', '--var_fit', default='M0_Mpipi',
                        help='Variable on which template fit is performed')
+
+parser_an.add_argument('-ld', '--load_dnn', action='store_true',
+                       help='Loads DNN model and weights saved as .json and .h5 files')
 
 parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
                        help='Variable(s) on which cut evaluation is performed')
@@ -226,12 +229,14 @@ if hasattr(args, "methods"):
             settings.verbose = 2
             settings.batchnorm = False
             settings.dropout = 0.005
-            settings.learning_rate = 5e-4
+            settings.learning_rate = 5e-5
+            MODEL_FILE = 'deepnn.json'
+            WEIGHTS_FILE = 'depnn.h5'
             INVERSE = False
             figures = args.figures
             PLOT_ROC = bool(args.figures*SINGULAR_ROCS)
-            fignames = ["DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
-                        "eval_Data.png"]
+            fignames = ("DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
+                        "eval_Data.png")
             NUM_SUBDATA = 100
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Deep Neural Network'
@@ -241,11 +246,9 @@ if hasattr(args, "methods"):
 
             pi_eval, k_eval, data_eval = dnn(
                 root_tree=tree, vars=args.variables, settings=settings,
-                savefigs=figures, figpaths=tuple([f'{respath}/{figname}'
-                                                  for figname in fignames]))
-
-            # QUA DA METTERE LA FUNZIONE PER LE STAT. UNCERTAINTIES
-            # frac_err = stat_dnn(...)
+                load=args.load_dnn, trained_model=(MODEL_FILE, WEIGHTS_FILE),
+                savefigs=figures, figpaths=([f'{respath}/{figname}'
+                                            for figname in fignames]))
 
             y_cut, misid = find_cut(pi_eval, k_eval, args.efficiency)
             # plt.axvline(x=y_cut, color='green', label='y cut for '
@@ -253,19 +256,28 @@ if hasattr(args, "methods"):
             # plt.legend()
             #   plt.savefig('fig/ycut.pdf')
 
+            fraction = ((data_eval > y_cut).sum()
+                        / data_eval.size-misid)/(args.efficiency-misid)
+            fr = (fraction,)
+
+            if args.stat_uncertainties:
+                frac_err = stat_dnn(
+                    source=('array', (pi_eval, k_eval, data_eval)),
+                    trained_model=(MODEL_FILE, WEIGHTS_FILE),
+                    eff=args.efficiency, stat_split=NUM_SUBDATA)
+                fr = fr + (frac_err,)
+
             rocx_dnn, rocy_dnn, auc_dnn = roc(
                 pi_eval, k_eval, eff=args.efficiency, inverse_mode=INVERSE,
-                makefig=figures, name=f'{respath}/ROC_dnn.png')
+                makefig=PLOT_ROC, name=f'{respath}/ROC_dnn.png')
 
             if SINGULAR_ROCS is not True:
                 rocx_array.append(rocx_dnn)
                 rocy_array.append(rocy_dnn)
                 roc_labels.append("DNN")
 
-            fraction = ((data_eval > y_cut).sum()
-                        / data_eval.size-misid)/(args.efficiency-misid)
-
-            add_result("K fraction", fraction)
+            add_result("K fraction", f'{fr[0]} +- {fr[1]}') \
+                if len(fr) == 2 else add_result("K fraction", fr[0])
             # add_result("Output cut", y_cut, f'Efficiency = {args.efficiency}')
             add_result("Misid", misid, f'Efficiency = {args.efficiency}')
             add_result("AUC", auc_dnn, f'Efficiency = {args.efficiency}')
@@ -287,7 +299,7 @@ if hasattr(args, "methods"):
             fr, eff, misid = dt_classifier(
                 root_tree=args.tree, vars=args.variables, test_size=TEST_SIZE,
                 min_leaf_samp=ML_SAMP, crit=CRIT, stat_split=NUM_SUBDATA*args.stat_uncertainties,
-                print_tree=f'{respath}/{PRINTED_TREE_FILE}', figpath=f'{respath}')
+                print_tree=f'{respath}/{PRINTED_TREE_FILE}', figpath=respath)
 
             if SINGULAR_ROCS is not True:
                 x_pnts.append(misid)

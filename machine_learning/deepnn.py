@@ -21,7 +21,8 @@ from machine_learning.dtc import dt_classifier
 from var_cut.var_cut import var_cut
 
 
-def train_dnn(training_set, settings, savefig=True, figpath=""):
+def train_dnn(training_set, settings, savefig=True, figpath="",
+              trained_filenames=('deepnn.json', 'deepnn.h5')):
     """
     """
     seed = np.random.seed(int(time.time()))
@@ -68,9 +69,9 @@ def train_dnn(training_set, settings, savefig=True, figpath=""):
             plt.savefig(figpath)
 
     model_json = deepnn.to_json()
-    with open("deepnn.json", "w") as json_file:
+    with open(trained_filenames[0], "w") as json_file:
         json_file.write(model_json)
-    deepnn.save_weights("deepnn.h5")
+    deepnn.save_weights(trained_filenames[1])
 
     return deepnn
 
@@ -102,15 +103,16 @@ def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True, figpath="
 
 def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
         vars=default_vars(), n_mc=560000, n_data=50000, settings=dnn_settings(),
-        savefigs=False, figpaths=("", "", "", ""), stat_split=0):
+        load=False, trained_model=('deepnn.json', 'deepnn.h5'), stat_split=0,
+        savefigs=False, figpaths=("", "", "", "")):
     """
     """
     try:
         if source[0] == 'txt':
             mc_array_path, data_array_path = source[1] if source[1] \
                 else default_txtpaths()
-            training_set, data_set = np.loadtxt(mc_array_path), \
-                np.loadtxt(data_array_path)
+            training_set = np.loadtxt(mc_array_path)
+            data_set = np.loadtxt(data_array_path)
         elif source[0] == 'root':
             training_set, data_set = array_generator(rootpaths=source[1],
                                                      tree=root_tree, vars=vars,
@@ -126,8 +128,18 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
     k_set = np.array([training_set[i, :] for i in range(
         np.shape(training_set)[0]) if training_set[i, -1] == 1])
 
-    deepnn = train_dnn(training_set, settings,
-                       savefig=savefigs, figpath=figpaths[0])
+    if load is not True:
+        deepnn = train_dnn(
+            training_set, settings, savefig=savefigs, figpath=figpaths[0],
+            trained_filenames=trained_model)
+    else:
+        json_path = trained_model[0]
+        weights_path = trained_model[1]
+        with open(json_path, 'r') as json_file:
+            loaded_model_json = json_file.read()
+        deepnn = model_from_json(loaded_model_json)
+        deepnn.load_weights(weights_path)
+        deepnn.summary()
 
     pi_eval = eval_dnn(deepnn, pi_set, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
@@ -139,18 +151,6 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
                           plot_opt=['Data_eval', 'blue', 'Evaluated data'],
                           figpath=figpaths[3])
 
-    '''
-    if stat_split:
-
-        subdata = np.split(data_eval, stat_split)
-        fractions = [((data > y_cut).sum()/data.size-misid)
-                     / (efficiency-misid) for data in subdata]
-
-        plt.figure('Fraction distribution for deepnn')
-        plt.hist(fractions, bins=20, histtype='step')
-        plt.savefig(default_figpath('fractionsdnn'))
-    '''
-
     return pi_eval, k_eval, pred_array
 
 
@@ -158,11 +158,11 @@ if __name__ == '__main__':
 
     settings = dnn_settings(layers=[75, 60, 45, 30, 20],
                             batch_size=128,
-                            epochnum=200,
+                            epochnum=10,
                             learning_rate=5e-5,
                             showhistory=False)
 
-    pi_eval, k_eval, data_eval = dnn(settings=settings)
+    pi_eval, k_eval, data_eval = dnn(settings=settings, load_trained=True)
     efficiency = 0.95
 
     y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
