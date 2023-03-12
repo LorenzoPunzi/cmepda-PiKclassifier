@@ -30,7 +30,7 @@ from utilities.gen_from_toy import gen_from_toy
 from utilities.dnn_settings import dnn_settings
 from utilities.utils import default_rootpaths, default_resultsdir, \
                             default_vars, find_cut, roc, plot_rocs
-from uncertainties.statistical import stat_dnn
+from uncertainties.statistical.stat_dnn import stat_dnn
 from var_cut.var_cut import var_cut
 
 # print(" ----------------------------------------------- ")
@@ -264,7 +264,7 @@ if hasattr(args, "methods"):
                 frac_err = stat_dnn(
                     source=('array', (pi_eval, k_eval, data_eval)),
                     trained_model=(MODEL_FILE, WEIGHTS_FILE),
-                    eff=args.efficiency, stat_split=NUM_SUBDATA)
+                    eff=args.efficiency, stat_split=NUM_SUBDATA, figpath=respath)
                 fr = fr + (frac_err,)
 
             rocx_dnn, rocy_dnn, auc_dnn = roc(
