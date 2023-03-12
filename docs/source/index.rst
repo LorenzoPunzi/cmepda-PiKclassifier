@@ -10,6 +10,9 @@ Welcome to cmepda-PiKclassifier's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. note::
+
+   This project is under active development.
 
 
 Indices and tables
