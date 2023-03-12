@@ -5,9 +5,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 from utilities.utils import default_rootpaths, find_cut, roc, default_figpath
 from utilities.import_datasets import loadvars
+import warnings
 
 
-def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi',
+warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
+
+
+def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
             eff=0.95, inverse_mode=False, specificity_mode=False,
             draw_roc=False, draw_fig=False, figpath='', stat_split=0):
     """
@@ -47,23 +51,25 @@ def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi'
 
     if (specificity_mode is not True and misid > eff) or \
             (specificity_mode is True and 1 - eff > misid):
+        msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in var_cut, but the test is not unbiased this way, switching to inverse_mode = {not inverse_mode}'
+        warnings.warn(msg,stacklevel=2)
         inverse_mode = not inverse_mode
         cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
                               specificity_mode=specificity_mode)
 
     if draw_fig:
         nbins = 300
-        range = (5.0, 5.6)
+        range = (min(min(var_pi),min(var_k)), max(max(var_pi),max(var_k)))
         plt.figure('Cut on ' + cut_var)
         plt.hist(var_pi, nbins, range=range, histtype='step',
-                 color='red', label=cut_var + ' for Pions')  # !!! (range)
+                 color='red', label=cut_var + ' for Pions') 
         plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
         plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
                     + str(eff)+' efficiency')
         plt.draw()
         plt.xlabel(cut_var)
-        plt.ylabel(f'Events per {range[1]-range[0]/nbins} [{cut_var}]')
+        plt.ylabel(f'Events per {range[1]-range[0]/nbins} {cut_var}')
         plt.legend()
         plt.savefig(default_figpath('cut_'+cut_var)) \
             if figpath == '' else plt.savefig(figpath+'/cut_'+cut_var+'.png')
@@ -73,19 +79,23 @@ def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi'
         if figpath == '' else roc(var_pi, var_k, eff=eff, inverse_mode=inverse_mode,
                                   makefig=draw_roc, name=figpath+'/ROC_'+cut_var + '_cut.png')
 
-    print(f'{cut_var} cut is {cut} for {eff} efficiency')
-    print(f'Misid. is {misid} for {eff} efficiency')
+    
 
     fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
         if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
-    print(f'The estimated fraction of K events is {fraction}')
-
-    fr = (fraction,)
+    
 
     if specificity_mode:
         eff, misid = misid, 1-eff
-        ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
+        fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
             if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
+        
+    fr = (fraction,)
+
+
+    print(f'{cut_var} cut is {cut} for {eff} efficiency')
+    print(f'Misid is {misid} for {eff} efficiency')
+    print(f'The estimated fraction of K events is {fraction}')
 
     if stat_split:
         subdata = np.array_split(var_data, stat_split)
