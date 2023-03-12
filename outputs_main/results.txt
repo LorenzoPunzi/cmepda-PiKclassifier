@@ -11,18 +11,18 @@
 
 
   Deep Neural Network: 
-    K fraction = 0.4318644335246807
-    Misid = 0.8656757005697543  |  Efficiency = 0.9 
-    AUC = 0.4126933971049088  |  Efficiency = 0.9 
+    K fraction = 0.41861613193670455 +- 0.01343785969888591
+    Misid = 0.28950450233121194  |  Efficiency = 0.9 
+    AUC = 0.909443544287293  |  Efficiency = 0.9 
 
 
   Decision Tree Classifier: 
-    K fraction = 0.434076055967367 +- 0.008750403436395349
-    Efficiency = 0.9052920296869958
-    Misid = 0.09563088402459996
+    K fraction = 0.4357208649502171 +- 0.005675095720191393
+    Efficiency = 0.9080111342670184
+    Misid = 0.09422256119919624
 
 
   Cut on Variables Distribution: 
-    K fraction = 0.46204359615028373 +- 0.039522851971687666  |  M0_Mpipi 
+    K fraction = 0.46204359615028373 +- 0.05515580429884682  |  M0_Mpipi 
     Misid = 5.302145435297932  |  M0_Mpipi 
     AUC = 0.6344987262396837  |  M0_Mpipi 
