@@ -225,19 +225,19 @@ if hasattr(args, "methods"):
             settings.layers = [75, 60, 45, 30, 20]
             # settings.val_fraction = 0.5
             settings.batch_size = 128
-            settings.epochnum = 100
+            settings.epochnum = 400
             settings.verbose = 2
             settings.batchnorm = False
-            settings.dropout = 0.005
-            settings.learning_rate = 5e-5
-            MODEL_FILE = 'deepnn.json'
-            WEIGHTS_FILE = 'depnn.h5'
+            settings.dropout = 0
+            settings.learning_rate = 5e-4
+            MODEL_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.json'
+            WEIGHTS_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.h5'
             INVERSE = False
             figures = args.figures
             PLOT_ROC = bool(args.figures*SINGULAR_ROCS)
             fignames = ("DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
                         "eval_Data.png")
-            NUM_SUBDATA = 100
+            NUM_SUBDATA = 10
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Deep Neural Network'
             with open(results_file, encoding='utf-8', mode='a') as file_dnn:
