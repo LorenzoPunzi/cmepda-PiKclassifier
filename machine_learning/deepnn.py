@@ -15,10 +15,8 @@ from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
 from utilities.dnn_settings import dnn_settings
 from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
-                            find_cut, roc, plot_rocs, default_figpath
+                            find_cut, roc, default_figpath
 from utilities.exceptions import InvalidSourceError
-from machine_learning.dtc import dt_classifier
-from var_cut.var_cut import var_cut
 
 
 def train_dnn(training_set, settings, savefig=True, figpath="",
@@ -33,12 +31,7 @@ def train_dnn(training_set, settings, savefig=True, figpath="",
 
     neurons = settings.layers
 
-    if settings.batchnorm:
-        bnorm_layer = Normalization(axis=1, mean=0, variance=10)
-        # layer.adapt(features)
-        features = bnorm_layer(features)
-
-    if not settings.dropout == 0:
+    if settings.dropout != 0:
         dr_layer = AlphaDropout(settings.dropout, seed=seed)
         features = dr_layer(features, training=True)
 
@@ -156,11 +149,10 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
 
 if __name__ == '__main__':
 
-    settings = dnn_settings(layers=[75, 60, 45, 30, 20],
+    settings = dnn_settings(layers=(75, 60, 45, 30, 20),
                             batch_size=128,
                             epochnum=10,
-                            learning_rate=5e-5,
-                            showhistory=False)
+                            learning_rate=5e-5)
 
     pi_eval, k_eval, data_eval = dnn(settings=settings, load_trained=True)
     efficiency = 0.95
