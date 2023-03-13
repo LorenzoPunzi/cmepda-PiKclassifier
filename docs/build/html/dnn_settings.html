@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>dnn_settings &#8212; cmepda-PiKclassifier  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="import_datasets" href="import_datasets.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="dnn-settings">
+<h1>dnn_settings<a class="headerlink" href="#dnn-settings" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="utilities.dnn_settings.DnnSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utilities.dnn_settings.</span></span><span class="sig-name descname"><span class="pre">DnnSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(75,</span> <span class="pre">60,</span> <span class="pre">45,</span> <span class="pre">30,</span> <span class="pre">20)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.dnn_settings.DnnSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that stores the most important options for the keras DNN algorithm</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><dl class="simple">
+<dt>layers<span class="classifier">list or tuple</span></dt><dd><p>List of integers, that indicate the number of neurons in each
+internal dense layer</p>
+</dd>
+<dt>val_fraction<span class="classifier">float</span></dt><dd><p>Fraction of the training dataset used for validation</p>
+</dd>
+<dt>epochnum<span class="classifier">int</span></dt><dd><p>Number of epochs</p>
+</dd>
+<dt>learning_rate<span class="classifier">float</span></dt><dd><p>Value given as learning rate to Adam optimizer</p>
+</dd>
+<dt>batch_size<span class="classifier">int</span></dt><dd><p>Size of the batches in the dnn</p>
+</dd>
+<dt>dropout<span class="classifier">float</span></dt><dd><p>Drop probability in the AlphaDropout layer</p>
+</dd>
+<dt>verbose<span class="classifier">int</span></dt><dd><p>Control of what to print on shell during the training.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">cmepda-PiKclassifier</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="var_cut.html">var_cut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cornerplot.html">cornerplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gen_from_toy.html">gen_from_toy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="import_datasets.html">import_datasets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">dnn_settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.dnn_settings.DnnSettings"><code class="docutils literal notranslate"><span class="pre">DnnSettings</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="import_datasets.html" title="previous chapter">import_datasets</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Ruben Forti and Lorenzo Punzi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/dnn_settings.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

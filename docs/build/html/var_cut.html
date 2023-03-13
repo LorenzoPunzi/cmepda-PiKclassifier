@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>var_cut &#8212; cmepda-PiKclassifier  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Utils" href="utils.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="var-cut">
+<h1>var_cut<a class="headerlink" href="#var-cut" title="Permalink to this heading">¶</a></h1>
+<p>Documentation for the  <code class="docutils literal notranslate"><span class="pre">var_cut.var_cut.var_cut()</span></code> function:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="var_cut.var_cut.var_cut">
+<span class="sig-prename descclassname"><span class="pre">var_cut.var_cut.</span></span><span class="sig-name descname"><span class="pre">var_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootpaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tree;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'M0_Mpipi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_roc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#var_cut.var_cut.var_cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates the fraction of kaons in the mixed sample by performing a cut on
+the distribution of the templates. The cut point is chosen so that the
+probability that a Kaon event has a larger value than that (smaller, in the
+inverse-mode) is equal to the efficiency chosen (parameter “eff”)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rootpaths</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – Three rootpaths where to search for the root files. The first is the rootpath for the “negative” species, the second for the “positive” species, the third  for the data to be evaluated</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Tree from which to load</p></li>
+<li><p><strong>cut_var</strong> (<em>str</em>) – Variable to load and test</p></li>
+<li><p><strong>eff</strong> (<em>float</em>) – Sensitivity required from the test (specificity in specificity mode)</p></li>
+<li><p><strong>inverse_mode</strong> (<em>bool</em>) – To activate if the “positive” events have lower values of the cut variable</p></li>
+<li><p><strong>specificity_mode</strong> (<em>bool</em>) – To activate if the efficiency given is the specificity</p></li>
+<li><p><strong>draw_roc</strong> (<em>bool</em>) – Draw the roc function of the test</p></li>
+<li><p><strong>draw_fig</strong> (<em>bool</em>) – Draw the figure of the variable distribution for the two species and the cut</p></li>
+<li><p><strong>figpath</strong> (<em>str</em>) – Path to where to save the figure</p></li>
+<li><p><strong>stat_split</strong> (<em>int</em>) – How many parts to split the dataset with to evaluate the statistical uncertainty of the fraction estimated with this test</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">cmepda-PiKclassifier</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">var_cut</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#var_cut.var_cut.var_cut"><code class="docutils literal notranslate"><span class="pre">var_cut()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="utils.html" title="previous chapter">Utils</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Ruben Forti and Lorenzo Punzi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/var_cut.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
