@@ -16,6 +16,7 @@ path_dat = os.path.join(current_dir, 'dummy/dummy_dat.root')
 
 class TestLoadvars(unittest.TestCase):
     """
+    Class of tests for the load_vars() function
     """
 
     def test_loadvars_flag(self):
@@ -90,6 +91,7 @@ class TestLoadvars(unittest.TestCase):
 
 class TestArrayGenerator(unittest.TestCase):
     """
+    Class of tests for the array_generator() function
     """
 
     def test_training_testing(self):

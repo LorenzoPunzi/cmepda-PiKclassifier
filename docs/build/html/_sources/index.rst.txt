@@ -18,6 +18,7 @@ cmepda-PiKclassifier documentation
    dnn_settings
    exceptions
    merge_variables
+   test_import_datasets
 
    
 

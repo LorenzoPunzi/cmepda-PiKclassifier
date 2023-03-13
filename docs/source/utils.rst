@@ -3,7 +3,7 @@
 utils
 ================================================
 
-Documentation for the  ``utilities.utils.default_vars()`` function:
+Documentation for functions in the ``utilities.utils`` module:
 
 .. autofunction:: utilities.utils.default_vars
 .. autofunction:: utilities.utils.default_rootpaths
