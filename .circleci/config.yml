@@ -34,6 +34,7 @@ jobs:
       - run:
           name: "Ciao"
           command: "echo HELLO WORLD"
+    '''
       - run:
           name: "Setting conda"
           command: "conda config --set channel_priority strict"
@@ -43,6 +44,7 @@ jobs:
       - run:
           name: "Activate environment"
           command: "conda activate root-env"
+    '''
       - python/install-packages:
           pkg-manager: auto
       - run:
