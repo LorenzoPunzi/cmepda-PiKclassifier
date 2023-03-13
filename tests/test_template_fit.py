@@ -4,11 +4,11 @@ Tests some functions inside template_fit/template_fit.py
 import unittest
 import sys
 import time
-import ROOT
+#import ROOT
 import numpy as np
 from utilities.utils import default_rootpaths
-from template_fit.template_functions import DoubleGaussian, GaussJohnson
-from template_fit.template_fit_var import global_fit, fit_mc_template
+#from template_fit.template_functions import DoubleGaussian, GaussJohnson
+#from template_fit.template_fit_var import global_fit, fit_mc_template
 # from templatefit.template_functions import DoubleGaussian, GaussJohnson
 
 

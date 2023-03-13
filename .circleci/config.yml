@@ -24,7 +24,7 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: "echo Hello, World!"
+          command: echo "Hello, World!"
 
   build-and-test:
     docker:
@@ -35,7 +35,7 @@ jobs:
           name: "Ciao"
           command: "echo HELLO WORLD"
       - python/install-packages:
-          pkg-manager: pip
+          pkg-manager: pip3.10
       - run:
           name: Run tests
           command: python -m unittest discover -s tests
