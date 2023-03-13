@@ -28,6 +28,11 @@ def default_txtpaths():
 
 def default_vars():
     """
+    Returns default variables of the package
+
+    :return: The variable tuple.
+    :rtype: tuple[str]
+
     """
     return ('M0_Mpipi', 'M0_MKK', 'M0_MKpi', 'M0_MpiK', 'M0_p', 'M0_pt',
             'M0_eta', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2',

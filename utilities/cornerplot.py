@@ -13,12 +13,11 @@ def cornerplot(array, figname):
     """
     Generates and saves a cornerplot for a single, multi-dimensional, array
 
-    Parameters
-        array : numpy array
-            Multidimensional array containing the values of the variables, for
-            each event (rows) and for each feature (columns)
-        figname : string
-            Name of the figure that the function saves
+    :param array: Multidimensional array containing the values of the variables, for each event (rows) and for each feature (columns)
+    :type array: numpy array  
+    :param figname: Name of the figure that the function saves
+    :type figname: str
+
     """
     array_new = array[:, :-1]
     figure = corner.corner(array_new)
@@ -32,16 +31,15 @@ def overlaid_cornerplot(filepaths, tree, vars, figpath=''):
     arrays on the same canva. The datasets are passed as numpy ndarray and the
     corner() function plot them as histograms, for each column (= feature).
 
-    Parameters:
-        figpaths : list or tuple
-            List of the tree paths where the eventsa are stored
-        tree : string
-            Name of the tree where the events are stored
-        vars : list or tuple
-            List containing the names of the variables to plot
-        figpath : string
-            Path where the figure is saved. This string must not contain a name
-            for the figure since it is given automatically.
+    :param figpaths: List of the tree paths where the events are stored
+    :type figpaths: list or tuple
+    :param tree: Name of the tree where the events are stored
+    :type tree: str
+    :param vars: List containing the names of the variables to plot
+    :type vars: list or tuple      
+    :param figpath: Path where the figure is saved. This string must not contain a name for the figure since it is given automatically.
+    :type figpath: str
+
     """
 
     arr_mc_pi, arr_mc_k = loadvars(filepaths[0], filepaths[1],

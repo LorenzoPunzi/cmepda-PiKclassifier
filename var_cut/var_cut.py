@@ -20,24 +20,26 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     probability that a Kaon event has a larger value than that (smaller, in the
     inverse-mode) is equal to the efficiency chosen (parameter "eff")
 
-    Parameters:
-        rootpaths: list or tuple
-
-        tree: string
-
-        cut_var: string
-
-        eff: float
-
-        inverse_mode: bool
-
-        specificity_mode: bool
-
-        draw_roc, draw_fig: bool
-
-        figpath: string
-
-        stat_split: int
+    :param rootpaths: Three rootpaths where to search for the root files. The first is the rootpath for the "negative" species, the second for the "positive" species, the third  for the data to be evaluated
+    :type rootpaths: tuple[str]
+    :param tree: Tree from which to load
+    :type tree: str
+    :param cut_var: Variable to load and test
+    :type cut_var: str
+    :param eff: Sensitivity required from the test (specificity in specificity mode)
+    :type eff: float
+    :param inverse_mode: To activate if the "positive" events have lower values of the cut variable
+    :type inverse_mode: bool
+    :param specificity_mode: To activate if the efficiency given is the specificity
+    :type specificity_mode: bool
+    :param draw_roc: Draw the roc function of the test
+    :type draw_roc: bool
+    :param draw_fig: Draw the figure of the variable distribution for the two species and the cut
+    :type draw_fig: bool
+    :param figpath: Path to where to save the figure
+    :type figpath: str
+    :param stat_split: How many parts to split the dataset with to evaluate the statistical uncertainty of the fraction estimated with this test
+    :type stat_split: int
 
     """
     rootpath_pi, rootpath_k, rootpath_data = rootpaths
