@@ -34,8 +34,13 @@ jobs:
       - run:
           name: "Ciao"
           command: "echo HELLO WORLD"
+      - run:
+          name: "Conda Environment"
+          command: "conda config --set channel_priority strict"
+          command: "conda create -c conda-forge --name root-env root"
+          command: "conda activate root-env"
       - python/install-packages:
-          pkg-manager: pip
+          pkg-manager: conda
       - run:
           name: Run tests
           command: python -m unittest discover -s tests
