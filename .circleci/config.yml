@@ -35,9 +35,14 @@ jobs:
           name: "Ciao"
           command: "echo HELLO WORLD"
       - run:
-          name: "Conda Environment"
-          command: ["/bin/sh", "-c"]
-          args: ["conda config --set channel_priority strict && conda create -c conda-forge --name root-env root && conda activate root-env"]
+          name: "Setting conda"
+          command: "conda config --set channel_priority strict"
+      - run:
+          name: "Create environment for ROOT"
+          command: "conda create -c conda-forge --name root-env root"
+      - run:
+          name: "Activate environment"
+          command: "conda activate root-env"
       - python/install-packages:
           pkg-manager: conda
       - run:
