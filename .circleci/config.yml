@@ -44,7 +44,7 @@ jobs:
           name: "Activate environment"
           command: "conda activate root-env"
       - python/install-packages:
-          pkg-manager: conda
+          pkg-manager: auto
       - run:
           name: Run tests
           command: python -m unittest discover -s tests
