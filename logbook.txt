@@ -654,8 +654,7 @@ dividere utilities,var_cut,dnn,....
 - rivedere i !!!!       DA FARE
 - Sistematiche (lorenzo+ruben)      DA FARE
 - CI (ruben+lorenzo)    PROVARE A COLLEGARE LA REPO SULL'APPLICAZIONE CIRCLECI E VEDERE CHE ERRORI DA'
-- SPHYNX (lorenzo)      DA FARE
-- Range per var_cut and exception for wrong inverse mode. FRAZIONE CORRETTA IN specificity ?
+- SPHYNX (lorenzo)      Da COMPLETARE E RIORGANIZZARE
 
 
 
