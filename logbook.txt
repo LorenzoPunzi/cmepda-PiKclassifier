@@ -642,6 +642,22 @@ L''unica cosa vorrei capire come suddividere meglio in sezioni la documentazione
 dividere utilities,var_cut,dnn,....
 
 
+13/03/2023 (Lorenzo):
+
+Fatto funzionare CircleCI dopo un po' di peripezie, ma occorre commentare il test_template_fit
+(da problemi) e addirittura il #import ROOT che esso contiene, sennò CircleCI fa storie.
+
+Commentato tutte le funzioni in utils.py, vorrei fare dei cambiamenti per uniformare il linguaggio
+delle opzioni ma aspetto Ruben perché non so se il main chiama sta roba !!!!
+
+
+Alcuni dubbi sulle docstrings !!!!:
+
+- come formattare roba tipo True, false e nomi delle variabili stesse così che abbiano font diverso dal semplice testo
+- come scrivere: if ... is set to True oppure if activated?
+- serve mettere i valori default nella docstring?
+- how to correcly format the return parameter in case of multiple eterogeneous return values 
+
 
 
 
@@ -653,8 +669,8 @@ dividere utilities,var_cut,dnn,....
 - docs (lorenzo+ruben)  DA COMPLETARE
 - rivedere i !!!!       DA FARE
 - Sistematiche (lorenzo+ruben)      DA FARE
-- CI (ruben+lorenzo)    PROVARE A COLLEGARE LA REPO SULL'APPLICAZIONE CIRCLECI E VEDERE CHE ERRORI DA'
-- SPHYNX (lorenzo)      Da COMPLETARE E RIORGANIZZARE
+- CI (ruben+lorenzo)    FUNZIONA TRANNE I TEST_TEMPLATE_FIT
+- SPHYNX (lorenzo)       RIORGANIZZARE
 
 
 

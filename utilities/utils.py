@@ -6,6 +6,11 @@ from sklearn import metrics
 
 def default_rootpaths():
     """
+    Returns the default root file paths of the package.
+
+    :return: Path tuple, containing the pion MC, the kaon Mc and the mixed data root files respectively.
+    :rtype: tuple[str]
+
     """
     current_path = os.path.dirname(__file__)
     rel_path = '../data/root_files'
@@ -17,6 +22,11 @@ def default_rootpaths():
 
 def default_txtpaths():
     """
+    Returns the txt file paths of the package.
+
+    :return: Path tuple, containing the pion MC, the kaon Mc and the mixed data txt files respectively.
+    :rtype: tuple[str]
+
     """
     current_path = os.path.dirname(__file__)
     rel_path = '../data/txt'
@@ -28,9 +38,9 @@ def default_txtpaths():
 
 def default_vars():
     """
-    Returns default variables of the package
+    Returns default variables of the package.
 
-    :return: The variable tuple.
+    :return: Variable tuple.
     :rtype: tuple[str]
 
     """
@@ -40,12 +50,34 @@ def default_vars():
 
 
 def default_figpath(figname, dir='fig', figtype='pdf'):
+    """
+    Returns the path to the figure folder with respect to the cwd in which to then save figures.
+
+    :param figname: Name with which to save the figure.
+    :type figname: str
+    :param dir: Directory relative to cwd where to save the figure.
+    :type dir: str
+    :param figtype: Type of figure save file.
+    :type figtype: str
+    :return: Path where to save the figure.
+    :rtype: str
+
+    """
     wd_path = os.getcwd()
     figpath = os.path.join(wd_path, dir, figname+'.'+figtype)
     return figpath
 
 
-def default_resultsdir(dir='outputs-PiKclassifier'):
+def default_resultsdir(dir='outputs-PiKclassifier'): #!!!! docstring
+    """
+    Returns the path where to store the outputs of the package.
+
+    :param dir: Directory where to save the outputs
+    :type dir: str
+    :return: The figure path.
+    :rtype: str
+
+    """
     if os.path.exists(os.getcwd()+'/'+dir):
         pass
     else:
@@ -57,6 +89,21 @@ def default_resultsdir(dir='outputs-PiKclassifier'):
 def find_cut(pi_array, k_array, efficiency,
              specificity_mode=False, inverse_mode=False):
     """
+    Finds where to cut a certain varibale to obtain a certain sensitivity in a hypothesis test between two given species' arrays
+
+    :param pi_array: Array containing the "negative" species.
+    :type pi_array: numpy.array[float]
+    :param k_array: Array containing the "positive" species.
+    :type k_array: numpy.array[float]
+    :param efficiency: Sensitivity required from the test (specificity in specificity mode)
+    :type efficiency: float
+    :param specificity_mode: To activate if the efficiency given is the specificity
+    :type specificity_mode: bool
+    :param inverse_mode: To activate if the "positive" events tend to have lower values
+    :type inverse_mode: bool
+    :return: Two element tuple containing cut value and misidentification probability for the negative species (or sensitivity in specificity mode)
+    :rtype: tuple[double]
+
     """
     if inverse_mode:
         efficiency = 1 - efficiency
@@ -78,6 +125,31 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
               x_pnts=(), y_pnts=(), point_labels=(''), eff=0,
               figtitle='ROC', figname=''):
     """
+    Draws superimposed roc curves and/or points
+
+    :param rocx_array: Array of arrays, each containing the respective x points of different roc curves to be plotted.
+    :type rocx_array: numpy.array[numpy.array[float]]
+    :param rocy_array: Array of arrays, each containing the respective y points of different roc curves to be plotted.
+    :type rocy_array: numpy.array[numpy.array[float]]
+    :param roc_labels: Names of the respective species whose roc coordinates were given.
+    :type roc_labels: list[str] or tuple[str]
+    :param roc_linestyles: Linestyles of the respective species whose roc coordinates were given.
+    :type roc_linestyles: list[str] or tuple[str]
+    :param roc_colors: Colors of the respective species whose roc coordinates were given.
+    :type roc_colors: list[str] or tuple[str]
+    :param x_pnts: Tuple containing the respective x coordinates of points to be plotted.
+    :type x_pnts: list[double] or tuple[double]
+    :param y_pnts: Tuple containing the respective y coordinates of points to be plotted.
+    :type y_pnts: list[double] or tuple[double]
+    :param point_labels: Names of the respective species whose point coordinates were given.
+    :type point_labels: list[str] or tuple[str]
+    :param eff: If different than 0., draws a green dashed line at y = eff on the plot.
+    :type eff: double
+    :param figtitle: Title to be given to the figure.
+    :type figtitle: str
+    :param figname: If different than '', saves the figure as a pdf with name figname.
+    :type figname: str
+
     """
     plt.figure(figtitle)
     plt.xlabel('False Positive Probability')
@@ -104,18 +176,32 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
     plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
     plt.legend()
     plt.draw()
-    if figname == '':
-        plt.savefig(default_figpath(figtitle))
+    if figname != '':
+        plt.savefig(default_figpath(figname))
     else:
         plt.savefig(figname)
 
-    # !!! How to make it so it saves in the /fig folder of the directory from which the function is CALLED, not the one where nnoutputfit.py IS.
-    # figpath = os.path.join(os.path.dirname(__file__), "fig")
-    # print(f"Figure {figname} saved in {figpath} folder")
 
 
 def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC"):
     """
+    Returns the roc curve's x and y coordinates given two arrays of values for two different species. optionally draws the roc curve using plot_rocs().
+
+    :param pi_array: Array containing the "negative" species.
+    :type pi_array: numpy.array[float]
+    :param k_array: Array containing the "positive" species.
+    :type k_array: numpy.array[float]
+    :param inverse_mode: To activate if the "positive" events tend to have lower values
+    :type inverse_mode: bool
+    :param makefig: If set to True draws the roc curve
+    :type makefig: bool
+    :param eff: If different than 0. and makefig = True , draws a green dashed line at y = eff on the plot.
+    :type eff: double
+    :param name: If makefig = True , name of the saved figure.
+    :type name: str
+    :return: Three element tuple containing: numpy array of floats of x coordinates of the roc curve, numpy array of floats of y coordinates of the roc curve, AUC of the ROC curve.
+    :rtype: tuple[numpy.array[float], numpy.array[float], float]
+
     """
     true_array = np.concatenate(
         (np.zeros(pi_array.size), np.ones(k_array.size)))

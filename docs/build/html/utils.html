@@ -15,7 +15,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="var_cut" href="var_cut.html" />
-    <link rel="prev" title="Welcome to cmepda-PiKclassifier’s documentation!" href="index.html" />
+    <link rel="prev" title="cmepda-PiKclassifier documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -38,13 +38,149 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="utilities.utils.default_vars">
 <span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">default_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.default_vars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns default variables of the package</p>
+<dd><p>Returns default variables of the package.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The variable tuple.</p>
+<dd class="field-odd"><p>Variable tuple.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.default_rootpaths">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">default_rootpaths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.default_rootpaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the default root file paths of the package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path tuple, containing the pion MC, the kaon Mc and the mixed data root files respectively.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.default_txtpaths">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">default_txtpaths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.default_txtpaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the txt file paths of the package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path tuple, containing the pion MC, the kaon Mc and the mixed data txt files respectively.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.default_figpath">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">default_figpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fig'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pdf'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.default_figpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to the figure folder with respect to the cwd in which to then save figures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>figname</strong> (<em>str</em>) – Name with which to save the figure.</p></li>
+<li><p><strong>dir</strong> (<em>str</em>) – Directory relative to cwd where to save the figure.</p></li>
+<li><p><strong>figtype</strong> (<em>str</em>) – Type of figure save file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path where to save the figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.default_resultsdir">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">default_resultsdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'outputs-PiKclassifier'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.default_resultsdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path where to store the outputs of the package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dir</strong> (<em>str</em>) – Directory where to save the outputs</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.find_cut">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">find_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pi_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.find_cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds where to cut a certain varibale to obtain a certain sensitivity in a hypothesis test between two given species’ arrays</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pi_array</strong> (<em>numpy.array</em><em>[</em><em>float</em><em>]</em>) – Array containing the “negative” species.</p></li>
+<li><p><strong>k_array</strong> (<em>numpy.array</em><em>[</em><em>float</em><em>]</em>) – Array containing the “positive” species.</p></li>
+<li><p><strong>efficiency</strong> (<em>float</em>) – Sensitivity required from the test (specificity in specificity mode)</p></li>
+<li><p><strong>specificity_mode</strong> (<em>bool</em>) – To activate if the efficiency given is the specificity</p></li>
+<li><p><strong>inverse_mode</strong> (<em>bool</em>) – To activate if the “positive” events tend to have lower values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two element tuple containing cut value and misidentification probability for the negative species (or sensitivity in specificity mode)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[double]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.plot_rocs">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">plot_rocs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rocx_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rocy_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roc_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roc_linestyles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roc_colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_pnts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pnts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figtitle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ROC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.plot_rocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws superimposed roc curves and/or points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rocx_array</strong> (<em>numpy.array</em><em>[</em><em>numpy.array</em><em>[</em><em>float</em><em>]</em><em>]</em>) – Array of arrays, each containing the respective x points of different roc curves to be plotted.</p></li>
+<li><p><strong>rocy_array</strong> (<em>numpy.array</em><em>[</em><em>numpy.array</em><em>[</em><em>float</em><em>]</em><em>]</em>) – Array of arrays, each containing the respective y points of different roc curves to be plotted.</p></li>
+<li><p><strong>roc_labels</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Names of the respective species whose roc coordinates were given.</p></li>
+<li><p><strong>roc_linestyles</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Linestyles of the respective species whose roc coordinates were given.</p></li>
+<li><p><strong>roc_colors</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Colors of the respective species whose roc coordinates were given.</p></li>
+<li><p><strong>x_pnts</strong> (<em>list</em><em>[</em><em>double</em><em>] or </em><em>tuple</em><em>[</em><em>double</em><em>]</em>) – Tuple containing the respective x coordinates of points to be plotted.</p></li>
+<li><p><strong>y_pnts</strong> (<em>list</em><em>[</em><em>double</em><em>] or </em><em>tuple</em><em>[</em><em>double</em><em>]</em>) – Tuple containing the respective y coordinates of points to be plotted.</p></li>
+<li><p><strong>point_labels</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Names of the respective species whose point coordinates were given.</p></li>
+<li><p><strong>eff</strong> (<em>double</em>) – If different than 0., draws a green dashed line at y = eff on the plot.</p></li>
+<li><p><strong>figtitle</strong> (<em>str</em>) – Title to be given to the figure.</p></li>
+<li><p><strong>figname</strong> (<em>str</em>) – If different than ‘’, saves the figure as a pdf with name figname.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.roc">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">roc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pi_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">makefig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ROC'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.utils.roc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the roc curve’s x and y coordinates given two arrays of values for two different species. optionally draws the roc curve using plot_rocs().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pi_array</strong> (<em>numpy.array</em><em>[</em><em>float</em><em>]</em>) – Array containing the “negative” species.</p></li>
+<li><p><strong>k_array</strong> (<em>numpy.array</em><em>[</em><em>float</em><em>]</em>) – Array containing the “positive” species.</p></li>
+<li><p><strong>inverse_mode</strong> (<em>bool</em>) – To activate if the “positive” events tend to have lower values</p></li>
+<li><p><strong>makefig</strong> (<em>bool</em>) – If set to True draws the roc curve</p></li>
+<li><p><strong>eff</strong> (<em>double</em>) – If different than 0. and makefig = True , draws a green dashed line at y = eff on the plot.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – If makefig = True , name of the saved figure.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Three element tuple containing: numpy array of floats of x coordinates of the roc curve, numpy array of floats of y coordinates of the roc curve, AUC of the ROC curve.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[numpy.array[float], numpy.array[float], float]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -72,6 +208,13 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">utils</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#utilities.utils.default_vars"><code class="docutils literal notranslate"><span class="pre">default_vars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.default_rootpaths"><code class="docutils literal notranslate"><span class="pre">default_rootpaths()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.default_txtpaths"><code class="docutils literal notranslate"><span class="pre">default_txtpaths()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.default_figpath"><code class="docutils literal notranslate"><span class="pre">default_figpath()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.default_resultsdir"><code class="docutils literal notranslate"><span class="pre">default_resultsdir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.find_cut"><code class="docutils literal notranslate"><span class="pre">find_cut()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.plot_rocs"><code class="docutils literal notranslate"><span class="pre">plot_rocs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.roc"><code class="docutils literal notranslate"><span class="pre">roc()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="var_cut.html">var_cut</a></li>
@@ -80,13 +223,14 @@
 <li class="toctree-l1"><a class="reference internal" href="import_datasets.html">import_datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dnn_settings.html">dnn_settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge_variables.html">merge_variables</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to cmepda-PiKclassifier’s documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">cmepda-PiKclassifier documentation</a></li>
       <li>Next: <a href="var_cut.html" title="next chapter">var_cut</a></li>
   </ul></li>
 </ul>

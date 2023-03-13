@@ -14,7 +14,7 @@ def cornerplot(array, figname):
     Generates and saves a cornerplot for a single, multi-dimensional, array
 
     :param array: Multidimensional array containing the values of the variables, for each event (rows) and for each feature (columns)
-    :type array: numpy array  
+    :type array: 2D numpy.array[float] 
     :param figname: Name of the figure that the function saves
     :type figname: str
 
