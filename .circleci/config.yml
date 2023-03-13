@@ -37,7 +37,7 @@ jobs:
       - run:
           name: "Conda Environment"
           command: ["/bin/sh", "-c"]
-          args: [conda config --set channel_priority strict; conda create -c conda-forge --name root-env root; conda activate root-env]
+          args: ["conda config --set channel_priority strict"; "conda create -c conda-forge --name root-env root"; "conda activate root-env"]
       - python/install-packages:
           pkg-manager: conda
       - run:
