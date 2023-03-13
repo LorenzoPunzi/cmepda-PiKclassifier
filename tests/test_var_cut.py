@@ -2,17 +2,22 @@
 """
 
 import unittest
-import numpy as np
+import os
 import matplotlib.pyplot as plt
 from var_cut.var_cut import var_cut
 
+
+current_dir = os.path.dirname(__file__)
+
+path_A= os.path.join(current_dir, 'dummy/dummy_A.root')
+path_B = os.path.join(current_dir, 'dummy/dummy_B.root')
 
 class TestVarCut(unittest.TestCase):
     def test_uniform(self):
         """
         Test var_cut() with a two uniformly distributed histograms
         """
-        rootpaths=("dummy/dummy_A.root","dummy/dummy_B.root","dummy/dummy_A.root")
+        rootpaths=(path_A,path_B,path_A)
         efficiency = 0.9
 
         f, misid, cut, _, = var_cut( rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar', eff=0.90, inverse_mode=False, specificity_mode=False, draw_fig=False)
@@ -30,7 +35,7 @@ class TestVarCut(unittest.TestCase):
         """
         Test var_cut() with a two uniformly distributed histograms in inverse mode
         """
-        rootpaths=("dummy/dummy_B.root", "dummy/dummy_A.root","dummy/dummy_B.root")
+        rootpaths=(path_B,path_A,path_B)
         efficiency = 0.9
 
         f, misid, cut, _, = var_cut( rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
@@ -51,7 +56,7 @@ class TestVarCut(unittest.TestCase):
         """
         Test var_cut() with a two uniformly distributed histograms in specificity mode
         """
-        rootpaths=("dummy/dummy_A.root","dummy/dummy_B.root","dummy/dummy_A.root")
+        rootpaths=(path_A,path_B,path_A)
         efficiency = 0.9
 
         f, misid, cut, _, = var_cut( rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
@@ -70,7 +75,7 @@ class TestVarCut(unittest.TestCase):
         """
         Test var_cut() with a two uniformly distributed histograms in inverse and specificity mode
         """
-        rootpaths=("dummy/dummy_B.root", "dummy/dummy_A.root","dummy/dummy_B.root")
+        rootpaths=(path_B,path_A,path_B)
         efficiency = 0.9
 
         f, misid, cut, _, = var_cut( rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
@@ -90,7 +95,7 @@ class TestVarCut(unittest.TestCase):
         """
         Test var_cut() with a two uniformly distributed histograms in inverse and specificity mode
         """
-        rootpaths=("dummy/dummy_A.root", "dummy/dummy_B.root", "dummy/dummy_A.root")
+        rootpaths=(path_A,path_B,path_A)
         efficiency = 0.9
 
         f, misid, cut, _, = var_cut( rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar', eff=0.90, inverse_mode=True, specificity_mode=False, draw_fig=False)
