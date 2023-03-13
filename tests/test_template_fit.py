@@ -4,12 +4,12 @@ Tests some functions inside template_fit/template_fit.py
 import unittest
 import sys
 import time
-#import ROOT
+import ROOT
 import numpy as np
 from utilities.utils import default_rootpaths
-#from template_fit.template_functions import DoubleGaussian, GaussJohnson
-#from template_fit.template_fit_var import global_fit, fit_mc_template
-# from templatefit.template_functions import DoubleGaussian, GaussJohnson
+from template_fit.template_functions import DoubleGaussian, GaussJohnson
+from template_fit.template_fit_var import global_fit, fit_mc_template
+from template_fit.template_functions import DoubleGaussian, GaussJohnson
 
 
 filepaths = default_rootpaths()
@@ -19,7 +19,7 @@ fit_range = (5.02, 5.42)
 
 # df_pi, df_k = ROOT.RDataFrame(tree, file1), ROOT.RDataFrame(tree, file2)
 
-"""
+
 class TestTemplateFit(unittest.TestCase):
     def test_onlypions(self):
 
@@ -49,7 +49,6 @@ class TestTemplateFit(unittest.TestCase):
         err_onlyPi = res_k.Errors()[1]
         # print(estim_onlyK, res_k.Errors()[1])
         self.assertAlmostEqual(estim_onlyK, 1, places=2)
-"""
 
 
 if __name__ == '__main__':
