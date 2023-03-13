@@ -621,6 +621,27 @@ Analisi delle 17.10 (N_MC = 227993, N_DATA = 45598, f=0.42):
         [ NOTA: la media delle stime sui sub-datasets converge alla stima effettuata sul
           dataset complessivo (osservazione empirica) ] 
 
+        
+12/03/2023 (Lorenzo):
+
+Fatto alcune modifiche a var_cut con miglioramenti, in particolare aggiustato il range dei plot degli hist
+
+Fatti i test_var_cut e vanno
+
+Aggiunta la sphinx documentation per var_cut e utilities tranne utils.
+
+PER AGGIUNGERE DOCUMENTATION A SPHINX:
+
+- Creare un .rst file in docs/source
+- Modificare il .rst file sul modello della doc già fatta
+- Aggiungere tale nome alla lista sotto toctree su index.rst
+- Chiamare >> make html da shell in docs/
+- Aprire la pagina web aprendo docs/build/html/index.html (o refreshare la pagina sul browser)
+
+L''unica cosa vorrei capire come suddividere meglio in sezioni la documentazione su sphix. Magari ad esempio 
+dividere utilities,var_cut,dnn,....
+
+
 
 
 
