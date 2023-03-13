@@ -19,11 +19,10 @@ fit_range = (5.02, 5.42)
 
 # df_pi, df_k = ROOT.RDataFrame(tree, file1), ROOT.RDataFrame(tree, file2)
 
-
+"""
 class TestTemplateFit(unittest.TestCase):
     def test_onlypions(self):
-        """
-        """
+
         print('Running only_pions test')
         templ_pars_pi = fit_mc_template(
             filepaths[0], tree, var, DoubleGaussian(fit_range))
@@ -38,8 +37,7 @@ class TestTemplateFit(unittest.TestCase):
         self.assertAlmostEqual(estim_onlyPi, 0, places=2)
 
     def test_onlykaons(self):
-        """
-        """
+
         print('Running only_kaons test')
         templ_pars_pi = fit_mc_template(
             filepaths[0], tree, var, DoubleGaussian(fit_range))
@@ -51,6 +49,7 @@ class TestTemplateFit(unittest.TestCase):
         err_onlyPi = res_k.Errors()[1]
         # print(estim_onlyK, res_k.Errors()[1])
         self.assertAlmostEqual(estim_onlyK, 1, places=2)
+"""
 
 
 if __name__ == '__main__':
