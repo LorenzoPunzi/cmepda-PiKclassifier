@@ -619,12 +619,13 @@ Analisi delle 17.10 (N_MC = 227993, N_DATA = 45598, f=0.42):
         poiché le stime dipendono in maniera molto maggiore dalla dimensione del
         sample rispetto agli altri due metodi
         [ NOTA: la media delle stime sui sub-datasets converge alla stima effettuata sul
-          dataset complessivo (osservazione empirica) ] 
+          dataset complessivo (osservazione empirica) ]
 
-        
+
 12/03/2023 (Lorenzo):
 
-Fatto alcune modifiche a var_cut con miglioramenti, in particolare aggiustato il range dei plot degli hist
+Fatto alcune modifiche a var_cut con miglioramenti, in particolare aggiustato il
+range dei plot degli hist
 
 Fatti i test_var_cut e vanno
 
@@ -638,25 +639,26 @@ PER AGGIUNGERE DOCUMENTATION A SPHINX:
 - Chiamare >> make html da shell in docs/
 - Aprire la pagina web aprendo docs/build/html/index.html (o refreshare la pagina sul browser)
 
-L''unica cosa vorrei capire come suddividere meglio in sezioni la documentazione su sphix. Magari ad esempio 
-dividere utilities,var_cut,dnn,....
+L''unica cosa vorrei capire come suddividere meglio in sezioni la documentazione
+su sphix. Magari ad esempio dividere utilities,var_cut,dnn,....
 
 
 13/03/2023 (Lorenzo):
 
 Fatto funzionare CircleCI dopo un po' di peripezie, ma occorre commentare il test_template_fit
-(da problemi) e addirittura il #import ROOT che esso contiene, sennò CircleCI fa storie.
+(dà problemi) e addirittura il #import ROOT che esso contiene, sennò CircleCI fa storie.
 
-Commentato tutte le funzioni in utils.py, vorrei fare dei cambiamenti per uniformare il linguaggio
-delle opzioni ma aspetto Ruben perché non so se il main chiama sta roba !!!!
+Commentato tutte le funzioni in utils.py, vorrei fare dei cambiamenti per uniformare
+il linguaggio delle opzioni ma aspetto Ruben perché non so se il main chiama sta roba !!!!
 
 
 Alcuni dubbi sulle docstrings !!!!:
 
-- come formattare roba tipo True, false e nomi delle variabili stesse così che abbiano font diverso dal semplice testo
+- come formattare roba tipo True, false e nomi delle variabili stesse così che
+  abbiano font diverso dal semplice testo
 - come scrivere: if ... is set to True oppure if activated?
 - serve mettere i valori default nella docstring?
-- how to correcly format the return parameter in case of multiple eterogeneous return values 
+- how to correcly format the return parameter in case of multiple eterogeneous return values
 - Cambiare i nomi a training/testing su cose vecchie (array_generator) con mc/data
 - docstrings dei modules
 - Forse ho fatto casino con figpath/figname su alcune funzioni...

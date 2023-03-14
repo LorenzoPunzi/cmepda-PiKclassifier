@@ -21,8 +21,9 @@ cmepda-PiKclassifier documentation
    test_import_datasets
    deepnn
    dtc
+   template_fit
 
-   
+
 
 .. note::
 

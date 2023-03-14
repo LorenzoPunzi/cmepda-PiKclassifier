@@ -1,6 +1,7 @@
 """
-Module that performs an estimate of the fraction f of kaons in the mixed pi-k
-population present in the dataset Bhh_data.root
+Module stores the functions able to perform fit on MC templates and to weight
+them in a template fit to retrieve an estimate of the fraction f of kaons in
+the mixed Pi-K population present in the dataset Bhh_data.root
 """
 
 import ROOT
@@ -13,6 +14,30 @@ def fit_mc_template(filepath, tree, var, fitfunc, Nbins=1000,
                     histo_lims=(5.0, 5.6), histo_name='', histo_title='',
                     savefig=False, img_name='template.png'):
     """
+    Performs a max-Likelihood fit on the distribution of a MC sample
+
+    :param filepath: Root file where the MC dataset is stored
+    :type filepath: tuple[str]
+    :param tree: Name of the tree in root file where the events are stored
+    :type tree: str
+    :param var: Variable the fit is performed on
+    :type var: str
+    :param fitfunc: Fit function
+    :type fitfunc: ROOT::TF1
+    :param Nbins: Number of bins of the histogram, defaults to 1000
+    :type Nbins: int, optional
+    :param histo_lims: Range of the histogram, defaults to (5.0, 5.6)
+    :type histo_lims: tuple[float], optional
+    :param histo_name: Name of the histogram
+    :type histo_name: str, optional
+    :param histo_title: Title of the histogram
+    :type histo_name: str, optional
+    :param savefig: If is ``True`` saves the image of the fit, defaults to ``False``
+    :type savefig: bool, optional
+    :param img_name: Name of the image to be saved
+    :type img_name: str, optional
+    :return: Best-fit farameters of the fit function
+    :rtype: tuple[float]
     """
     if histo_name == '':
         histo_name = var
@@ -48,11 +73,48 @@ def fit_mc_template(filepath, tree, var, fitfunc, Nbins=1000,
     return tuple(exit_pars)
 
 
-def global_fit(filepath, tree, var, histo_lims=(5.0, 5.6), Nbins=1000,
-               pars_mc1=(), pars_mc2=(), fit_range=(5.02, 5.42),
-               savefigs=False, img_name="fig/Fit_data.png",):
+def global_fit(filepath, tree, var, Nbins=1000, histo_lims=(5.0, 5.6),
+               histo_name='', histo_title='', pars_mc1=(), pars_mc2=(),
+               fit_range=(5.02, 5.42), savefig=False, img_name="fig/Fit_data.png"):
     """
+    Performs a max-Likelihood fit on the mixed dataset, by weighting (linearly)
+    the template functions found for the two MC import_datasets. The template
+    functions used in this case are already mixed in the function
+    ROOT.TemplateComposition (external library) and the parameters given by the
+    fit on MC datasets are passed into this function.
+
+    :param filepath: Root file where the MC dataset is stored
+    :type filepath: tuple[str]
+    :param tree: Name of the tree in root file where the events are stored
+    :type tree: str
+    :param var: Variable the fit is performed on
+    :type var: str
+    :param Nbins: Number of bins of the histogram, defaults to 1000
+    :type Nbins: int, optional
+    :param histo_lims: Range of the histogram, defaults to (5.0, 5.6)
+    :type histo_lims: tuple[float], optional
+    :param histo_name: Name of the histogram
+    :type histo_name: str, optional
+    :param histo_title: Title of the histogram
+    :type histo_name: str, optional
+    :param pars_mc1: Best-fit parameters for the first template function
+    :type pars_mc1: tuple[float]
+    :param pars_mc2: Best-fit parameters for the second template function
+    :type pars_mc2: tuple[float]
+    :param fit_range: Range where the fit is performed
+    :type fit_range: tuple[float]
+    :param savefig: If is ``True`` saves the image of the fit, defaults to ``False``
+    :type savefig: bool, optional
+    :param img_name: Name of the image to be saved
+    :type img_name: str, optional
+    :return: Best-fit farameters of the fit function
+    :rtype: tuple[float]
     """
+    if histo_name == '':
+        histo_name = var
+    if histo_title == '':
+        histo_title = var + ' distribution (data)'
+
     npars_1 = len(pars_mc1)
     npars_2 = len(pars_mc2)
     npars_tot = 2 + npars_1 + npars_2
@@ -71,7 +133,7 @@ def global_fit(filepath, tree, var, histo_lims=(5.0, 5.6), Nbins=1000,
     [f_data.FixParameter(2+k, pars_mc1[k]) for k in range(npars_1)]
     [f_data.FixParameter(2+npars_1+k, pars_mc2[k]) for k in range(npars_2)]
 
-    if savefigs is True:
+    if savefig is True:
         fitvar = h.Fit(f_data, "SQLR")
         c = ROOT.TCanvas()
         c.cd()

@@ -68,7 +68,7 @@ def default_figpath(figname, dir='fig', figtype='pdf'):
     return figpath
 
 
-def default_resultsdir(dir='outputs-PiKclassifier'): #!!!! docstring
+def default_resultsdir(dir='outputs-PiKclassifier'):  # !!!! docstring
     """
     Returns the path where to store the outputs of the package.
 
@@ -180,7 +180,6 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
         plt.savefig(default_figpath(figname))
     else:
         plt.savefig(figname)
-
 
 
 def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC"):
