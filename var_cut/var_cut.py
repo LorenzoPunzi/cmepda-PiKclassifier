@@ -38,7 +38,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     :type draw_fig: bool
     :param figpath: Path to where to save the figure
     :type figpath: str
-    :param stat_split: How many parts to split the dataset with to evaluate the statistical uncertainty of the fraction estimated with this test
+    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test
     :type stat_split: int
 
     """

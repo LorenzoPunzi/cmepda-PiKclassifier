@@ -13,15 +13,30 @@ from keras.layers import Dense, Input, Normalization, AlphaDropout
 from keras.models import Model, model_from_json
 from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
-from utilities.dnn_settings import dnn_settings
+from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
                             find_cut, roc, default_figpath
 from utilities.exceptions import InvalidSourceError
 
 
-def train_dnn(training_set, settings, savefig=True, figpath="",
+def train_dnn(training_set, settings, savefig=True, figname='history',
               trained_filenames=('deepnn.json', 'deepnn.h5')):
     """
+    Returns a trained keras deep neural network.
+
+    :param training_set: 2D numpy array with flag {0,1} as last column for training the DNN
+    :type training_set: 2D numpy.array[float]
+    :param settings: DnnSettings instance with the settings for the generation of the DNN
+    :type settings: utilities.import_datasets.DnnSettings class instance
+    :param savefig: If True, saves the history plot of the training.
+    :type savefig: bool
+    :param figname: If savefig = True, saves the history figure as a pdf with this name
+    :type figname: str
+    :param trained_filenames: Two element tuple containing respectively the name of the .json of the file where to save the DNN and the .h5 where to store its weigths.
+    :type trained_filenames: tuple[str]
+    :return: Trained deep neural network.
+    :rtype: keras.models.Model
+
     """
     seed = np.random.seed(int(time.time()))
     pid = training_set[:, -1]
@@ -56,10 +71,7 @@ def train_dnn(training_set, settings, savefig=True, figpath="",
         plt.plot(history.history['val_loss'], label='Validation Loss')
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
-        if figpath == "":
-            plt.savefig(default_figpath('history'))
-        else:
-            plt.savefig(figpath)
+        plt.savefig(default_figpath(figname))
 
     model_json = deepnn.to_json()
     with open(trained_filenames[0], "w") as json_file:
@@ -69,36 +81,78 @@ def train_dnn(training_set, settings, savefig=True, figpath="",
     return deepnn
 
 
-def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True, figpath=""):
+def eval_dnn(dnn, eval_set, plot_opt=[], flag_data=True, savefig=True, figname=""):
     """
+    Evaluates a given keras deep neural network on a given dataset and optionally plots the results.
+
+    :param dnn: Trained deep neural network to be used in the evaluation.
+    :type dnn: keras.models.Model
+    :param eval_set: 2D numpy array to evaluate.
+    :type eval_set: 2D numpy.array[float]
+    :param plot_opt: If True, saves the history plot of the training
+    :type plot_opt: bool
+    :param flag_data: If True assumes the eval_set array has no falg column at the end. otherwise it stripsa away the last columns before evaluation.
+    :type flag_data: bool
+    :param savefig: If True, saves the histogram of the evaluation results of the given set.
+    :type savefig: bool
+    :param figname: If savefig = True, saves the evaluation figure as a pdf with this name.
+    :type figname: str
+    :return: Numpy array of the predictions of the respective events (rows) of the eval_set
+    :rtype: numpy.array[float]
+
     """
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
 
-    if savefig and len(plot_opt) == 3:  # !!!! MAKE IT BETTER
+    if savefig and len(plot_opt) == 3:  # !!!! MAKE IT BETTER (E.G. KWARGS)
         nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
         plt.hist(prediction_array, bins=nbins, histtype='step',
                  color=plot_opt[1], label=plot_opt[2])
         plt.xlabel('y')
-        plt.ylabel(f'Events per 1/{nbins}')  # MAKE IT BETTER
+        plt.ylabel(f'Events per 1/{nbins}') 
         plt.yscale('log')
         plt.legend()
-        if figpath == "":
+        if figname == '':
             plt.savefig(default_figpath('predict_'+plotname))
         else:
-            plt.savefig(figpath)
+            plt.savefig(figname)
         plt.draw()
 
     return prediction_array
 
 
-def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
-        vars=default_vars(), n_mc=560000, n_data=50000, settings=dnn_settings(),
-        load=False, trained_model=('deepnn.json', 'deepnn.h5'), stat_split=0,
-        savefigs=False, figpaths=("", "", "", "")):
+def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
+        vars=default_vars(), n_mc=560000, n_data=50000, settings=DnnSettings(),
+        load=False, trained_model=('deepnn.json', 'deepnn.h5'),
+        savefigs=False, fignames=("", "", "", "")):
     """
+    Trains or loads a deep neural network and evaluates it on the training sets used to train it, as well as a ulterior dataset.
+
+    :param source: Two element tuple containing respectively the option for how to build the DNN and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt the second element of source must be a tuple containing two .txt paths, one relative to the training set .txt file and the other to the set to evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix to be evaluated.
+    :type source: tuple[{'root','txt'},tuple[str]]
+    :param root_tree: In case of 'root' source, the name of the tree from which to load variables.
+    :type root_tree: str
+    :param vars: In case of 'root' source, tuple containing the names of the variables to load and with which  the DNN should be built.
+    :type vars: tuple[str]
+    :param n_mc: In case of 'root' source, number of events to take from the root files for the training set
+    :type n_mc: int
+    :param n_data: In case of 'root' source, number of events to take from the root file for the mixed evaluation set
+    :type n_data: int
+    :param settings: DnnSettings instance with the settings for the generation of the DNN
+    :type settings: utilities.import_datasets.DnnSettings class instance
+    :param load: If True, instead of training a new DNN, it loads it from the files in trained_model
+    :type load: bool
+    :param trained_filenames: Two element tuple containing respectively the name of the .json of the file from which to load the DNN and the .h5 from which to load its weigths.
+    :type trained_filenames: tuple[str]
+    :param savefigs: If True, saves the training history (if the DNN was not loaded) and the histograms of the evaluation results of the the training and data sets.
+    :type savefigs: bool
+    :param fignames: Four element tuple containing some figure names for the pdf figures, in case savefigs is True. The first element is the name of the DNN training histotry figure. The second and third elemenst are the names of the evaluated training species figures. The fourth element is the name of the evaluated data figure.
+    :type fignames: tupel[str]
+    :return: Tuple of numpy arrays, respectively the evaluated background set, the evaluated signal set, and the evaluated data set.
+    :rtype: tuple[numpy.array[float]]
+
     """
     try:
         if source[0] == 'txt':
@@ -123,7 +177,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
 
     if load is not True:
         deepnn = train_dnn(
-            training_set, settings, savefig=savefigs, figpath=figpaths[0],
+            training_set, settings, savefig=savefigs, figname=fignames[0],
             trained_filenames=trained_model)
     else:
         json_path = trained_model[0]
@@ -136,20 +190,20 @@ def dnn(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
 
     pi_eval = eval_dnn(deepnn, pi_set, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
-                       figpath=figpaths[1])
+                       figname=fignames[1])
     k_eval = eval_dnn(deepnn, k_set, flag_data=False, savefig=savefigs,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
-                      figpath=figpaths[2])
+                      figname=fignames[2])
     pred_array = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
                           plot_opt=['Data_eval', 'blue', 'Evaluated data'],
-                          figpath=figpaths[3])
+                          figname=fignames[3])
 
     return pi_eval, k_eval, pred_array
 
 
 if __name__ == '__main__':
 
-    settings = dnn_settings(layers=(75, 60, 45, 30, 20),
+    settings = DnnSettings(layers=(75, 60, 45, 30, 20),
                             batch_size=128,
                             epochnum=10,
                             learning_rate=5e-5)

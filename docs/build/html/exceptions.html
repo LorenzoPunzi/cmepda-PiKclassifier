@@ -40,10 +40,20 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utilities.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidSourceError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.InvalidSourceError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception that gives an error message if the type of the source file given
 to a function is incorrect</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – Invalid source type given by the user.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="utilities.exceptions.InvalidSourceError.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.InvalidSourceError.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – Invalid source type given by the user.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -52,17 +62,28 @@ to a function is incorrect</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utilities.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidArrayGenRequestError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">for_training</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_testing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mixing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.InvalidArrayGenRequestError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception that gives an error message if there is an incompatibility of the
 number of source file given and the type of array to import</p>
-<dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>for_training, for_testing, mixed<span class="classifier">bool</span></dt><dd><p>Flags that select which type of error message to show</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>for_training</strong> (<em>bool</em>) – Flag indicating the user wants to generate arrays for training.</p></li>
+<li><p><strong>for_testing</strong> (<em>bool</em>) – Flag indicating the user wants to generate arrays for testing.</p></li>
+<li><p><strong>mixing</strong> (<em>bool</em>) – Flag indicating the user wants to use mixed variables.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="utilities.exceptions.InvalidArrayGenRequestError.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">for_training</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_testing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mixing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.InvalidArrayGenRequestError.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>for_training</strong> (<em>bool</em>) – Flag indicating the user wants to generate arrays for training.</p></li>
+<li><p><strong>for_testing</strong> (<em>bool</em>) – Flag indicating the user wants to generate arrays for testing.</p></li>
+<li><p><strong>mixing</strong> (<em>bool</em>) – Flag indicating the user wants to use mixed variables.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -71,10 +92,20 @@ number of source file given and the type of array to import</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utilities.exceptions.</span></span><span class="sig-name descname"><span class="pre">LoadHeadError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.LoadHeadError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception that gives an error message if the header file cannot be found in
 the selected path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>header_path</strong> (<em>str</em>) – Invalid header path given by the user.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="utilities.exceptions.LoadHeadError.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.LoadHeadError.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>header_path</strong> (<em>str</em>) – Invalid header path given by the user.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -83,10 +114,20 @@ the selected path</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utilities.exceptions.</span></span><span class="sig-name descname"><span class="pre">IncorrectFractionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.IncorrectFractionError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception that gives an error message if the given fraction of Kaons (to be
 used in the dataset generation) is non-physical.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>float</em>) – Invalid fraction given by the user.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="utilities.exceptions.IncorrectFractionError.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.exceptions.IncorrectFractionError.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>float</em>) – Invalid fraction given by the user.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -139,6 +180,7 @@ the MC and mixed datasets is incompatible with the event size of the toyMCs</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="merge_variables.html">merge_variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_import_datasets.html">test_import_datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 </ul>
 
 <div class="relations">
