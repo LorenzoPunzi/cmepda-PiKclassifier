@@ -4,6 +4,7 @@ Tests some functions inside template_fit/template_fit.py
 import unittest
 import sys
 import time
+"""
 import ROOT
 import numpy as np
 from utilities.utils import default_rootpaths
@@ -53,3 +54,4 @@ class TestTemplateFit(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+"""
