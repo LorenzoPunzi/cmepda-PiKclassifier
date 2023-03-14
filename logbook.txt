@@ -657,7 +657,7 @@ Alcuni dubbi sulle docstrings !!!!:
 - come scrivere: if ... is set to True oppure if activated?
 - serve mettere i valori default nella docstring?
 - how to correcly format the return parameter in case of multiple eterogeneous return values 
-
+- Cambiare i nomi a training/testing su cose vecchie (array_generator) con mc/data
 
 
 

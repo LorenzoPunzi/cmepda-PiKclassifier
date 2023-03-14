@@ -146,7 +146,7 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
         n_mc, n_data : int
             Number of total events requested for training and for testing.
         for_training, for_testing: bool
-            Flags that seleindicate for which purpose the dataset(s) is created
+            Flags that indicate for which purpose the dataset(s) is created
             Defalut: True
         new_variables : tuple
             Tuple containing the combination (consisting themselves in

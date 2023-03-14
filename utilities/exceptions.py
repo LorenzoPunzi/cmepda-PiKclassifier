@@ -10,6 +10,10 @@ class InvalidSourceError(ValueError):
     """
 
     def __init__(self, source):
+        """
+        :param source: Invalid source type given by the user.
+        :type source: str
+        """
         self.source = source
         self.message = f"\'{self.source}\' is not a valid source! Only \
             \'.txt\' and \'.root\' are allowed, \'.root\' being the default"
@@ -20,13 +24,17 @@ class InvalidArrayGenRequestError(ValueError):
     """
     Exception that gives an error message if there is an incompatibility of the
     number of source file given and the type of array to import
-
-    Parameters:
-        for_training, for_testing, mixed : bool
-            Flags that select which type of error message to show
     """
 
     def __init__(self, for_training, for_testing, mixing=False):
+        """
+        :param for_training: Flag indicating the user wants to generate arrays for training.
+        :type for_training: bool
+        :param for_testing: Flag indicating the user wants to generate arrays for testing.
+        :type for_testing: bool
+        :param mixing: Flag indicating the user wants to use mixed variables.
+        :type mixing: bool
+        """
         if (for_training and for_testing):
             self.message = "To create both the tranining and testing \
                             datasets, the file paths (.root) of both the two \
@@ -53,6 +61,10 @@ class LoadHeadError(Exception):
     """
 
     def __init__(self, header_path):
+        """
+        :param header_path: Invalid header path given by the user.
+        :type header_path: str
+        """
         self.header_path = header_path
         self.message = f"Could not load header at path \'{self.header_path}\'"
         super().__init__(self.message)
@@ -65,6 +77,10 @@ class IncorrectFractionError(ValueError):
     """
 
     def __init__(self, f):
+        """
+        :param f: Invalid fraction given by the user.
+        :type f: float
+        """
         self.fraction = f
         self.message = f" {self.fraction} is not a valid value for the \
             fraction of Kaons in the mixed dataset!"
