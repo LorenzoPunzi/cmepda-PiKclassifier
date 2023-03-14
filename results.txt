@@ -1,4 +1,0 @@
-
- Results of the analysis performed with PiK classifier package 
- ------------------------------------------------------------- 
-

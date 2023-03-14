@@ -9,19 +9,22 @@ from template_fit.template_functions import DoubleGaussian, GaussJohnson
 from utilities.utils import default_rootpaths
 
 
-def fit_mc_template(df, var, histo_lims, fitfunc, Nbins=1000, savefig=False,
-                    histo_name='', histo_title='', img_name='template.png'):
+def fit_mc_template(filepath, tree, var, fitfunc, Nbins=1000,
+                    histo_lims=(5.0, 5.6), histo_name='', histo_title='',
+                    savefig=False, img_name='template.png'):
     """
     """
-
     if histo_name == '':
         histo_name = var
     if histo_title == '':
         histo_title = var + ' distribution (MC)'
 
-    ROOT.gStyle.SetOptFit(11111)
+    df = ROOT.RDataFrame(tree, filepath)
+
     h = df.Histo1D((histo_name, histo_title, Nbins,
                    histo_lims[0], histo_lims[1]), var)
+
+    ROOT.gStyle.SetOptFit(11111)
 
     if savefig is True:
         fitvar = h.Fit(fitfunc, "SQLR")
@@ -42,40 +45,31 @@ def fit_mc_template(df, var, histo_lims, fitfunc, Nbins=1000, savefig=False,
     for k in range(fitfunc.GetNpar()):
         exit_pars.append(fitfunc.GetParameter(k))
 
-    return exit_pars
+    return tuple(exit_pars)
 
 
-def global_fit(filepaths, tree, var, img_name="fig/Fit_data.png", Nbins=1000,
-               histo_lims=(5.0, 5.6), fit_range=(5.02, 5.42), savefigs=False):
+def global_fit(filepath, tree, var, histo_lims=(5.0, 5.6), Nbins=1000,
+               pars_mc1=(), pars_mc2=(), fit_range=(5.02, 5.42),
+               savefigs=False, img_name="fig/Fit_data.png",):
     """
     """
-    dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths]
-    df_mc1, df_mc2, df_data = dataframes
+    npars_1 = len(pars_mc1)
+    npars_2 = len(pars_mc2)
+    npars_tot = 2 + npars_1 + npars_2
 
-    templ_pars_pi = fit_mc_template(df_mc1, var, histo_lims,
-                                    DoubleGaussian(fit_range),
-                                    img_name='fig/template_fit_pi.png',
-                                    histo_title=f'{var} distribution (B0->PiPi MC)',
-                                    savefig=savefigs)
-    templ_pars_k = fit_mc_template(df_mc2, var, histo_lims,
-                                   GaussJohnson(fit_range),
-                                   img_name='fig/template_fit_k.png',
-                                   histo_title=f'{var} distribution (B0s->KK MC)',
-                                   savefig=savefigs)
-    # ROOT.gStyle.SetOptStat(0)
+    df = ROOT.RDataFrame(tree, filepath)
+
+    # ROO T.gStyle.SetOptStat(0)
     ROOT.gStyle.SetOptFit(11111)
     histo_title = var + ' distribution (data)'
-    print(histo_title)
-    h = df_data.Histo1D(
-        (str(var), histo_title, Nbins, histo_lims[0], histo_lims[1]), var)
+    h = df.Histo1D(
+        (var, histo_title, Nbins, histo_lims[0], histo_lims[1]), var)
 
     f_data = ROOT.TF1("f_data", ROOT.TemplateComposition,
-                      fit_range[0], fit_range[1], 16)
-    # Per tenere sotto controllo che fa TemplateComposition è meglio costruire
-    # la rispettiva funzuione in model_functions.py
+                      fit_range[0], fit_range[1], npars_tot)
 
-    [f_data.FixParameter(2+k, templ_pars_k[k]) for k in range(8)]
-    [f_data.FixParameter(10+k, templ_pars_pi[k]) for k in range(6)]
+    [f_data.FixParameter(2+k, pars_mc1[k]) for k in range(npars_1)]
+    [f_data.FixParameter(2+npars_1+k, pars_mc2[k]) for k in range(npars_2)]
 
     if savefigs is True:
         fitvar = h.Fit(f_data, "SQLR")
@@ -100,8 +94,23 @@ if __name__ == "__main__":
     filepaths = default_rootpaths()
     tree = 'tree;1'
     var = 'M0_Mpipi'
+    histo_lims = (5.0, 5.6)
+    fit_range = (5.02, 5.42)
 
-    results = global_fit(filepaths, tree, var, savefigs=False)
+    templ_pars_pi = fit_mc_template(filepaths[0], tree, var,
+                                    DoubleGaussian(fit_range),
+                                    img_name='fig/template_fit_pi.png',
+                                    histo_title=f'{var} distribution (B0->PiPi MC)',
+                                    savefig=True)
+
+    templ_pars_k = fit_mc_template(filepaths[1], tree, var,
+                                   GaussJohnson(fit_range),
+                                   img_name='fig/template_fit_k.png',
+                                   histo_title=f'{var} distribution (B0s->KK MC)',
+                                   savefig=False)
+
+    results = global_fit(filepaths[2], tree, var, pars_mc1=templ_pars_k,
+                         pars_mc2=templ_pars_pi, savefigs=False)
 
     print(
         f'Frazione di K = {results.Parameters()[1]} +- {results.Errors()[1]}')

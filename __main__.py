@@ -24,7 +24,7 @@ from random import randint
 # import matplotlib.pyplot as plt
 from machine_learning.deepnn import dnn
 from machine_learning.dtc import dt_classifier
-from template_fit.template_fit_var import fit_mc_template, global_fit
+from template_fit.template_fit import fit_mc_template, global_fit
 from template_fit.template_functions import DoubleGaussian, GaussJohnson
 from utilities.gen_from_toy import gen_from_toy
 from utilities.dnn_settings import dnn_settings
