@@ -31,7 +31,7 @@ def fit_mc_template(filepath, tree, var, fitfunc, Nbins=1000,
     :param histo_name: Name of the histogram
     :type histo_name: str, optional
     :param histo_title: Title of the histogram
-    :type histo_name: str, optional
+    :type histo_title: str, optional
     :param savefig: If is ``True`` saves the image of the fit, defaults to ``False``
     :type savefig: bool, optional
     :param img_name: Name of the image to be saved
@@ -107,8 +107,8 @@ def global_fit(filepath, tree, var, Nbins=1000, histo_lims=(5.0, 5.6),
     :type savefig: bool, optional
     :param img_name: Name of the image to be saved
     :type img_name: str, optional
-    :return: Best-fit farameters of the fit function
-    :rtype: tuple[float]
+    :return: Root object containing the fit details
+    :rtype: Root::TFitResult
     """
     if histo_name == '':
         histo_name = var

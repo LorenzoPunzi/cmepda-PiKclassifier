@@ -22,6 +22,7 @@ cmepda-PiKclassifier documentation
    deepnn
    dtc
    template_fit
+   template_functions
 
 
 

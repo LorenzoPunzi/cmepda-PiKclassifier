@@ -10,7 +10,7 @@ from utilities.exceptions import LoadHeadError
 def initialize_library():
     """
     Function that loads into the Python environment the shared library
-    containing the fit functions.
+    containing the fit functions, via the Declare and CompileMacro methods.
     """
     current_path = os.path.dirname(__file__)
     header_path = os.path.join(current_path, 'fit_functions.h')
@@ -31,11 +31,12 @@ def initialize_library():
                     lib_file = os.path.join(root, filename)
         if lib_file == '':
             print("ERROR in source code compilation")
-            quit()
+            sys.exit()
         else:
             ROOT.gSystem.Load(lib_file)
 
 
+'''
 def BreitWigner(func_limits, funcname='BW', pars=(2000, 5.28, 0.5)):
     """
     Returns a TF1 function corresponding to a relativistic Breit-Wigner.
@@ -73,25 +74,25 @@ def BreitWigner(func_limits, funcname='BW', pars=(2000, 5.28, 0.5)):
     function.SetParLimits(2, 0., func_limits[0], func_limits[1])
 
     return function
+'''
 
 
 def DoubleGaussian(func_limits, funcname='DoubleGaussian',
                    pars=(1e5, 0.16, 5.28, 0.08, 5.29, 0.04)):
     """
-    Returns a TF1 function corresponding to a weighted sum of two Gaussians;
-    its expression is written in a C++ shared library and is imported in the
-    Python environment by the InitializeFunctionsLibrary() function.
+    Function that creates a ROOT::TF1 function corresponding to a weighted sum
+    of two Gaussians; its expression is written in a C++ shared library and is
+    imported in the Python environment by the InitializeFunctionsLibrary()
+    function.
 
-    Parameters
-    ----------
-    LowLim: double
-        Lower limit of the x axis
-    UpLim: double
-        Upper limit of the x axis
-    funcname: string
-        Name of the function created
-    pars: tuple of double
-        Initial parameters given to the function
+    :param func_limits: Limits of the axis where the function is defined
+    :type func_limits: tuple[float]
+    :param funcname: Name of the TF1 created
+    :type funcname: str
+    :param pars: Initial parameters given to the function
+    :type pars: tuple[float]
+    :return: The corresponding ROOT function
+    :rtype: ROOT::TF1
     """
     initialize_library()
 
@@ -112,20 +113,19 @@ def DoubleGaussian(func_limits, funcname='DoubleGaussian',
 def GaussJohnson(func_limits, funcname='Gauss+Johnson',
                  pars=(1e05, 0.991, 1.57, 0.045, 5.29, 1.02, 5.28, 0.00043)):
     """
-    Returns a TF1 function corresponding to a weighted sum of a Johnson and a
-    Gaussian; its expression is written in a C++ shared library and is imported
-    in the Python environment by the InitializeFunctionsLibrary() function.
+    Function that creates a ROOT::TF1 function corresponding to a weighted sum
+    of an SU-Johnson and a Gaussian; its expression is written in a C++ shared
+    library and is imported in the Python environment by the I
+    nitializeFunctionsLibrary() function.
 
-    Parameters
-    ----------
-    LowLim: double
-        Lower limit of the x axis
-    UpLim: double
-        Upper limit of the x axis
-    funcname: string
-        Name of the function created
-    pars: tuple of double
-        Initial parameters given to the function
+    :param func_limits: Limits of the axis where the function is defined
+    :type func_limits: tuple[float]
+    :param funcname: Name of the TF1 created
+    :type funcname: str
+    :param pars: Initial parameters given to the function
+    :type pars: tuple[float]
+    :return: The corresponding ROOT function
+    :rtype: ROOT::TF1
     """
     initialize_library()
 
