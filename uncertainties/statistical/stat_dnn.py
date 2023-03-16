@@ -5,7 +5,7 @@ import sys
 import numpy as np
 from keras.models import Model, model_from_json
 from matplotlib import pyplot as plt
-from utilities.dnn_settings import dnn_settings
+from utilities.dnn_settings import DnnSettings
 from machine_learning.deepnn import eval_dnn
 from utilities.exceptions import InvalidSourceError
 from utilities.utils import find_cut, default_txtpaths, default_figpath

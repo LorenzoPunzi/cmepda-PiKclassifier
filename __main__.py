@@ -20,18 +20,23 @@
 import os
 import argparse
 import time
+import numpy as np
 from random import randint
 # import matplotlib.pyplot as plt
 from machine_learning.deepnn import dnn
 from machine_learning.dtc import dt_classifier
 from template_fit.template_fit import fit_mc_template, global_fit
 from template_fit.template_functions import DoubleGaussian, GaussJohnson
+from utilities.cornerplot import overlaid_cornerplot
 from utilities.gen_from_toy import gen_from_toy
-from utilities.dnn_settings import dnn_settings
+from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_resultsdir, \
                             default_vars, find_cut, roc, plot_rocs
 from uncertainties.statistical.stat_dnn import stat_dnn
 from var_cut.var_cut import var_cut
+import warnings
+
+warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 # print(" ----------------------------------------------- ")
 # print("|  Welcome to the PiK Classifier package!       |")
@@ -104,7 +109,10 @@ parser_an.add_argument('-ld', '--load_dnn', action='store_true',
 
 parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
                        help='Variable(s) on which cut evaluation is performed')
-
+'''
+parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
+                       help='Flag(s) that select the inverse mode to perform the variable(s) cut analysis')
+'''
 parser_an.add_argument('-e', '--efficiency', default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
@@ -120,11 +128,9 @@ args = parser.parse_args()
 filepaths = args.rootpaths_gen
 tree = args.tree
 
-
 respath = os.path.join(os.getcwd(), args.resdir)
 
 results_file = os.path.join(respath, 'results.txt')
-
 with open(results_file, encoding='utf-8', mode='w') as f:
     f.write('\n Results of the analysis performed with PiK classifier package \n'
             ' ------------------------------------------------------------- \n\n')
@@ -152,9 +158,29 @@ if hasattr(args, 'rootpaths_toy'):
                  num_mc=NUM_MC, num_data=NUM_DATA)
 
 
+if args.cornerplot is True:
+    if args.variables == default_vars():
+        overlaid_cornerplot(vars=args.variables[:5], figpath=respath)
+        overlaid_cornerplot(vars=args.variables[7:], figpath=respath)
+        overlaid_cornerplot(
+            vars=('M0_p',)+args.variables[7:9], figpath=respath)
+    elif len(args.variables) > 5:
+        msg = '***WARNING*** \nNumber of variables to print in the corner plot\
+        exceeds the maximum suggested (5). Running the \'cornerplot\' function\
+        on groups of five contiguous variables in the list.'
+        warnings.warn(msg, stacklevel=2)
+        ind = 0
+        while ind+5 <= len(args.variables):
+            overlaid_cornerplot(
+                vars=args.variables[ind:ind+4], figpath=respath)
+            ind += 5
+        overlaid_cornerplot(vars=args.variables[ind:], figpath=respath)
+
+
 if hasattr(args, "methods"):
+    # Initialize a list with the requesteds method of analysis, also removing
+    # duplicates
     SINGULAR_ROCS = True
-    # Initialize a list with the requesteds method of analysis, also removing duplicates
     if 'all' in args.methods:
         analysis = ['all']
         SINGULAR_ROCS = False
@@ -208,7 +234,7 @@ if hasattr(args, "methods"):
 
             res = global_fit(filepaths[2], args.tree, var, Nbins=NBINS_HISTO,
                              pars_mc1=templ_pars_k, pars_mc2=templ_pars_pi,
-                             histo_lims=histo_lims, savefigs=figures,
+                             histo_lims=histo_lims, savefig=figures,
                              img_name=f'{respath}/{FIGNAME_GLOBAL}')
 
             add_result(
@@ -221,7 +247,7 @@ if hasattr(args, "methods"):
 
         if opt in ["dnn", "all"]:
             # ~~~~~~~~ Setup of the DNN - free to edit ~~~~~~~~~~~~~~~~~~~~~~~
-            settings = dnn_settings()
+            settings = DnnSettings()
             settings.layers = (75, 60, 45, 30, 20)
             # settings.val_fraction = 0.5
             settings.batch_size = 128
@@ -246,8 +272,8 @@ if hasattr(args, "methods"):
             pi_eval, k_eval, data_eval = dnn(
                 root_tree=tree, vars=args.variables, settings=settings,
                 load=args.load_dnn, trained_model=(MODEL_FILE, WEIGHTS_FILE),
-                savefigs=figures, figpaths=([f'{respath}/{figname}'
-                                            for figname in fignames]))
+                savefigs=figures, fignames=tuple([f'{respath}/{name}'
+                                                  for name in fignames]))
 
             y_cut, misid = find_cut(pi_eval, k_eval, args.efficiency)
             # plt.axvline(x=y_cut, color='green', label='y cut for '

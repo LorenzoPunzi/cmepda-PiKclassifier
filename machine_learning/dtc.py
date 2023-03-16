@@ -35,7 +35,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     :type test_size: float
     :param crit: The function to measure the quality of a split. Supported criteria are 'gini' for the Gini impurity and 'log_loss' and 'entropy' both for the Shannon information gain.
     :type crit: {'gini','log_loss','entropy'}
-    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test 
+    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test
     :type stat_split: int
     :param print_tree: If different from '', prints the tree on a print_tree.txt file
     :type print_tree: str
@@ -88,8 +88,10 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     fraction = pred_array.sum()/len(pred_array)
 
     if print_tree:
+        if print_tree.endswith('.txt') is not True:
+            print_tree += '.txt'
         tree_diagram = tree.export_text(dtc, feature_names=vars)
-        with open(print_tree + '.txt', 'w') as file:
+        with open(print_tree, 'w') as file:
             file.write(f'Number of nodes = {n_nodes} \n')
             file.write(f'Max depth = {max_depth} \n \n')
             file.write(tree_diagram)

@@ -14,7 +14,7 @@ def cornerplot(array, figname):
     Generates and saves a cornerplot for a single, multi-dimensional, array
 
     :param array: Multidimensional array containing the values of the variables, for each event (rows) and for each feature (columns)
-    :type array: 2D numpy.array[float] 
+    :type array: 2D numpy.array[float]
     :param figname: Name of the figure that the function saves
     :type figname: str
 
@@ -25,18 +25,19 @@ def cornerplot(array, figname):
     figure.savefig(figname)
 
 
-def overlaid_cornerplot(filepaths, tree, vars, figpath=''):
+def overlaid_cornerplot(filepaths=default_rootpaths(), tree='t_M0pipi;1',
+                        vars=default_vars(), figpath=''):
     """
     Generates and saves cornerplots for two different (multidimensional)
     arrays on the same canva. The datasets are passed as numpy ndarray and the
     corner() function plot them as histograms, for each column (= feature).
 
-    :param figpaths: List of the tree paths where the events are stored
-    :type figpaths: list or tuple
+    :param figpaths: Tree paths where the events are stored
+    :type figpaths: tuple[str]
     :param tree: Name of the tree where the events are stored
     :type tree: str
     :param vars: List containing the names of the variables to plot
-    :type vars: list or tuple      
+    :type vars: tuple[str]
     :param figpath: Path where the figure is saved. This string must not contain a name for the figure since it is given automatically.
     :type figpath: str
 
@@ -63,7 +64,7 @@ def overlaid_cornerplot(filepaths, tree, vars, figpath=''):
     figure.set_size_inches(9, 7)
 
     plt.savefig(default_figpath('corner_'+'_'.join(vars))) if figpath == '' \
-        else plt.savefig(figpath+'corner_'+'_'.join(vars)+'.pdf')
+        else plt.savefig(figpath+'/corner_'+'_'.join(vars)+'.pdf')
 
 
 if __name__ == '__main__':

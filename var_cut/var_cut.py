@@ -53,18 +53,20 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
 
     if (specificity_mode is not True and misid > eff) or \
             (specificity_mode is True and 1 - eff > misid):
-        msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in var_cut, but the test is not unbiased this way, switching to inverse_mode = {not inverse_mode}'
-        warnings.warn(msg,stacklevel=2)
+        msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in \
+              var_cut, but the test is not unbiased this way, switching \
+              to inverse_mode = {not inverse_mode}'
+        warnings.warn(msg, stacklevel=2)
         inverse_mode = not inverse_mode
         cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
                               specificity_mode=specificity_mode)
 
     if draw_fig:
         nbins = 300
-        range = (min(min(var_pi),min(var_k)), max(max(var_pi),max(var_k)))
+        range = (min(min(var_pi), min(var_k)), max(max(var_pi), max(var_k)))
         plt.figure('Cut on ' + cut_var)
         plt.hist(var_pi, nbins, range=range, histtype='step',
-                 color='red', label=cut_var + ' for Pions') 
+                 color='red', label=cut_var + ' for Pions')
         plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
         plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
@@ -77,23 +79,21 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
             if figpath == '' else plt.savefig(figpath+'/cut_'+cut_var+'.png')
 
     rocx, rocy, auc = roc(var_pi, var_k, eff=eff, inverse_mode=inverse_mode,
-                          makefig=draw_roc, name=default_figpath('ROC_'+cut_var+'_cut')) \
-        if figpath == '' else roc(var_pi, var_k, eff=eff, inverse_mode=inverse_mode,
-                                  makefig=draw_roc, name=figpath+'/ROC_'+cut_var + '_cut.png')
-
-    
+                          makefig=draw_roc,
+                          name=default_figpath(f'ROC_{cut_var}_cut')) \
+        if figpath == '' else roc(var_pi, var_k, eff=eff,
+                                  inverse_mode=inverse_mode, makefig=draw_roc,
+                                  name=f'{figpath}/ROC_{cut_var}_cut.png')
 
     fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
         if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
-    
 
     if specificity_mode:
         eff, misid = misid, 1-eff
         fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
             if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
-        
-    fr = (fraction,)
 
+    fr = (fraction,)
 
     print(f'{cut_var} cut is {cut} for {eff} efficiency')
     print(f'Misid is {misid} for {eff} efficiency')
