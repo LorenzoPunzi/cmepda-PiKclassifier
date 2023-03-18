@@ -675,6 +675,7 @@ Alcuni dubbi sulle docstrings !!!!:
 - Sistematiche (lorenzo+ruben)      DA FARE
 - CI (ruben+lorenzo)    FUNZIONA TRANNE I TEST_TEMPLATE_FIT
 - SPHYNX (lorenzo)       RIORGANIZZARE
+- Analogamente a import_datasets rendere gen_from_toy shuffled nel prendere eventi dai toyxxx.root
 
 
 

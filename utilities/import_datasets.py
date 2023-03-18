@@ -15,31 +15,24 @@ from utilities.exceptions import InvalidArrayGenRequestError
 
 def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     """
-    Function that extracts the events of the interesting variables from the
+    Function that extracts the events of the chosen variables from two
     ROOT files and stores them in numpy arrays.
 
-    Parameters:
-        file_pi : string
-            Path of MC file of B0->PiPi process
-        file_k : string
-            Path of MC file of B0s->KK process
-        tree : string
-            Tree containing the datasets
-        vars : tuple
-            Tuple containing names of the variables requested
-            Default: variables given by the default_vars() function
-        flag_column : bool
-            If is set to True, a column full of 0 or 1, for Pions or Kaons
-            respectively, is added at the rightmost position
-            Default: False
-        flatten1d : bool
-            If is True and only one variable is passed as "vars", the array
-            generated are returned as row-arrays
-            Default: True
 
-    Returns:
-        Two numpy arrays filled by events of the two root files given in input
-        and containing the requested variables, plus a flag-column if requested
+    :param file_pi: Path to MC root file of background only processes.
+    :type file_pi: str        
+    :param file_k: Path to MC root file of signal only processes.
+    :type file_k: str
+    :param tree: Tree in which the variables are stored on the root files.
+    :type tree: str
+    :param vars: Tuple containing names of the variables to be loaded.
+    :type vars: list[str] or tuple[str]
+    :param flag_column: If set to True, a column full of 0 or 1, for background or signal events respectively, is appended as the last column of the 2D array.
+    :type flag_column: bool        
+    :param flatten1d: If is True and only one variable is passed as "vars", the arrays generated are returned as row-arrays instead of one-column arrays.
+    :type flatten1d: bool
+    :return: Two 2D numpy arrays filled by events of the two root files given in input and containing the requested variables, plus a flag-column if requested.
+    :rtype: 2D numpy.array[float]
     """
 
     tree_pi, tree_k = uproot.open(file_pi)[tree], uproot.open(file_k)[tree]
@@ -74,24 +67,18 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     Function that allows to append to the existing datasets (numpy arrays) new
     columns filled by the outputs of the mergevar() function.
 
-    Parameters:
-        rootpaths : tuple
-            Paths (with name) of the root files where the variables are stored.
-            It must include both the MC files for Pi and K and the mixed data
-            file, in this order
-        tree : string
-            Tree containing the datasets
-        initial_arrays : tuple
-            Arrays containing the data of the original variables of Pions and
-            Kaons MC and of the mixed dataset
-        new_variables : tuple
-            Tuple containing the combination (consisting themselves in
-            two-elements tuples) of variables to merge
-
-    Returns:
-        A tuple containing the new numpy arrays for the three datasets, with
-        the new columns filled with the data retrieved by the merge-variables
-        algorithm. For MC datasets the flag column is still the rightmost
+    
+    :param rootpaths: Three element list or tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix.
+    :type rootpaths: list[str] or tuple[str]
+    :param tree: Tree in which the variables are stored on the root files.
+    :type tree: str
+    :param initial_arrays: Three element list or tuple of 2D numpy arrays containing the data of the origina variables of background, signal and mixed events.
+    :type initial_arrays: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
+    :param new_variables: List or tuple containing two element lists or tuples of variables to merge.
+    :type new_variables: list[tuple[str]] or tuple[tuple[str]]
+    :return: A list or tuple containing the new numpy arrays for the three datasets, with the new columns filled with the data retrieved by the merge-variables algorithm. For MC datasets the flag column is still the rightmost column.
+    :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
+        
     """
 
     n_old_vars = len(initial_arrays[2][0, :])
@@ -132,32 +119,29 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
                     for_training=True, for_testing=True, new_variables=()):
     """
     Generates arrays for ML treatment (training and testing). To guarantee
-    unbiasedness the training array has an equal number of Pions' and Kaons'
+    unbiasedness the training array has an equal number of background and signal
     events.
 
-    Parameters
-        rootpaths : tuple
-            Paths of the tree files needed to generate the requested dataset(s)
-        tree : string
-            Tree containing the datasets
-        vars : tuple
-            Tuple containing names of the variables requested
-            Default: variables given by the default_vars() function
-        n_mc, n_data : int
-            Number of total events requested for training and for testing.
-        for_training, for_testing: bool
-            Flags that indicate for which purpose the dataset(s) is created
-            Defalut: True
-        new_variables : tuple
-            Tuple containing the combination (consisting themselves in
-            two-elements tuples) of variables to merge
-            Default: empty tuple
 
-    Returns:
-        Two numpy array: the first containing the MC datasets' events and the
-        flag that identifies each event as Pi or K; the second containing the
-        events of the mixed dataset. Obviously, the array for testing will have
-        one column less than the other one.
+    :param rootpaths: Three element list or tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix.
+    :type rootpaths: list[str] or tuple[str]
+    :param tree: Tree in which the variables are stored on the root files.
+    :type tree: str
+    :param vars: Tuple containing names of the variables to be used.
+    :type vars: list[str] or tuple[str]
+    :param n_mc: Number of events to take from the root files for the training set.
+    :type n_mc: int
+    :param n_data: Number of events to take from the root file for the testing set.
+    :type n_data: int
+    :param for_training: If True generates scambled dataset for training from the mc sets with flags.
+    :type for_training: bool
+    :param for_testing: If True generates dataset to be evaluated, hence without flag column.
+    :type for_testing: bool
+    :param new_variables: Optional list or tuple containing two element lists or tuples of variables to merge.
+    :type new_variables: list[tuple[str]] or tuple[tuple[str]]
+
+    :return: Two element tuple containing 2D numpy arrays. The first contains the MC datasets' events (scrambled to avoid position bias) and the flag that identifies each event as background or signal. The second contains the events of the mixed dataset without flags (one less column).
+    :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
     """
 
     try:

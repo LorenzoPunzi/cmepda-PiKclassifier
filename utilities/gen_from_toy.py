@@ -16,37 +16,24 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
                  filepaths_out=default_rootpaths(), tree='t_M0pipi;1',
                  num_mc=0, num_data=0, fraction=0.42, vars=default_vars()):
     """
-    Generates the datasets needed for the analysis, starting from root files of
-    toyMC events of the processes B0->PiPi and B0s->KK.
+    Generates mixed signal+background datasets to be analysed, starting from root files of
+    toyMC events of background only and sognal only processes.
 
-        Parameters:
-            filepaths_in : list or tuple
-                Path (with name) of the toyMC files
-                Default: 'cmepda-PiKclassifier/data/root_files/toyMC_xxxx.root'
-            filepaths_out : list or tuple
-                Path (with name) of the three output file files
-                Default: paths given by the default_rootpaths() function
-            tree : string
-                Name of the tree in the toyMC files where the events are stored
-            num_mc : int
-                Number of events in each output MC template file
-                Default: 0
-            num_data : int
-                Number of events in the output file with mixed species
-                Default: 0
-            fraction : double
-                Fraction of Kaon events in the mixed sample
-                Default: 0.42
-            vars : list or tuple
-                Variables stored in the toyMC files that are stored in the
-                output datasets.
-                Default: variables given by the default_vars() function
 
-        Returns:
-            Two datasets that have the role of templates for the analysis and
-            one file containing the required mixed fraction of events. The
-            events in toyMC files are selected uniquely, to ensure indipendence
-            in the three files generated.
+    :param filepaths_in: 2 element tuple with path to the toyMC, first being backgorund, the second being signal species.
+    :type filepaths_in: list[str] or tuple[str]
+    :param filepaths_out: Three element tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix to be generated.
+    :type filepaths_out: list[str] or tuple[str]
+    :param tree: Name of the tree in which the desired variables are stored on the toyMC files
+    :type tree: str
+    :param num_mc: Number of events generated for each output MC file
+    :type num_mc: int
+    :param num_data: Number of events generated for the output mixed file
+    :type num_data: int
+    :param fraction: Ideal fraction of signal events in the generated mixed sample. Actual fraction will be different if fraction*num_data is not an integer.
+    :type fraction: double
+    :param vars: List or tuple of variables to export from the toyMC files 
+    :type vars: list[str] or tuple[str]
     """
 
     if tree.endswith(";1"):
