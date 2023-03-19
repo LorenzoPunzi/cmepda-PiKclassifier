@@ -106,7 +106,7 @@ def find_cut(pi_array, k_array, efficiency,
 
     """
     
-    if inverse_mode:  # !!!! NOT DRY
+    if inverse_mode: 
         efficiency = 1 - efficiency
         cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
         if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
