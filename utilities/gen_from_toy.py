@@ -114,21 +114,6 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     var_dictionary = {}
     for idx in range(len(vars)):
         var_dictionary.update({vars[idx]: var_array[:, idx]})
-        # !!! Could be made more DRY since it's the same as AsNumpy() above?
-        # Why are we not using RDataFrame here as well?
-        #
-        # The transformation df -> numpy array -> new ttree is necessary
-        # because we need to shuffle the events and the easiest way to do that
-        # is with the method np.random.shuffle.
-        # Maybe we can avoid the second "for" loop by generating an array of
-        # indexes (integers from 0 to n_data), shuffling it BEFORE the first
-        # loop; then we can generate the dictionary and we have to find a way
-        # to apply this index array to all the values in the var_dictionary.
-        # In general, I think that using uproot is the most straightforward way
-        # to manage ttrees; there could be some doubts on the usage of
-        # .AsNumpy() method, because I haven't found it in the documentation
-        # and it seems less performant than other methods
-        # (https://indico.cern.ch/event/775679/contributions/3244724/attachments/1767054/2869505/RDataFrame.AsNumpy.pdf)
 
     print(tree)
     file = uproot.recreate(filepaths_out[2])
