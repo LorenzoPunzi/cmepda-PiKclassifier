@@ -649,19 +649,26 @@ Fatto funzionare CircleCI dopo un po' di peripezie, ma occorre commentare il tes
 (dà problemi) e addirittura il #import ROOT che esso contiene, sennò CircleCI fa storie.
 
 Commentato tutte le funzioni in utils.py, vorrei fare dei cambiamenti per uniformare
-il linguaggio delle opzioni ma aspetto Ruben perché non so se il main chiama sta roba !!!!
+il linguaggio delle opzioni ma aspetto Ruben perché non so se il main chiama sta roba ->
+di base il main chiama solo le funzioni fondamentali per una certa analisi (cornerplot
+escluso), quindi bisogna fare in modo che ogni cambiamento in utils sia poi passato
+correttamente a queste funzioni. Si può certamente fare
 
 
 Alcuni dubbi sulle docstrings !!!!:
 
 - come formattare roba tipo True, false e nomi delle variabili stesse così che
-  abbiano font diverso dal semplice testo
-- come scrivere: if ... is set to True oppure if activated?
-- serve mettere i valori default nella docstring?
-- how to correcly format the return parameter in case of multiple eterogeneous return values
+  abbiano font diverso dal semplice testo -> ``___``
+- come scrivere: if ... is set to True oppure if activated? Sarei dell'idea di mettere
+  ovunque 'if True ...'
+- serve mettere i valori default nella docstring? Non ho idea, forse la cosa migliore
+  è mettere solamente scelte che hanno un significato particolare (es. i default rootpaths)
+- how to correcly format the return parameter in case of multiple eterogeneous return
+  values? Elencherei semplicemente i types dei diversi output
 - Cambiare i nomi a training/testing su cose vecchie (array_generator) con mc/data
 - docstrings dei modules
-- Forse ho fatto casino con figpath/figname su alcune funzioni...
+- Forse ho fatto casino con figpath/figname su alcune funzioni... (dovrebbe essere
+  tutto risolto)
 
 
 
@@ -670,12 +677,27 @@ Alcuni dubbi sulle docstrings !!!!:
 | COSE DA FARE |
 ----------------
 
-- docs (lorenzo+ruben)  DA COMPLETARE
-- rivedere i !!!!       DA FARE
+- docs (lorenzo+ruben)  SISTEMARE
+- SPHYNX (lorenzo)      SISTEMARE READTHEDOCS
+- rivedere i !!!!       DA FARE (ma si fa veloce, non ce n'è molti)
 - Sistematiche (lorenzo+ruben)      DA FARE
-- CI (ruben+lorenzo)    FUNZIONA TRANNE I TEST_TEMPLATE_FIT
-- SPHYNX (lorenzo)       RIORGANIZZARE
 - Analogamente a import_datasets rendere gen_from_toy shuffled nel prendere eventi dai toyxxx.root
+
+
+Idee per sistematiche:
+---------------------
+  - Modificare il numero di prametri nella NN, attualmente è 10000. Potremmo vedere,
+    a parità di epoche e learning rate, come cambiano le predizioni su un sample
+    indipendente
+  - Variare il binning nel fit globale sui due template (non starei a toccare invece
+    i fit dei due templates perché la loro convergenza è diciamo l'ipotesi di partenza
+    dell'analisi)
+  - Su var_cut che si può fare?
+
+
+
+
+
 
 
 
@@ -690,7 +712,7 @@ Alcuni dubbi sulle docstrings !!!!:
 - Stampare a txt le frazioni dei vari metodi    SÌ, TUTTO OK
 - Aggiungere errori statistici per DNN nel main (ruben)     OK
 - Errori statistici (lorenzo)   QUELLO CHE C'È FUNZIONA (Va forse sistemata la cartella ma si farà)
-
+- CI (ruben+lorenzo)    FUNZIONA TRANNE I TEST_TEMPLATE_FIT
 
 
 
