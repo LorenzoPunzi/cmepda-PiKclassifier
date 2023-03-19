@@ -105,16 +105,16 @@ def find_cut(pi_array, k_array, efficiency,
     :rtype: tuple[double]
 
     """
-    if inverse_mode:
-        efficiency = 1 - efficiency
-
-    cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
-        if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
-
+    
     if inverse_mode:  # !!!! NOT DRY
+        efficiency = 1 - efficiency
+        cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
+        if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
         misid = (pi_array < cut).sum()/pi_array.size \
             if not specificity_mode else (k_array < cut).sum()/k_array.size
     else:
+        cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
+        if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
         misid = (pi_array > cut).sum()/pi_array.size \
             if not specificity_mode else (k_array > cut).sum()/k_array.size
 
