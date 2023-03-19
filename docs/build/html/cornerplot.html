@@ -51,16 +51,16 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utilities.cornerplot.overlaid_cornerplot">
-<span class="sig-prename descclassname"><span class="pre">utilities.cornerplot.</span></span><span class="sig-name descname"><span class="pre">overlaid_cornerplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.cornerplot.overlaid_cornerplot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">utilities.cornerplot.</span></span><span class="sig-name descname"><span class="pre">overlaid_cornerplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t_M0pipi;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('M0_Mpipi',</span> <span class="pre">'M0_MKK',</span> <span class="pre">'M0_MKpi',</span> <span class="pre">'M0_MpiK',</span> <span class="pre">'M0_p',</span> <span class="pre">'M0_pt',</span> <span class="pre">'M0_eta',</span> <span class="pre">'h1_thetaC0',</span> <span class="pre">'h1_thetaC1',</span> <span class="pre">'h1_thetaC2',</span> <span class="pre">'h2_thetaC0',</span> <span class="pre">'h2_thetaC1',</span> <span class="pre">'h2_thetaC2')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.cornerplot.overlaid_cornerplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates and saves cornerplots for two different (multidimensional)
 arrays on the same canva. The datasets are passed as numpy ndarray and the
 corner() function plot them as histograms, for each column (= feature).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>figpaths</strong> (<em>list</em><em> or </em><em>tuple</em>) – List of the tree paths where the events are stored</p></li>
+<li><p><strong>figpaths</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – Tree paths where the events are stored</p></li>
 <li><p><strong>tree</strong> (<em>str</em>) – Name of the tree where the events are stored</p></li>
-<li><p><strong>vars</strong> (<em>list</em><em> or </em><em>tuple</em>) – List containing the names of the variables to plot</p></li>
+<li><p><strong>vars</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – List containing the names of the variables to plot</p></li>
 <li><p><strong>figpath</strong> (<em>str</em>) – Path where the figure is saved. This string must not contain a name for the figure since it is given automatically.</p></li>
 </ul>
 </dd>
@@ -104,6 +104,7 @@ corner() function plot them as histograms, for each column (= feature).</p>
 <li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dtc.html">dtc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_fit.html">template_fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_functions.html">template_functions</a></li>
 </ul>
 
 <div class="relations">

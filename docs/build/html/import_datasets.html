@@ -38,31 +38,24 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="utilities.import_datasets.loadvars">
 <span class="sig-prename descclassname"><span class="pre">utilities.import_datasets.</span></span><span class="sig-name descname"><span class="pre">loadvars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_pi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten1d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.import_datasets.loadvars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function that extracts the events of the interesting variables from the
+<dd><p>Function that extracts the events of the chosen variables from two
 ROOT files and stores them in numpy arrays.</p>
-<dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>file_pi<span class="classifier">string</span></dt><dd><p>Path of MC file of B0-&gt;PiPi process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_pi</strong> (<em>str</em>) – Path to MC root file of background only processes.</p></li>
+<li><p><strong>file_k</strong> (<em>str</em>) – Path to MC root file of signal only processes.</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Tree in which the variables are stored on the root files.</p></li>
+<li><p><strong>vars</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple containing names of the variables to be loaded.</p></li>
+<li><p><strong>flag_column</strong> (<em>bool</em>) – If set to True, a column full of 0 or 1, for background or signal events respectively, is appended as the last column of the 2D array.</p></li>
+<li><p><strong>flatten1d</strong> (<em>bool</em>) – If is True and only one variable is passed as “vars”, the arrays generated are returned as row-arrays instead of one-column arrays.</p></li>
+</ul>
 </dd>
-<dt>file_k<span class="classifier">string</span></dt><dd><p>Path of MC file of B0s-&gt;KK process</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two 2D numpy arrays filled by events of the two root files given in input and containing the requested variables, plus a flag-column if requested.</p>
 </dd>
-<dt>tree<span class="classifier">string</span></dt><dd><p>Tree containing the datasets</p>
-</dd>
-<dt>vars<span class="classifier">tuple</span></dt><dd><p>Tuple containing names of the variables requested
-Default: variables given by the default_vars() function</p>
-</dd>
-<dt>flag_column<span class="classifier">bool</span></dt><dd><p>If is set to True, a column full of 0 or 1, for Pions or Kaons
-respectively, is added at the rightmost position
-Default: False</p>
-</dd>
-<dt>flatten1d<span class="classifier">bool</span></dt><dd><p>If is True and only one variable is passed as “vars”, the array
-generated are returned as row-arrays
-Default: True</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>Two numpy arrays filled by events of the two root files given in input
-and containing the requested variables, plus a flag-column if requested</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>2D numpy.array[float]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -72,25 +65,20 @@ and containing the requested variables, plus a flag-column if requested</p>
 <span class="sig-prename descclassname"><span class="pre">utilities.import_datasets.</span></span><span class="sig-name descname"><span class="pre">include_merged_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_arrays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_variables</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.import_datasets.include_merged_variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that allows to append to the existing datasets (numpy arrays) new
 columns filled by the outputs of the mergevar() function.</p>
-<dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>rootpaths<span class="classifier">tuple</span></dt><dd><p>Paths (with name) of the root files where the variables are stored.
-It must include both the MC files for Pi and K and the mixed data
-file, in this order</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rootpaths</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Three element list or tuple of .root file paths. The first should indicate the root file containing the “background” species (flag=0), the second the “signal” species (flag=1), the third the mix.</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Tree in which the variables are stored on the root files.</p></li>
+<li><p><strong>initial_arrays</strong> (<em>list</em><em>[</em><em>2D numpy.array</em><em>[</em><em>double</em><em>]</em><em>] or </em><em>tuple</em><em>[</em><em>2D numpy.array</em><em>[</em><em>double</em><em>]</em><em>]</em>) – Three element list or tuple of 2D numpy arrays containing the data of the origina variables of background, signal and mixed events.</p></li>
+<li><p><strong>new_variables</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>]</em><em>] or </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List or tuple containing two element lists or tuples of variables to merge.</p></li>
+</ul>
 </dd>
-<dt>tree<span class="classifier">string</span></dt><dd><p>Tree containing the datasets</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list or tuple containing the new numpy arrays for the three datasets, with the new columns filled with the data retrieved by the merge-variables algorithm. For MC datasets the flag column is still the rightmost column.</p>
 </dd>
-<dt>initial_arrays<span class="classifier">tuple</span></dt><dd><p>Arrays containing the data of the original variables of Pions and
-Kaons MC and of the mixed dataset</p>
-</dd>
-<dt>new_variables<span class="classifier">tuple</span></dt><dd><p>Tuple containing the combination (consisting themselves in
-two-elements tuples) of variables to merge</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>A tuple containing the new numpy arrays for the three datasets, with
-the new columns filled with the data retrieved by the merge-variables
-algorithm. For MC datasets the flag column is still the rightmost</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[2D numpy.array[double]] or tuple[2D numpy.array[double]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -99,32 +87,26 @@ algorithm. For MC datasets the flag column is still the rightmost</p>
 <dt class="sig sig-object py" id="utilities.import_datasets.array_generator">
 <span class="sig-prename descclassname"><span class="pre">utilities.import_datasets.</span></span><span class="sig-name descname"><span class="pre">array_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_training</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_testing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.import_datasets.array_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates arrays for ML treatment (training and testing). To guarantee
-unbiasedness the training array has an equal number of Pions’ and Kaons’
+unbiasedness the training array has an equal number of background and signal
 events.</p>
-<dl class="simple">
-<dt>Parameters</dt><dd><dl class="simple">
-<dt>rootpaths<span class="classifier">tuple</span></dt><dd><p>Paths of the tree files needed to generate the requested dataset(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rootpaths</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Three element list or tuple of .root file paths. The first should indicate the root file containing the “background” species (flag=0), the second the “signal” species (flag=1), the third the mix.</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Tree in which the variables are stored on the root files.</p></li>
+<li><p><strong>vars</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple containing names of the variables to be used.</p></li>
+<li><p><strong>n_mc</strong> (<em>int</em>) – Number of events to take from the root files for the training set.</p></li>
+<li><p><strong>n_data</strong> (<em>int</em>) – Number of events to take from the root file for the testing set.</p></li>
+<li><p><strong>for_training</strong> (<em>bool</em>) – If True generates scambled dataset for training from the mc sets with flags.</p></li>
+<li><p><strong>for_testing</strong> (<em>bool</em>) – If True generates dataset to be evaluated, hence without flag column.</p></li>
+<li><p><strong>new_variables</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>]</em><em>] or </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Optional list or tuple containing two element lists or tuples of variables to merge.</p></li>
+</ul>
 </dd>
-<dt>tree<span class="classifier">string</span></dt><dd><p>Tree containing the datasets</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two element tuple containing 2D numpy arrays. The first contains the MC datasets’ events (scrambled to avoid position bias) and the flag that identifies each event as background or signal. The second contains the events of the mixed dataset without flags (one less column).</p>
 </dd>
-<dt>vars<span class="classifier">tuple</span></dt><dd><p>Tuple containing names of the variables requested
-Default: variables given by the default_vars() function</p>
-</dd>
-<dt>n_mc, n_data<span class="classifier">int</span></dt><dd><p>Number of total events requested for training and for testing.</p>
-</dd>
-<dt>for_training, for_testing: bool</dt><dd><p>Flags that indicate for which purpose the dataset(s) is created
-Defalut: True</p>
-</dd>
-<dt>new_variables<span class="classifier">tuple</span></dt><dd><p>Tuple containing the combination (consisting themselves in
-two-elements tuples) of variables to merge
-Default: empty tuple</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>Two numpy array: the first containing the MC datasets’ events and the
-flag that identifies each event as Pi or K; the second containing the
-events of the mixed dataset. Obviously, the array for testing will have
-one column less than the other one.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[2D numpy.array[double]] or tuple[2D numpy.array[double]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -167,6 +149,7 @@ one column less than the other one.</p>
 <li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dtc.html">dtc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_fit.html">template_fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_functions.html">template_functions</a></li>
 </ul>
 
 <div class="relations">

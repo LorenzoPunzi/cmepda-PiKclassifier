@@ -36,42 +36,22 @@
 <h1>gen_from_toy<a class="headerlink" href="#gen-from-toy" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="utilities.gen_from_toy.gen_from_toy">
-<span class="sig-prename descclassname"><span class="pre">utilities.gen_from_toy.</span></span><span class="sig-name descname"><span class="pre">gen_from_toy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('../data/root_files/toyMC_B0PiPi.root',</span> <span class="pre">'../data/root_files/toyMC_B0sKK.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepaths_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t_M0pipi;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('M0_Mpipi',</span> <span class="pre">'M0_MKK',</span> <span class="pre">'M0_MKpi',</span> <span class="pre">'M0_MpiK',</span> <span class="pre">'M0_p',</span> <span class="pre">'M0_pt',</span> <span class="pre">'M0_eta',</span> <span class="pre">'h1_thetaC0',</span> <span class="pre">'h1_thetaC1',</span> <span class="pre">'h1_thetaC2',</span> <span class="pre">'h2_thetaC0',</span> <span class="pre">'h2_thetaC1',</span> <span class="pre">'h2_thetaC2')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.gen_from_toy.gen_from_toy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates the datasets needed for the analysis, starting from root files of
-toyMC events of the processes B0-&gt;PiPi and B0s-&gt;KK.</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>filepaths_in<span class="classifier">list or tuple</span></dt><dd><p>Path (with name) of the toyMC files
-Default: ‘cmepda-PiKclassifier/data/root_files/toyMC_xxxx.root’</p>
-</dd>
-<dt>filepaths_out<span class="classifier">list or tuple</span></dt><dd><p>Path (with name) of the three output file files
-Default: paths given by the default_rootpaths() function</p>
-</dd>
-<dt>tree<span class="classifier">string</span></dt><dd><p>Name of the tree in the toyMC files where the events are stored</p>
-</dd>
-<dt>num_mc<span class="classifier">int</span></dt><dd><p>Number of events in each output MC template file
-Default: 0</p>
-</dd>
-<dt>num_data<span class="classifier">int</span></dt><dd><p>Number of events in the output file with mixed species
-Default: 0</p>
-</dd>
-<dt>fraction<span class="classifier">double</span></dt><dd><p>Fraction of Kaon events in the mixed sample
-Default: 0.42</p>
-</dd>
-<dt>vars<span class="classifier">list or tuple</span></dt><dd><p>Variables stored in the toyMC files that are stored in the
-output datasets.
-Default: variables given by the default_vars() function</p>
+<span class="sig-prename descclassname"><span class="pre">utilities.gen_from_toy.</span></span><span class="sig-name descname"><span class="pre">gen_from_toy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('../data/root_files/toyMC_B0PiPi.root',</span> <span class="pre">'../data/root_files/toyMC_B0sKK.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepaths_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/Users/lorenzo/cmep/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t_M0pipi;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('M0_Mpipi',</span> <span class="pre">'M0_MKK',</span> <span class="pre">'M0_MKpi',</span> <span class="pre">'M0_MpiK',</span> <span class="pre">'M0_p',</span> <span class="pre">'M0_pt',</span> <span class="pre">'M0_eta',</span> <span class="pre">'h1_thetaC0',</span> <span class="pre">'h1_thetaC1',</span> <span class="pre">'h1_thetaC2',</span> <span class="pre">'h2_thetaC0',</span> <span class="pre">'h2_thetaC1',</span> <span class="pre">'h2_thetaC2')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utilities.gen_from_toy.gen_from_toy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates mixed signal+background datasets to be analysed, starting from root files of
+toyMC events of background only and sognal only processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepaths_in</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – 2 element tuple with path to the toyMC, first being backgorund, the second being signal species.</p></li>
+<li><p><strong>filepaths_out</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – Three element tuple of .root file paths. The first should indicate the root file containing the “background” species (flag=0), the second the “signal” species (flag=1), the third the mix to be generated.</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Name of the tree in which the desired variables are stored on the toyMC files</p></li>
+<li><p><strong>num_mc</strong> (<em>int</em>) – Number of events generated for each output MC file</p></li>
+<li><p><strong>num_data</strong> (<em>int</em>) – Number of events generated for the output mixed file</p></li>
+<li><p><strong>fraction</strong> (<em>double</em>) – Ideal fraction of signal events in the generated mixed sample. Actual fraction will be different if fraction*num_data is not an integer.</p></li>
+<li><p><strong>vars</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>tuple</em><em>[</em><em>str</em><em>]</em>) – List or tuple of variables to export from the toyMC files</p></li>
+</ul>
 </dd>
 </dl>
-</dd>
-<dt>Returns:</dt><dd><p>Two datasets that have the role of templates for the analysis and
-one file containing the required mixed fraction of events. The
-events in toyMC files are selected uniquely, to ensure indipendence
-in the three files generated.</p>
-</dd>
-</dl>
-</div></blockquote>
 </dd></dl>
 
 </section>
@@ -110,6 +90,7 @@ in the three files generated.</p>
 <li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dtc.html">dtc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_fit.html">template_fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template_functions.html">template_functions</a></li>
 </ul>
 
 <div class="relations">
