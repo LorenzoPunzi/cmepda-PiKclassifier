@@ -202,7 +202,7 @@ if hasattr(args, "methods"):
 
         if opt in ["tfit", "all"]:
             # ~~~~~~~~ Setup of the template fit - free to edit ~~~~~~~~~~~~~~
-            NBINS_HISTO = 1500
+            NBINS_HISTO = 1000
             histo_lims = (5.0, 5.6)  # Limits of the histograms
             fit_range = (5.02, 5.42)  # Range where the functions are fitted
             p0_pi = (1e5, 0.16, 5.28, 0.08, 5.29, 0.04)
