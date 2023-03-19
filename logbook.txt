@@ -665,6 +665,7 @@ Alcuni dubbi sulle docstrings !!!!:
   è mettere solamente scelte che hanno un significato particolare (es. i default rootpaths)
 - how to correcly format the return parameter in case of multiple eterogeneous return
   values? Elencherei semplicemente i types dei diversi output
+- default paths show lorenzo
 - Cambiare i nomi a training/testing su cose vecchie (array_generator) con mc/data
 - docstrings dei modules
 - Forse ho fatto casino con figpath/figname su alcune funzioni... (dovrebbe essere
@@ -676,8 +677,9 @@ Alcuni dubbi sulle docstrings !!!!:
 ----------------
 | COSE DA FARE |
 ----------------
-- docs (lorenzo+ruben)  SISTEMARE
-- SPHYNX (lorenzo)      SISTEMARE READTHEDOCS
+
+- docs (lorenzo+ruben)  SISTEMARE (dnn_settings + abbelimmenti)
+- SPHYNX                RIORDINARE LE DOCS (ABBELLIMENTI)
 - rivedere i !!!!       DA FARE (ma si fa veloce, non ce n'è molti)
 - Sistematiche (lorenzo+ruben)      DA FARE
 - Analogamente a import_datasets rendere gen_from_toy shuffled nel prendere eventi dai toyxxx.root
@@ -692,9 +694,6 @@ Idee per sistematiche:
     i fit dei due templates perché la loro convergenza è diciamo l'ipotesi di partenza
     dell'analisi)
   - Su var_cut che si può fare?
-
-
-
 
 
 
