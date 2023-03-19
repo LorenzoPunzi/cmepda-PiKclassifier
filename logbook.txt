@@ -687,7 +687,7 @@ Alcuni dubbi sulle docstrings !!!!:
 - Per DNN e DTC: usare come testing dataset (-> evaluation) un dataset indipendente di pi e k (!!!)
 - Mixare il testing dataset con frazione nota e utilizzare la differenza col risultato
   come BIAS O SISTEMATICA
-- SYST var_cut: split dei MC
+- SYST var_cut: split dei MC per vedere incertezza su eff e misid (questo va fatto anche negli altri casi?)
 - Figure of merit maximization per tutto
 
 IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
