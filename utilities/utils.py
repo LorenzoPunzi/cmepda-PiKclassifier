@@ -68,11 +68,11 @@ def default_figpath(figname, dir='fig', figtype='pdf'):
     return figpath
 
 
-def default_resultsdir(dir='outputs-PiKclassifier'):  # !!!! docstring
+def default_resultsdir(dir='outputs-PiKclassifier'):  
     """
     Returns the path where to store the outputs of the package.
 
-    :param dir: Directory where to save the outputs
+    :param dir: Directory where to save the outputs.
     :type dir: str
     :return: The figure path.
     :rtype: str
