@@ -676,7 +676,6 @@ Alcuni dubbi sulle docstrings !!!!:
 ----------------
 | COSE DA FARE |
 ----------------
-
 - docs (lorenzo+ruben)  SISTEMARE
 - SPHYNX (lorenzo)      SISTEMARE READTHEDOCS
 - rivedere i !!!!       DA FARE (ma si fa veloce, non ce n'è molti)
