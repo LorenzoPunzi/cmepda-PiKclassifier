@@ -618,6 +618,7 @@ Analisi delle 17.10 (N_MC = 227993, N_DATA = 45598, f=0.42):
         Per il var_cut il procedimento è lo stesso ma sono stati presi solo 5 sub-samples,
         poiché le stime dipendono in maniera molto maggiore dalla dimensione del
         sample rispetto agli altri due metodi
+        FORSE È DA DIVIDERE PER NSAMPLE**1/2 (!!!)
         [ NOTA: la media delle stime sui sub-datasets converge alla stima effettuata sul
           dataset complessivo (osservazione empirica) ]
 
@@ -678,24 +679,18 @@ Alcuni dubbi sulle docstrings !!!!:
 | COSE DA FARE |
 ----------------
 
-- docs (lorenzo+ruben)  SISTEMARE (dnn_settings + abbelimmenti)
-- SPHYNX                RIORDINARE LE DOCS (ABBELLIMENTI)
-- rivedere i !!!!       DA FARE (ma si fa veloce, non ce n'è molti)
-- Sistematiche (lorenzo+ruben)      DA FARE
-- Analogamente a import_datasets rendere gen_from_toy shuffled nel prendere eventi dai toyxxx.root
+- docs (lorenzo+ruben)      Sistemare dnn_settings + abbelimmenti
+- SPHYNX (ruben )           Sistemare l'upload di readthedocs
+- Sistemare plot_options in deepnn.py (lorenzo)
+- Incorporare il file stat_dnn su deepnn.py (ruben)
+- TFractionFitter (lorenzo)
+- Per DNN e DTC: usare come testing dataset (-> evaluation) un dataset indipendente di pi e k (!!!)
+- Mixare il testing dataset con frazione nota e utilizzare la differenza col risultato
+  come BIAS O SISTEMATICA
+- SYST var_cut: split dei MC
+- Figure of merit maximization per tutto
 
-
-Idee per sistematiche:
----------------------
-  - Modificare il numero di prametri nella NN, attualmente è 10000. Potremmo vedere,
-    a parità di epoche e learning rate, come cambiano le predizioni su un sample
-    indipendente
-  - Variare il binning nel fit globale sui due template (non starei a toccare invece
-    i fit dei due templates perché la loro convergenza è diciamo l'ipotesi di partenza
-    dell'analisi)
-  - Su var_cut che si può fare?
-
-
+IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 
 
