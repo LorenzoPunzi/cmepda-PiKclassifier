@@ -85,7 +85,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
 
     efficiency = (k_eval == 1).sum()/k_eval.size
     misid = (pi_eval == 1).sum()/pi_eval.size
-    fraction = pred_array.sum()/len(pred_array)
+    fraction = (pred_array.sum()/pred_array.size-misid)/(efficiency-misid)
 
     if print_tree:
         if print_tree.endswith('.txt') is not True:
