@@ -127,10 +127,10 @@ def eval_dnn(dnn, eval_set, flag_data=True,
 
 def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         vars=default_vars(), n_mc=560000, n_data=50000, settings=DnnSettings(),
-        load=False, trained_model=('deepnn.json', 'deepnn.h5'),
-        savefigs=False, fignames=("", "", "", "")):
+        load=False, trained_filenames=('deepnn.json', 'deepnn.h5'), efficiency=0,
+        stat_split=0, savefigs=False, figpath='', fignames=("", "", "", "")):
     """
-    Trains or loads a deep neural network and evaluates it on the training sets used to train it, as well as a ulterior dataset.
+    Trains or loads a deep neural network and uses it to estimate the fraction \'f\' of Kaons in the mixed dataset. To do that, a previous evaluation of the dnn on the \"testing dataset\" with a fixed value of efficiency is required. If the given value of efficiency is zero, an algorithm maximizes the Figure of Merit (FOM) defined by the inverse of the (absolute) difference between the evaluated fraction of kaons in the testing dataset and the expected one (that is known since the testing dataset's events hold the flag indicating their specie)
 
     :param source: Two element tuple containing the options for how to build the datasets for the DNN and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt, the second element of source must be a tuple containing two .txt paths, one relative to the training set and the other to the set to be evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths, containing the "background" sample (flag=0), the "signal" one (flag=1) and the mixed one, in this order.
     :type source: tuple[{'root','txt'},tuple[str]]
@@ -148,10 +148,16 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     :type load: bool
     :param trained_filenames: Two element tuple containing respectively the name of the .json and .h5 files from which to load the DNN structure and weights, if load=``True``.
     :type trained_filenames: tuple[str]
+    :param efficiency: Sensitivity required from the test. If efficiency=0 (default), the F.o.M. is maximixed
+    :type efficiency: float
     :param savefigs: If ``True``, saves the training history (if the DNN was not loaded) and the histograms of the evaluation results on the training and mixed datasets.
     :type savefigs: bool
+    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test
+    :type stat_split: int
+    :param figpath: Path where to save the figures (in case savefigs=``True``)
+    :type figpath: str
     :param fignames: Four element tuple containing the figure names (in case savefigs=``True``) for: DNN training history figure, evaluated training species figures, evaluated mixed dataset figure.
-    :type fignames: tupel[str]
+    :type fignames: tuple[str]
     :return: Tuple of numpy arrays, containing the evaluated background set, the evaluated signal set and the evaluated data set (in this order).
     :rtype: tuple[numpy.array[float]]
 
@@ -180,10 +186,10 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     if load is not True:
         deepnn = train_dnn(
             training_set, settings, savefig=savefigs, figname=fignames[0],
-            trained_filenames=trained_model)
+            trained_filenames=trained_filenames)
     else:
-        json_path = trained_model[0]
-        weights_path = trained_model[1]
+        json_path = trained_filenames[0]
+        weights_path = trained_filenames[1]
         with open(json_path, 'r') as json_file:
             loaded_model_json = json_file.read()
         deepnn = model_from_json(loaded_model_json)
@@ -196,11 +202,33 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     k_eval = eval_dnn(deepnn, k_set, flag_data=False, savefig=savefigs,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
                       figname=fignames[2])
-    pred_array = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
-                          plot_opt=['Data_eval', 'blue', 'Evaluated data'],
-                          figname=fignames[3])
+    data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
+                         plot_opt=['Data_eval', 'blue', 'Evaluated data'],
+                         figname=fignames[3])
 
-    return pi_eval, k_eval, pred_array
+    cut, misid = find_cut(pi_eval, k_eval, efficiency)
+
+    fraction = ((data_eval > cut).sum()/data_eval.size
+                - misid)/(efficiency-misid)
+
+    fr = (fraction,)
+
+    if stat_split:
+        cut, misid = find_cut(pi_eval, k_eval, efficiency)
+        subdata = np.array_split(data_eval, stat_split)
+        fractions = [((dat > cut).sum()/dat.size-misid)/(efficiency-misid)
+                     for dat in subdata]
+        plt.figure('Fraction distribution for deepnn')
+        plt.hist(fractions, bins=20, histtype='step')
+        plt.savefig(default_figpath('fractionsdnn')) if figpath == '' \
+            else plt.savefig(figpath+'/dnn_distrib.png')
+        stat_err = np.sqrt(np.var(fractions, ddof=1, dtype='float64'))
+        fr = fr + (stat_err,)
+
+    stats = (cut, misid)
+    eval_test = (pi_eval, k_eval)
+
+    return fr, stats, eval_test
 
 
 if __name__ == '__main__':

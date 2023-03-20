@@ -258,7 +258,7 @@ if hasattr(args, "methods"):
             MODEL_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.json'
             WEIGHTS_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.h5'
             INVERSE = False
-            figures = args.figures
+            figs = args.figures
             PLOT_ROC = bool(args.figures*SINGULAR_ROCS)
             fignames = ("DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
                         "eval_Data.png")
@@ -269,32 +269,23 @@ if hasattr(args, "methods"):
                 file_dnn.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
 
-            pi_eval, k_eval, data_eval = dnn(
-                root_tree=tree, vars=args.variables, settings=settings,
-                load=args.load_dnn, trained_model=(MODEL_FILE, WEIGHTS_FILE),
-                savefigs=figures, fignames=tuple([f'{respath}/{name}'
-                                                  for name in fignames]))
+            fr, stats, eval_test = dnn(
+                source=('root', filepaths), root_tree=tree,
+                vars=args.variables, settings=settings, load=args.load_dnn,
+                trained_filenames=(MODEL_FILE, WEIGHTS_FILE),
+                efficiency=args.efficiency,
+                stat_split=NUM_SUBDATA*args.stat_uncertainties,
+                savefigs=figs, figpath=respath, fignames=fignames)
 
-            y_cut, misid = find_cut(pi_eval, k_eval, args.efficiency)
             # plt.axvline(x=y_cut, color='green', label='y cut for '
             #             + str(efficiency)+' efficiency')
             # plt.legend()
             #   plt.savefig('fig/ycut.pdf')
 
-            fraction = ((data_eval > y_cut).sum()
-                        / data_eval.size-misid)/(args.efficiency-misid)
-            fr = (fraction,)
-
-            if args.stat_uncertainties:
-                frac_err = stat_dnn(
-                    source=('array', (pi_eval, k_eval, data_eval)),
-                    trained_model=(MODEL_FILE, WEIGHTS_FILE),
-                    eff=args.efficiency, stat_split=NUM_SUBDATA, figpath=respath)
-                fr = fr + (frac_err,)
-
             rocx_dnn, rocy_dnn, auc_dnn = roc(
-                pi_eval, k_eval, eff=args.efficiency, inverse_mode=INVERSE,
-                makefig=PLOT_ROC, name=f'{respath}/ROC_dnn.png')
+                eval_test[0], eval_test[1],
+                eff=args.efficiency, inverse_mode=INVERSE, makefig=PLOT_ROC,
+                name=f'{respath}/ROC_dnn.png')
 
             if SINGULAR_ROCS is not True:
                 rocx_array.append(rocx_dnn)
@@ -303,8 +294,8 @@ if hasattr(args, "methods"):
 
             add_result("K fraction", f'{fr[0]} +- {fr[1]}') \
                 if len(fr) == 2 else add_result("K fraction", fr[0])
-            # add_result("Output cut", y_cut, f'Efficiency = {args.efficiency}')
-            add_result("Misid", misid, f'Efficiency = {args.efficiency}')
+            add_result("Cut", stats[0], f'Efficiency = {args.efficiency}')
+            add_result("Misid", stats[1], f'Efficiency = {args.efficiency}')
             add_result("AUC", auc_dnn, f'Efficiency = {args.efficiency}')
             print(f"\n  {method_title} - ended successfully! \n\n")
 
