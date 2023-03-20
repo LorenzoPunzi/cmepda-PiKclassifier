@@ -68,7 +68,7 @@ def default_figpath(figname, dir='fig', figtype='pdf'):
     return figpath
 
 
-def default_resultsdir(dir='outputs-PiKclassifier'):  
+def default_resultsdir(dir='outputs-PiKclassifier'):
     """
     Returns the path where to store the outputs of the package.
 
@@ -105,16 +105,15 @@ def find_cut(pi_array, k_array, efficiency,
     :rtype: tuple[double]
 
     """
-    
-    if inverse_mode: 
+    if inverse_mode:
         efficiency = 1 - efficiency
         cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
-        if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
+            if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
         misid = (pi_array < cut).sum()/pi_array.size \
             if not specificity_mode else (k_array < cut).sum()/k_array.size
     else:
         cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
-        if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
+            if not specificity_mode else np.sort(pi_array)[int(efficiency*(len(k_array)-1))]
         misid = (pi_array > cut).sum()/pi_array.size \
             if not specificity_mode else (k_array > cut).sum()/k_array.size
 
@@ -176,8 +175,8 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
     plt.axline((0, 0), (1, 1), linestyle='--', label='AUC = 0.5')
     plt.legend()
     plt.draw()
-    if figname != '':
-        plt.savefig(default_figpath(figname))
+    if figname == '':
+        plt.savefig(default_figpath(figtitle))
     else:
         plt.savefig(figname)
 

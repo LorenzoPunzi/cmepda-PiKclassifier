@@ -113,7 +113,7 @@ parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
 parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
                        help='Flag(s) that select the inverse mode to perform the variable(s) cut analysis')
 '''
-parser_an.add_argument('-e', '--efficiency', default=0.90,
+parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
 parser_an.add_argument('-su', '--stat_uncertainties', action='store_true',
@@ -283,9 +283,8 @@ if hasattr(args, "methods"):
             #   plt.savefig('fig/ycut.pdf')
 
             rocx_dnn, rocy_dnn, auc_dnn = roc(
-                eval_test[0], eval_test[1],
-                eff=args.efficiency, inverse_mode=INVERSE, makefig=PLOT_ROC,
-                name=f'{respath}/ROC_dnn.png')
+                eval_test[0], eval_test[1], eff=round(stats[2], 4), inverse_mode=INVERSE,
+                makefig=PLOT_ROC, name=f'{respath}/ROC_dnn')
 
             if SINGULAR_ROCS is not True:
                 rocx_array.append(rocx_dnn)
@@ -294,9 +293,9 @@ if hasattr(args, "methods"):
 
             add_result("K fraction", f'{fr[0]} +- {fr[1]}') \
                 if len(fr) == 2 else add_result("K fraction", fr[0])
-            add_result("Cut", stats[0], f'Efficiency = {args.efficiency}')
-            add_result("Misid", stats[1], f'Efficiency = {args.efficiency}')
-            add_result("AUC", auc_dnn, f'Efficiency = {args.efficiency}')
+            add_result("Cut", stats[0], f'Efficiency = {round(stats[2], 4)}')
+            add_result("Misid", stats[1], f'Efficiency = {round(stats[2], 4)}')
+            add_result("AUC", auc_dnn, f'Efficiency = {round(stats[2], 4)}')
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dtc", "all"]:

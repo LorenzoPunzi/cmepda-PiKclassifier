@@ -24,8 +24,8 @@ def train_dnn(training_set, settings, savefig=True, figname='history',
     """
     Trains a Keras deep neural network.
 
-    :param training_set: 2D numpy array with flag {0,1} as last column for training the DNN.
-    :type training_set: 2D numpy.array[float]
+    :param mc_set: 2D numpy array with flag {0,1} as last column for training the DNN.
+    :type mc_set: 2D numpy.array[float]
     :param settings: DnnSettings instance with the settings for the generation of the DNN.
     :type settings: utilities.import_datasets.DnnSettings class instance
     :param savefig: If ``True``, saves the history plot of the training.
@@ -126,8 +126,9 @@ def eval_dnn(dnn, eval_set, flag_data=True,
 
 
 def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
-        vars=default_vars(), n_mc=560000, n_data=50000, settings=DnnSettings(),
-        load=False, trained_filenames=('deepnn.json', 'deepnn.h5'), efficiency=0,
+        vars=default_vars(), n_mc=560000, n_data=50000, test_split=0.2,
+        settings=DnnSettings(), efficiency=0,
+        load=False, trained_filenames=('deepnn.json', 'deepnn.h5'),
         stat_split=0, savefigs=False, figpath='', fignames=("", "", "", "")):
     """
     Trains or loads a deep neural network and uses it to estimate the fraction \'f\' of Kaons in the mixed dataset. To do that, a previous evaluation of the dnn on the \"testing dataset\" with a fixed value of efficiency is required. If the given value of efficiency is zero, an algorithm maximizes the Figure of Merit (FOM) defined by the inverse of the (absolute) difference between the evaluated fraction of kaons in the testing dataset and the expected one (that is known since the testing dataset's events hold the flag indicating their specie)
@@ -166,23 +167,24 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         if source[0] == 'txt':
             mc_array_path, data_array_path = source[1] if source[1] \
                 else default_txtpaths()
-            training_set = np.loadtxt(mc_array_path)
+            mc_set = np.loadtxt(mc_array_path)
             data_set = np.loadtxt(data_array_path)
         elif source[0] == 'root':
-            training_set, data_set = array_generator(rootpaths=source[1],
-                                                     tree=root_tree, vars=vars,
-                                                     n_mc=n_mc, n_data=n_data)
+            mc_set, data_set = array_generator(rootpaths=source[1],
+                                               tree=root_tree, vars=vars,
+                                               n_mc=n_mc, n_data=n_data)
         else:
             raise InvalidSourceError(source[0])
     except InvalidSourceError as err:
         print(err)
         sys.exit()
 
-    pi_set = np.array([training_set[i, :] for i in range(
-        np.shape(training_set)[0]) if training_set[i, -1] == 0])
-    k_set = np.array([training_set[i, :] for i in range(
-        np.shape(training_set)[0]) if training_set[i, -1] == 1])
+    num_mc = len(mc_set[:, 0])
 
+    training_set = mc_set[:int((1-test_split)*num_mc), :]
+    test_set = mc_set[int((1-test_split)*num_mc):-1, :]
+
+    # Training of the neural network
     if load is not True:
         deepnn = train_dnn(
             training_set, settings, savefig=savefigs, figname=fignames[0],
@@ -196,36 +198,72 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         deepnn.load_weights(weights_path)
         deepnn.summary()
 
-    pi_eval = eval_dnn(deepnn, pi_set, flag_data=False, savefig=savefigs,
+    # Evaluation of the dnn on the testing dataset
+    pi_test = np.array([test_set[i, :] for i in range(
+        np.shape(test_set)[0]) if test_set[i, -1] == 0])
+    k_test = np.array([test_set[i, :] for i in range(
+        np.shape(test_set)[0]) if test_set[i, -1] == 1])
+
+    pi_eval = eval_dnn(deepnn, pi_test, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
                        figname=fignames[1])
-    k_eval = eval_dnn(deepnn, k_set, flag_data=False, savefig=savefigs,
+    k_eval = eval_dnn(deepnn, k_test, flag_data=False, savefig=savefigs,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
                       figname=fignames[2])
+
+    test_eval = eval_dnn(deepnn, test_set, flag_data=False, savefig=False)
+
+    expected_fraction = 1.*len(k_test)/len(test_set)
+    used_eff = 0
+    FOM = 0
+    # Evaluation of the testing array
+
+    if efficiency == 0:
+        efficiencies = np.linspace(0.5, 0.9999, 100)
+        for eff in efficiencies:
+            tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, eff)
+            tmp_frac = ((test_eval > tmp_cut).sum()/test_eval.size
+                        - tmp_misid)/(eff-tmp_misid)
+            tmp_FOM = 1./abs(tmp_frac-expected_fraction)
+            if tmp_FOM >= FOM:
+                FOM = tmp_FOM
+                used_eff = eff
+    else:
+        used_eff = efficiency
+
+    print(used_eff, FOM)
+
+    cut, misid = find_cut(pi_eval, k_eval, used_eff)
+
+    estim_f_test = ((test_eval > cut).sum()
+                    / test_eval.size - misid)/(used_eff-misid)
+
+    syst_error = abs(estim_f_test-expected_fraction)
+    print(syst_error)
+
     data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
                          plot_opt=['Data_eval', 'blue', 'Evaluated data'],
                          figname=fignames[3])
 
-    cut, misid = find_cut(pi_eval, k_eval, efficiency)
+    fraction = ((data_eval > cut).sum()
+                / data_eval.size - misid)/(used_eff-misid)
 
-    fraction = ((data_eval > cut).sum()/data_eval.size
-                - misid)/(efficiency-misid)
+    print(fraction)
 
     fr = (fraction,)
 
     if stat_split:
-        cut, misid = find_cut(pi_eval, k_eval, efficiency)
         subdata = np.array_split(data_eval, stat_split)
-        fractions = [((dat > cut).sum()/dat.size-misid)/(efficiency-misid)
+        fractions = [((dat > cut).sum()/dat.size-misid)/(used_eff-misid)
                      for dat in subdata]
         plt.figure('Fraction distribution for deepnn')
         plt.hist(fractions, bins=20, histtype='step')
-        plt.savefig(default_figpath('fractionsdnn')) if figpath == '' \
+        plt.savefig(default_figpath('dnn_distrib')) if figpath == '' \
             else plt.savefig(figpath+'/dnn_distrib.png')
         stat_err = np.sqrt(np.var(fractions, ddof=1, dtype='float64'))
         fr = fr + (stat_err,)
 
-    stats = (cut, misid)
+    stats = (cut, misid, used_eff)
     eval_test = (pi_eval, k_eval)
 
     return fr, stats, eval_test

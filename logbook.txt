@@ -673,39 +673,37 @@ Alcuni dubbi sulle docstrings !!!!:
   tutto risolto)
 
 
+20/03/23 (Ruben):
+
+Inserito il test_dataset per la dnn e implementata la massimizzazione della F.O.M.
+Probabilmente a causa del sample molto più ridotto su cui si fa la ricerca del cut,
+e ovviamente a causa dello scrambling ogni volta diverso dei dati, i valori stimati
+della frazione del mixed dataset oscillano. Anche il valore "ottimale" dell'efficienza
+oscilla.
+
+Questa variazione si può intendere in qualche modo come incertezza sistematica? Perché
+in fondo non stiamo pescando a ogni run nuovi dati, ma è l'algoritmo che subisce
+delle fluttuazioni
+
+La differenza tra la predicted fraction sul test_dataset e 0.5 è trascurabile
+
 
 
 ----------------
 | COSE DA FARE |
 ----------------
-
 - docs (lorenzo+ruben)      Sistemare dnn_settings + abbelimmenti
 - SPHYNX (ruben )           Sistemare l'upload di readthedocs
 - Sistemare plot_options in deepnn.py (lorenzo)
-- Incorporare il file stat_dnn su deepnn.py (ruben)
 - TFractionFitter (lorenzo)
-- Per DNN e DTC: usare come testing dataset (-> evaluation) un dataset indipendente di pi e k (!!!)
-- Mixare il testing dataset con frazione nota e utilizzare la differenza col risultato
+- DTC: usare come testing dataset un dataset indipendente di pi e k (e imporre FOM optimization se possibile)
+- DNN: mixare il testing dataset con frazione nota e utilizzare la differenza col risultato
   come BIAS O SISTEMATICA
 - SYST var_cut: split dei MC per vedere incertezza su eff e misid (questo va fatto anche negli altri casi?)
-- Figure of merit maximization per tutto
 
 IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 
-
-------------------------
-| COSE FATTE (DA POCO) |
-------------------------
-- exceptions (lorenzo)  OK
-- tests (lorenzo)       OK
-- parser/main (ruben)   OK
-- relative path for get_xxx functions (lorenzo) OK
-- upgrade dtc (lorenzo) OK
-- Stampare a txt le frazioni dei vari metodi    SÌ, TUTTO OK
-- Aggiungere errori statistici per DNN nel main (ruben)     OK
-- Errori statistici (lorenzo)   QUELLO CHE C'È FUNZIONA (Va forse sistemata la cartella ma si farà)
-- CI (ruben+lorenzo)    FUNZIONA TRANNE I TEST_TEMPLATE_FIT
 
 
 
