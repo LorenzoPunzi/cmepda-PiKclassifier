@@ -19,7 +19,7 @@ from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
 from utilities.exceptions import InvalidSourceError
 
 
-def train_dnn(training_set, settings, savefig=True, figname='history',
+def train_dnn(training_set, settings, savefig=True, figname='',
               trained_filenames=('deepnn.json', 'deepnn.h5')):
     """
     Trains a Keras deep neural network.
@@ -71,7 +71,10 @@ def train_dnn(training_set, settings, savefig=True, figname='history',
         plt.plot(history.history['val_loss'], label='Validation Loss')
         plt.plot(history.history['loss'], label='Training Loss')
         plt.legend()
-        plt.savefig(default_figpath(figname))
+        if figname == '':
+            plt.savefig(default_figpath('History'))
+        else:
+            plt.savefig(figname)
 
     model_json = deepnn.to_json()
     with open(trained_filenames[0], "w") as json_file:
@@ -184,12 +187,16 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     training_set = mc_set[:int((1-test_split)*num_mc), :]
     test_set = mc_set[int((1-test_split)*num_mc):-1, :]
 
+    module_path = os.path.dirname(__file__)
+
     # Training of the neural network
     if load is not True:
         deepnn = train_dnn(
-            training_set, settings, savefig=savefigs, figname=fignames[0],
+            training_set, settings, savefig=savefigs, figname=f'{figpath}/{fignames[0]}',
             trained_filenames=trained_filenames)
+        np.savetxt(f'{module_path}/testing_array.txt', test_set)
     else:
+        test_set = np.loadtxt(f'{module_path}/testing_array.txt')
         json_path = trained_filenames[0]
         weights_path = trained_filenames[1]
         with open(json_path, 'r') as json_file:
@@ -206,10 +213,10 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
     pi_eval = eval_dnn(deepnn, pi_test, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
-                       figname=fignames[1])
+                       figname=f'{figpath}/{fignames[1]}')
     k_eval = eval_dnn(deepnn, k_test, flag_data=False, savefig=savefigs,
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
-                      figname=fignames[2])
+                      figname=f'{figpath}/{fignames[2]}')
 
     test_eval = eval_dnn(deepnn, test_set, flag_data=False, savefig=False)
 
@@ -243,7 +250,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
     data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
                          plot_opt=['Data_eval', 'blue', 'Evaluated data'],
-                         figname=fignames[3])
+                         figname=f'{figpath}/{fignames[3]}')
 
     fraction = ((data_eval > cut).sum()
                 / data_eval.size - misid)/(used_eff-misid)

@@ -4,7 +4,8 @@
 
 
 
-  Template fit with ROOT: 
-    K fraction = 0.42700558550054807 +- 0.0081678473759866
-    Chi2 = 891.6650622664648
-    Probability = 0.9929607119722517
+  Deep Neural Network: 
+    K fraction = 0.4180530072976529 +- 0.010785499884092971
+    Cut = 0.31579869985580444  |  Efficiency = 0.9696 
+    Misid = 0.3415807862181107  |  Efficiency = 0.9696 
+    AUC = 0.9257805018962174  |  Efficiency = 0.9696 
