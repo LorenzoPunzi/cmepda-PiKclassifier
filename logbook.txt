@@ -696,7 +696,7 @@ La differenza tra la predicted fraction sul test_dataset e 0.5 è trascurabile
 - SPHYNX (ruben )           Sistemare l'upload di readthedocs
 - Sistemare plot_options in deepnn.py (lorenzo)
 - TFractionFitter (lorenzo)
-- DTC: usare come testing dataset un dataset indipendente di pi e k (e imporre FOM optimization se possibile)
+- DTC: usare come testing dataset un dataset indipendente di pi e k (e imporre FOM optimization se possibile) già usato un dataset indipendente per forza di cose usando la built-in function train_test_split(). Inoltre non si può pttimizzare per la FOM perché non siamo noi a scegliere eff e misid nel dtc. Secondo me qui la sistematica è solo fare più volte il training del dtc e vedere come varia la f dando lo STESSO set di dati. Oppure può essere visto come l'incertezza su eff e misid a tree fissato, dato che noi usiamo solo degli stimatori del valore reale (analogo a efficienza in morelloproject)
 - DNN: mixare il testing dataset con frazione nota e utilizzare la differenza col risultato
   come BIAS O SISTEMATICA
 - SYST var_cut: split dei MC per vedere incertezza su eff e misid (questo va fatto anche negli altri casi?)
