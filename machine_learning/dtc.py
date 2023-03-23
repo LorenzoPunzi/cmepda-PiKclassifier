@@ -84,8 +84,11 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
         dtc.predict(pi_test), dtc.predict(k_test)
 
     efficiency = (k_eval == 1).sum()/k_eval.size
+    deff = np.sqrt(efficiency*(1-efficiency)/k_eval.size)
     misid = (pi_eval == 1).sum()/pi_eval.size
+    dmisid = np.sqrt(misid*(1-misid)/pi_eval.size)
     fraction = (pred_array.sum()/pred_array.size-misid)/(efficiency-misid)
+    dfrac = np.sqrt(dmisid**2*((pred_array.sum()/pred_array.size-misid)-efficiency)**2+deff**2*((pred_array.sum()/pred_array.size-misid)-misid))/(efficiency-misid)**2
 
     if print_tree:
         if print_tree.endswith('.txt') is not True:
@@ -99,7 +102,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     print(f'Efficiency = {efficiency}')
     print(f'Misidentification probability = {misid}')
     print(
-        f'The predicted K fraction is : {fraction}')
+        f'The predicted K fraction is : {fraction} +- {dfrac} (syst)')
 
     fr = (fraction,)
 
