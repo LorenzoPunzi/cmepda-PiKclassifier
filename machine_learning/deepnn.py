@@ -15,7 +15,7 @@ from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
 from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
-                            find_cut, roc, default_figpath
+                            default_figpath, find_cut, roc, syst_error
 from utilities.exceptions import InvalidSourceError
 
 
@@ -205,12 +205,12 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         deepnn.load_weights(weights_path)
         deepnn.summary()
 
-    # Evaluation of the dnn on the testing dataset
     pi_test = np.array([test_set[i, :] for i in range(
         np.shape(test_set)[0]) if test_set[i, -1] == 0])
     k_test = np.array([test_set[i, :] for i in range(
         np.shape(test_set)[0]) if test_set[i, -1] == 1])
 
+    # Evaluation of the dnn on the testing dataset
     pi_eval = eval_dnn(deepnn, pi_test, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
                        figname=f'{figpath}/{fignames[1]}')
@@ -223,9 +223,8 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     expected_fraction = 1.*len(k_test)/len(test_set)
     used_eff = 0
     FOM = 0
-    # Evaluation of the testing array
 
-    if efficiency == 0:
+    if efficiency == 0:  # Enambels FOM maximization
         efficiencies = np.linspace(0.5, 0.9999, 100)
         for eff in efficiencies:
             tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, eff)
@@ -245,9 +244,6 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     estim_f_test = ((test_eval > cut).sum()
                     / test_eval.size - misid)/(used_eff-misid)
 
-    syst_error = abs(estim_f_test-expected_fraction)
-    print(syst_error)
-
     data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
                          plot_opt=['Data_eval', 'blue', 'Evaluated data'],
                          figname=f'{figpath}/{fignames[3]}')
@@ -255,10 +251,16 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     fraction = ((data_eval > cut).sum()
                 / data_eval.size - misid)/(used_eff-misid)
 
-    print(fraction)
+    df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
 
-    fr = (fraction,)
+    df_syst = syst_error(
+        fraction, (pi_eval.size, k_eval.size), used_eff, misid)
 
+    print(fraction, df_stat, df_syst)
+
+    fr = (fraction, df_stat, df_syst)
+
+    '''
     if stat_split:
         subdata = np.array_split(data_eval, stat_split)
         fractions = [((dat > cut).sum()/dat.size-misid)/(used_eff-misid)
@@ -269,11 +271,12 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
             else plt.savefig(figpath+'/dnn_distrib.png')
         stat_err = np.sqrt(np.var(fractions, ddof=1, dtype='float64'))
         fr = fr + (stat_err,)
+    '''
 
-    stats = (cut, misid, used_eff)
+    algorithm_parameters = (cut, misid, used_eff)
     eval_test = (pi_eval, k_eval)
 
-    return fr, stats, eval_test
+    return fr, algorithm_parameters, eval_test
 
 
 if __name__ == '__main__':

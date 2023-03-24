@@ -3,7 +3,7 @@ Estimates f using a cut on Mhh only
 """
 import numpy as np
 from matplotlib import pyplot as plt
-from utilities.utils import default_rootpaths, find_cut, roc, default_figpath
+from utilities.utils import default_rootpaths, default_figpath, find_cut, roc, syst_error
 from utilities.import_datasets import loadvars
 import warnings
 
@@ -93,12 +93,17 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
             if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
 
-    fr = (fraction,)
+    df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
+
+    df_syst = syst_error(fraction, (var_pi.size, var_k.size), eff, misid)
+
+    fr = (fraction, df_stat, df_syst)
 
     print(f'{cut_var} cut is {cut} for {eff} efficiency')
     print(f'Misid is {misid} for {eff} efficiency')
     print(f'The estimated fraction of K events is {fraction}')
 
+    '''
     if stat_split:
         subdata = np.array_split(var_data, stat_split)
         fractions = [((dat < cut).sum()/dat.size-misid)/(eff-misid)
@@ -114,10 +119,13 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         # print(f"Mean = {np.mean(fractions, dtype=np.float64)}")
         # print(f"Sqrt_var = {stat_err}")
         fr = fr + (stat_err,)
+    '''
+
+    algorithm_parameters = (cut, misid, eff)
 
     roc_info = tuple([rocx, rocy, auc])
 
-    return fr, misid, cut, roc_info
+    return fr, algorithm_parameters, roc_info
 
 
 if __name__ == '__main__':

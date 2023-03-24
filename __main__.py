@@ -204,7 +204,7 @@ if hasattr(args, "methods"):
             # ~~~~~~~~ Setup of the template fit - free to edit ~~~~~~~~~~~~~~
             NBINS_HISTO = 1000
             histo_lims = (5.0, 5.6)  # Limits of the histograms
-            fit_range = (5.02, 5.42)  # Range where the functions are fitted
+            fit_range = (5.0, 5.6)  # Range where the templates are fitted
             p0_pi = (1e5, 0.16, 5.28, 0.08, 5.29, 0.04)
             p0_k = (1e5, 0.97, 1.6, 0.046, 5.30, 1.1, 5.27, 0.00045)
             figures = args.figures
@@ -347,10 +347,10 @@ if hasattr(args, "methods"):
                 fr, misid, cut, roc_info = var_cut(
                     rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
-                    draw_roc=roc_figure, draw_fig=figure, figpath=respath,
-                    stat_split=NUM_SUBDATA*args.stat_uncertainties)
-                add_result("K fraction", f'{fr[0]} +- {fr[1]}', vc) \
-                    if len(fr) == 2 else add_result("K fraction", fr[0], vc)
+                    draw_fig=figure, figpath=respath)
+
+                add_result(
+                    "K fraction", f'{fr[0]} +- {fr[1]} (stat) +- {fr[2]} (syst)', vc)
                 add_result("Misid", misid, vc)
                 add_result("AUC", roc_info[2], vc)
                 if SINGULAR_ROCS is not True:

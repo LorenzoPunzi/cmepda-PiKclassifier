@@ -693,19 +693,44 @@ La differenza tra la predicted fraction sul test_dataset e 0.5 è trascurabile
 | COSE DA FARE |
 ----------------
 - docs (lorenzo+ruben)      Sistemare dnn_settings + abbelimmenti
-- SPHYNX (ruben )           Sistemare l'upload di readthedocs
-- Sistemare plot_options in deepnn.py (lorenzo)
-- TFractionFitter (lorenzo)
-- DTC: usare come testing dataset un dataset indipendente di pi e k (e imporre FOM optimization se possibile) già usato un dataset indipendente per forza di cose usando la built-in function train_test_split(). Inoltre non si può pttimizzare per la FOM perché non siamo noi a scegliere eff e misid nel dtc. Secondo me qui la sistematica è solo fare più volte il training del dtc e vedere come varia la f dando lo STESSO set di dati. Oppure può essere visto come l'incertezza su eff e misid a tree fissato, dato che noi usiamo solo degli stimatori del valore reale (analogo a efficienza in morelloproject)
+
+- DTC: usare come testing dataset un dataset indipendente di pi e k (e imporre FOM
+  optimization se possibile) già usato un dataset indipendente per forza di cose
+  usando la built-in function train_test_split(). Inoltre non si può ottimizzare
+  per la FOM perché non siamo noi a scegliere eff e misid nel dtc. Secondo me qui
+  la sistematica è solo fare più volte il training del dtc e vedere come varia
+  la f dando lo STESSO set di dati. Oppure può essere visto come l'incertezza su
+  eff e misid a tree fissato, dato che noi usiamo solo degli stimatori del valore
+  reale (analogo a efficienza in morelloproject)
 - DNN: mixare il testing dataset con frazione nota e utilizzare la differenza col risultato
   come BIAS O SISTEMATICA
 - SYST var_cut: split dei MC per vedere incertezza su eff e misid (questo va fatto anche negli altri casi?)
+
+Non fondamentali:
+- Sistemare plot_options in deepnn.py (lorenzo)
+- TFractionFitter (lorenzo)
+
 
 IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 
 
 
+fraction | range
+---------------
+
+0.427005   [5.02, 5.42]
+
+0.427608   [5.00, 5.60]
+0.427218   [5.02, 5.44]
+0.426768   [5.02, 5.40]
+0.426781   [5.04, 5.42]
+0.426564   [5.04, 5.40]
+0.425947   [5.06, 5.38]
+0.425976   [5.08, 5.36]
+0.427552   [5.10, 5.34]
+0.423498   [5.10, 5.42]
+0.423782   [5.10, 5.46]
 
 
 

@@ -4,8 +4,7 @@
 
 
 
-  Deep Neural Network: 
-    K fraction = 0.4180530072976529 +- 0.010785499884092971
-    Cut = 0.31579869985580444  |  Efficiency = 0.9696 
-    Misid = 0.3415807862181107  |  Efficiency = 0.9696 
-    AUC = 0.9257805018962174  |  Efficiency = 0.9696 
+  Decision Tree Classifier: 
+    K fraction = 0.41964590254869216
+    Efficiency = 0.905969909201234
+    Misid = 0.09546364925514962

@@ -218,3 +218,29 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
                   figname=name)
 
     return rocx, rocy, auc
+
+
+def syst_error(fraction, template_sizes, eff, misid):
+    """
+    Evaluates the systematic error on fraction estimate due to the finite sample
+    used to evaluate the "efficiency" and "misid" parameters.
+
+    :param fraction: Estimated fraction
+    :type fraction: float
+    :param template_sizes: Sizes of the evaluation arrays (pi and k dataset, in this order)
+    :type template_sizes: tuple[int]
+    :param eff: Efficiency of the algorithm
+    :type eff: float
+    :param misid: Misidentification probability (false positive) of the algorithm
+    :type misid: float
+    :return: The systematic error associated with the fraction
+    :rtype: float
+
+    """
+    d_eff = np.sqrt(eff*(1-eff)/template_sizes[1])
+    d_misid = np.sqrt(misid*(1-misid)/template_sizes[0])
+
+    d_frac = np.sqrt((d_misid*(1+fraction))**2
+                     + (d_eff*fraction)**2)/(eff-misid)
+
+    return d_frac

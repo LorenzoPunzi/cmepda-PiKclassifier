@@ -1,11 +1,12 @@
 """
 
 """
+import sys
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from utilities.utils import default_txtpaths, default_vars, default_rootpaths, default_figpath
+from utilities.utils import default_txtpaths, default_vars, default_rootpaths, default_figpath, syst_error
 from utilities.import_datasets import array_generator
 from utilities.exceptions import InvalidSourceError
 
@@ -59,7 +60,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
             raise InvalidSourceError(source[0])
     except InvalidSourceError as err:
         print(err)
-        exit()
+        sys.exit()
 
     dtc = tree.DecisionTreeClassifier(criterion=crit,
                                       min_samples_leaf=min_leaf_samp)
@@ -80,15 +81,22 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     k_test = np.array([X_test[i, :]
                        for i in range(np.shape(X_test)[0]) if y_test[i] == 1])
 
-    pred_array, pi_eval, k_eval = dtc.predict(data_set), \
-        dtc.predict(pi_test), dtc.predict(k_test)
+    pi_eval, k_eval = dtc.predict(pi_test), dtc.predict(k_test)
+
+    data_eval = dtc.predict(data_set)
 
     efficiency = (k_eval == 1).sum()/k_eval.size
     deff = np.sqrt(efficiency*(1-efficiency)/k_eval.size)
     misid = (pi_eval == 1).sum()/pi_eval.size
     dmisid = np.sqrt(misid*(1-misid)/pi_eval.size)
-    fraction = (pred_array.sum()/pred_array.size-misid)/(efficiency-misid)
-    dfrac = np.sqrt(dmisid**2*((pred_array.sum()/pred_array.size-misid)-efficiency)**2+deff**2*((pred_array.sum()/pred_array.size-misid)-misid))/(efficiency-misid)**2
+    fraction = (data_eval.sum()/data_eval.size-misid)/(efficiency-misid)
+    dfrac = np.sqrt(dmisid**2*((data_eval.sum()/data_eval.size-misid)-efficiency)
+                    ** 2+deff**2*((data_eval.sum()/data_eval.size-misid)-misid))/(efficiency-misid)**2
+
+    df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
+
+    df_syst = syst_error(
+        fraction, (pi_eval.size, k_eval.size), efficiency, misid)
 
     if print_tree:
         if print_tree.endswith('.txt') is not True:
@@ -104,8 +112,9 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     print(
         f'The predicted K fraction is : {fraction} +- {dfrac} (syst)')
 
-    fr = (fraction,)
+    fr = (fraction, df_stat, df_syst)
 
+    '''
     if stat_split:
         subdata = np.array_split(pred_array, stat_split)
         fractions = [data.sum()/len(data) for data in subdata]
@@ -118,6 +127,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
         # print(f"Mean = {np.mean(fractions, dtype=np.float64)}")
         # print(f"Sqrt_var = {stat_err}")
         fr = fr + (stat_err,)
+    '''
 
     return fr, efficiency, misid
 
