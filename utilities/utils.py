@@ -240,7 +240,7 @@ def syst_error(fraction, template_sizes, eff, misid):
     d_eff = np.sqrt(eff*(1-eff)/template_sizes[1])
     d_misid = np.sqrt(misid*(1-misid)/template_sizes[0])
 
-    d_frac = np.sqrt((d_misid*(1+fraction))**2
+    d_frac = np.sqrt((d_misid*(1-fraction))**2
                      + (d_eff*fraction)**2)/(eff-misid)
 
     return d_frac

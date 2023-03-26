@@ -132,7 +132,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         vars=default_vars(), n_mc=560000, n_data=50000, test_split=0.2,
         settings=DnnSettings(), efficiency=0,
         load=False, trained_filenames=('deepnn.json', 'deepnn.h5'),
-        stat_split=0, savefigs=False, figpath='', fignames=("", "", "", "")):
+        savefigs=False, figpath='', fignames=("", "", "", "")):
     """
     Trains or loads a deep neural network and uses it to estimate the fraction \'f\' of Kaons in the mixed dataset. To do that, a previous evaluation of the dnn on the \"testing dataset\" with a fixed value of efficiency is required. If the given value of efficiency is zero, an algorithm maximizes the Figure of Merit (FOM) defined by the inverse of the (absolute) difference between the evaluated fraction of kaons in the testing dataset and the expected one (that is known since the testing dataset's events hold the flag indicating their specie)
 
@@ -273,7 +273,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         fr = fr + (stat_err,)
     '''
 
-    algorithm_parameters = (cut, misid, used_eff)
+    algorithm_parameters = (used_eff, misid, cut)
     eval_test = (pi_eval, k_eval)
 
     return fr, algorithm_parameters, eval_test

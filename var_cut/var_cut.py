@@ -13,7 +13,7 @@ warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
             eff=0.95, inverse_mode=False, specificity_mode=False,
-            draw_roc=False, draw_fig=False, figpath='', stat_split=0):
+            draw_fig=False, figpath=''):
     """
     Estimates the fraction of kaons in the mixed sample by performing a cut on
     the distribution of the templates. The cut point is chosen so that the
@@ -54,8 +54,8 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     if (specificity_mode is not True and misid > eff) or \
             (specificity_mode is True and 1 - eff > misid):
         msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in \
-              var_cut, but the test is not unbiased this way, switching \
-              to inverse_mode = {not inverse_mode}'
+        var_cut, but the test is not unbiased this way, switching \
+        to inverse_mode = {not inverse_mode}'
         warnings.warn(msg, stacklevel=2)
         inverse_mode = not inverse_mode
         cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
@@ -77,13 +77,6 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         plt.legend()
         plt.savefig(default_figpath('cut_'+cut_var)) \
             if figpath == '' else plt.savefig(figpath+'/cut_'+cut_var+'.png')
-
-    rocx, rocy, auc = roc(var_pi, var_k, eff=eff, inverse_mode=inverse_mode,
-                          makefig=draw_roc,
-                          name=default_figpath(f'ROC_{cut_var}_cut')) \
-        if figpath == '' else roc(var_pi, var_k, eff=eff,
-                                  inverse_mode=inverse_mode, makefig=draw_roc,
-                                  name=f'{figpath}/ROC_{cut_var}_cut.png')
 
     fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
         if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
@@ -121,15 +114,15 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         fr = fr + (stat_err,)
     '''
 
-    algorithm_parameters = (cut, misid, eff)
+    algorithm_parameters = (eff, misid, cut)
 
-    roc_info = tuple([rocx, rocy, auc])
+    eval_arrays = (var_pi, var_k)
 
-    return fr, algorithm_parameters, roc_info
+    return fr, algorithm_parameters, eval_arrays
 
 
 if __name__ == '__main__':
 
     var_cut(eff=0.9, inverse_mode=True,
-            specificity_mode=False, draw_roc=True, stat_split=5)
+            specificity_mode=False, draw_roc=True)
     plt.show()

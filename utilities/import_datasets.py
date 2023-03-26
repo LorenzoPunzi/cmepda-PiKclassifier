@@ -20,7 +20,7 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
 
 
     :param file_pi: Path to MC root file of background only processes.
-    :type file_pi: str        
+    :type file_pi: str
     :param file_k: Path to MC root file of signal only processes.
     :type file_k: str
     :param tree: Tree in which the variables are stored on the root files.
@@ -28,7 +28,7 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     :param vars: Tuple containing names of the variables to be loaded.
     :type vars: list[str] or tuple[str]
     :param flag_column: If set to True, a column full of 0 or 1, for background or signal events respectively, is appended as the last column of the 2D array.
-    :type flag_column: bool        
+    :type flag_column: bool
     :param flatten1d: If is True and only one variable is passed as "vars", the arrays generated are returned as row-arrays instead of one-column arrays.
     :type flatten1d: bool
     :return: Two 2D numpy arrays filled by events of the two root files given in input and containing the requested variables, plus a flag-column if requested.
@@ -67,7 +67,6 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     Function that allows to append to the existing datasets (numpy arrays) new
     columns filled by the outputs of the mergevar() function.
 
-    
     :param rootpaths: Three element list or tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix.
     :type rootpaths: list[str] or tuple[str]
     :param tree: Tree in which the variables are stored on the root files.
@@ -78,7 +77,7 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     :type new_variables: list[tuple[str]] or tuple[tuple[str]]
     :return: A list or tuple containing the new numpy arrays for the three datasets, with the new columns filled with the data retrieved by the merge-variables algorithm. For MC datasets the flag column is still the rightmost column.
     :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
-        
+
     """
 
     n_old_vars = len(initial_arrays[2][0, :])

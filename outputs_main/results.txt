@@ -4,7 +4,7 @@
 
 
 
-  Decision Tree Classifier: 
-    K fraction = 0.41964590254869216
-    Efficiency = 0.905969909201234
-    Misid = 0.09546364925514962
+  Cut on Variables Distribution: 
+    K fraction = 0.46204359615028373 +- 0 (stat) +- 0.008187719050219335 (syst)  |  M0_Mpipi 
+    Misid = 0.8381485396481471  |  M0_Mpipi 
+    AUC = 0.6344987262396837  |  M0_Mpipi 

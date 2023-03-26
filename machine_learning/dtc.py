@@ -13,7 +13,7 @@ from utilities.exceptions import InvalidSourceError
 
 def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
                   vars=default_vars(), n_mc=560000, n_data=50000,
-                  test_size=0.3, min_leaf_samp=1, crit='gini', stat_split=0,
+                  test_size=0.3, min_leaf_samp=1, crit='gini',
                   print_tree='printed_dtc', figpath=''):
     """
     Trains a decision tree classifier and evaluates it on a dataset.
@@ -86,17 +86,21 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     data_eval = dtc.predict(data_set)
 
     efficiency = (k_eval == 1).sum()/k_eval.size
-    deff = np.sqrt(efficiency*(1-efficiency)/k_eval.size)
     misid = (pi_eval == 1).sum()/pi_eval.size
+    fraction = ((data_eval.sum()/data_eval.size) - misid)/(efficiency-misid)
+    '''
+    deff = np.sqrt(efficiency*(1-efficiency)/k_eval.size)
     dmisid = np.sqrt(misid*(1-misid)/pi_eval.size)
-    fraction = (data_eval.sum()/data_eval.size-misid)/(efficiency-misid)
-    dfrac = np.sqrt(dmisid**2*((data_eval.sum()/data_eval.size-misid)-efficiency)
-                    ** 2+deff**2*((data_eval.sum()/data_eval.size-misid)-misid))/(efficiency-misid)**2
+    dfrac = np.sqrt((dmisid*((data_eval.sum()/data_eval.size-misid)-efficiency))**2 +
+                    + (deff*((data_eval.sum()/data_eval.size-misid)-misid))**2)/(efficiency-misid)**2
+    '''
 
     df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
 
     df_syst = syst_error(
         fraction, (pi_eval.size, k_eval.size), efficiency, misid)
+
+    print(df_syst)
 
     if print_tree:
         if print_tree.endswith('.txt') is not True:
@@ -109,10 +113,12 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
 
     print(f'Efficiency = {efficiency}')
     print(f'Misidentification probability = {misid}')
-    print(
-        f'The predicted K fraction is : {fraction} +- {dfrac} (syst)')
+    # print(
+    #    f'The predicted K fraction is : {fraction} +- {dfrac} (syst)')
 
     fr = (fraction, df_stat, df_syst)
+
+    algorithm_parameters = (efficiency, misid)
 
     '''
     if stat_split:
@@ -129,7 +135,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
         fr = fr + (stat_err,)
     '''
 
-    return fr, efficiency, misid
+    return fr, algorithm_parameters
 
 
 """

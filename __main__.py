@@ -291,8 +291,8 @@ if hasattr(args, "methods"):
                 rocy_array.append(rocy_dnn)
                 roc_labels.append("DNN")
 
-            add_result("K fraction", f'{fr[0]} +- {fr[1]}') \
-                if len(fr) == 2 else add_result("K fraction", fr[0])
+            add_result(
+                "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2], 4)} (syst)')
             add_result("Cut", stats[0], f'Efficiency = {round(stats[2], 4)}')
             add_result("Misid", stats[1], f'Efficiency = {round(stats[2], 4)}')
             add_result("AUC", auc_dnn, f'Efficiency = {round(stats[2], 4)}')
@@ -311,28 +311,28 @@ if hasattr(args, "methods"):
                 file_dtc.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
 
-            fr, eff, misid = dt_classifier(
+            fr, stats = dt_classifier(
                 root_tree=args.tree, vars=args.variables, test_size=TEST_SIZE,
                 min_leaf_samp=ML_SAMP, crit=CRIT, stat_split=NUM_SUBDATA*args.stat_uncertainties,
                 print_tree=f'{respath}/{PRINTED_TREE_FILE}', figpath=respath)
 
             if SINGULAR_ROCS is not True:
-                x_pnts.append(misid)
-                y_pnts.append(eff)
+                x_pnts.append(stats[1])
+                y_pnts.append(stats[0])
                 point_labels.append("DTC")
 
-            add_result("K fraction", f'{fr[0]} +- {fr[1]}') \
-                if len(fr) == 2 else add_result("K fraction", fr[0])
-            add_result("Efficiency", eff)
-            add_result("Misid", misid)
+            add_result(
+                "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2], 4)} (syst)')
+            add_result("Efficiency", stats[0])
+            add_result("Misid", stats[1])
             print(f'\n  {method_title} - ended successfully! \n\n')
 
         if opt in ["vcut", "all"]:
             # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
             INVERSE = True
             SPECIFICITY = False
-            figure = args.figures
-            roc_figure = bool(args.figures*SINGULAR_ROCS)
+            figure_cut = args.figures
+            figure_roc = bool(args.figures*SINGULAR_ROCS)
             NUM_SUBDATA = 5
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             type_title = 'Cut on Variables Distribution'
@@ -344,18 +344,23 @@ if hasattr(args, "methods"):
 
             print(args.var_cut)
             for vc in [args.var_cut]:
-                fr, misid, cut, roc_info = var_cut(
+                fr, stats, eval_arr = var_cut(
                     rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
-                    draw_fig=figure, figpath=respath)
+                    draw_fig=figure_cut, figpath=respath)
+
+                rocx, rocy, auc = roc(eval_arr[0], eval_arr[1], eff=stats[0],
+                                      inverse_mode=INVERSE,
+                                      makefig=figure_roc,
+                                      name=f'{respath}/ROC_{vc}_cut')
 
                 add_result(
-                    "K fraction", f'{fr[0]} +- {fr[1]} (stat) +- {fr[2]} (syst)', vc)
-                add_result("Misid", misid, vc)
-                add_result("AUC", roc_info[2], vc)
+                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc)
+                add_result("Misid", stats[1], vc)
+                add_result("AUC", auc, vc)
                 if SINGULAR_ROCS is not True:
-                    rocx_array.append(roc_info[0])
-                    rocy_array.append(roc_info[1])
+                    rocx_array.append(rocx)
+                    rocy_array.append(rocy)
                     roc_labels.append(f'{vc}')
             print(f"\n  {type_title} - ended successfully! \n\n")
 
