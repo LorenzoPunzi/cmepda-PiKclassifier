@@ -241,6 +241,11 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
     cut, misid = find_cut(pi_eval, k_eval, used_eff)
 
+    if savefigs:
+        plt.axvline(x=cut, color='green', label=f'y cut for eff={used_eff}')
+        plt.legend()
+        plt.savefig(f'{figpath}/eval_Templates.png')
+
     estim_f_test = ((test_eval > cut).sum()
                     / test_eval.size - misid)/(used_eff-misid)
 

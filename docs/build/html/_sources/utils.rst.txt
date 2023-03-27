@@ -13,3 +13,4 @@ Documentation for functions in the ``utilities.utils`` module:
 .. autofunction:: utilities.utils.find_cut
 .. autofunction:: utilities.utils.plot_rocs
 .. autofunction:: utilities.utils.roc
+.. autofunction:: utilities.utils.syst_error

@@ -185,6 +185,29 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.utils.syst_error">
+<span class="sig-prename descclassname"><span class="pre">utilities.utils.</span></span><span class="sig-name descname"><span class="pre">syst_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">misid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utilities/utils.html#syst_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.utils.syst_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the systematic error on fraction estimate due to the finite sample
+used to evaluate the “efficiency” and “misid” parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fraction</strong> (<em>float</em>) – Estimated fraction</p></li>
+<li><p><strong>template_sizes</strong> (<em>tuple</em><em>[</em><em>int</em><em>]</em>) – Sizes of the evaluation arrays (pi and k dataset, in this order)</p></li>
+<li><p><strong>eff</strong> (<em>float</em>) – Efficiency of the algorithm</p></li>
+<li><p><strong>misid</strong> (<em>float</em>) – Misidentification probability (false positive) of the algorithm</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The systematic error associated with the fraction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -215,6 +238,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#utilities.utils.find_cut"><code class="docutils literal notranslate"><span class="pre">find_cut()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#utilities.utils.plot_rocs"><code class="docutils literal notranslate"><span class="pre">plot_rocs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#utilities.utils.roc"><code class="docutils literal notranslate"><span class="pre">roc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities.utils.syst_error"><code class="docutils literal notranslate"><span class="pre">syst_error()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="var_cut.html">var_cut</a></li>

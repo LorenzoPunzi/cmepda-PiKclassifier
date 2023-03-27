@@ -204,7 +204,7 @@ if hasattr(args, "methods"):
             # ~~~~~~~~ Setup of the template fit - free to edit ~~~~~~~~~~~~~~
             NBINS_HISTO = 1000
             histo_lims = (5.0, 5.6)  # Limits of the histograms
-            fit_range = (5.0, 5.6)  # Range where the templates are fitted
+            fit_range = (5.02, 5.42)  # Range where the templates are fitted
             p0_pi = (1e5, 0.16, 5.28, 0.08, 5.29, 0.04)
             p0_k = (1e5, 0.97, 1.6, 0.046, 5.30, 1.1, 5.27, 0.00045)
             figures = args.figures
@@ -262,7 +262,6 @@ if hasattr(args, "methods"):
             PLOT_ROC = bool(args.figures*SINGULAR_ROCS)
             fignames = ("DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
                         "eval_Data.png")
-            NUM_SUBDATA = 10
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Deep Neural Network'
             with open(results_file, encoding='utf-8', mode='a') as file_dnn:
@@ -274,16 +273,10 @@ if hasattr(args, "methods"):
                 vars=args.variables, settings=settings, load=args.load_dnn,
                 trained_filenames=(MODEL_FILE, WEIGHTS_FILE),
                 efficiency=args.efficiency,
-                stat_split=NUM_SUBDATA*args.stat_uncertainties,
                 savefigs=figs, figpath=respath, fignames=fignames)
 
-            # plt.axvline(x=y_cut, color='green', label='y cut for '
-            #             + str(efficiency)+' efficiency')
-            # plt.legend()
-            #   plt.savefig('fig/ycut.pdf')
-
             rocx_dnn, rocy_dnn, auc_dnn = roc(
-                eval_test[0], eval_test[1], eff=round(stats[2], 4), inverse_mode=INVERSE,
+                eval_test[0], eval_test[1], eff=stats[2], inverse_mode=INVERSE,
                 makefig=PLOT_ROC, name=f'{respath}/ROC_dnn')
 
             if SINGULAR_ROCS is not True:
@@ -293,9 +286,10 @@ if hasattr(args, "methods"):
 
             add_result(
                 "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2], 4)} (syst)')
-            add_result("Cut", stats[0], f'Efficiency = {round(stats[2], 4)}')
-            add_result("Misid", stats[1], f'Efficiency = {round(stats[2], 4)}')
-            add_result("AUC", auc_dnn, f'Efficiency = {round(stats[2], 4)}')
+            add_result("Efficiency", stats[0])
+            add_result("Misid", stats[1])
+            add_result("Cut", stats[2])
+            add_result("AUC", auc_dnn)
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dtc", "all"]:
@@ -304,7 +298,6 @@ if hasattr(args, "methods"):
             ML_SAMP = 1
             CRIT = 'gini'
             PRINTED_TREE_FILE = 'DTC_printed.txt'
-            NUM_SUBDATA = 10
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Decision Tree Classifier'
             with open(results_file, encoding='utf-8', mode='a') as file_dtc:
@@ -313,7 +306,7 @@ if hasattr(args, "methods"):
 
             fr, stats = dt_classifier(
                 root_tree=args.tree, vars=args.variables, test_size=TEST_SIZE,
-                min_leaf_samp=ML_SAMP, crit=CRIT, stat_split=NUM_SUBDATA*args.stat_uncertainties,
+                min_leaf_samp=ML_SAMP, crit=CRIT,
                 print_tree=f'{respath}/{PRINTED_TREE_FILE}', figpath=respath)
 
             if SINGULAR_ROCS is not True:
@@ -333,7 +326,6 @@ if hasattr(args, "methods"):
             SPECIFICITY = False
             figure_cut = args.figures
             figure_roc = bool(args.figures*SINGULAR_ROCS)
-            NUM_SUBDATA = 5
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             type_title = 'Cut on Variables Distribution'
             with open(results_file, encoding='utf-8', mode='a') as file_vcut:
@@ -349,14 +341,15 @@ if hasattr(args, "methods"):
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
                     draw_fig=figure_cut, figpath=respath)
 
-                rocx, rocy, auc = roc(eval_arr[0], eval_arr[1], eff=stats[0],
-                                      inverse_mode=INVERSE,
-                                      makefig=figure_roc,
-                                      name=f'{respath}/ROC_{vc}_cut')
+                rocx, rocy, auc = roc(
+                    eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
+                    makefig=figure_roc, name=f'{respath}/ROC_{vc}_cut')
 
                 add_result(
                     "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc)
+                add_result("Efficiency", stats[0], vc)
                 add_result("Misid", stats[1], vc)
+                add_result("Cut", stats[2], vc)
                 add_result("AUC", auc, vc)
                 if SINGULAR_ROCS is not True:
                     rocx_array.append(rocx)

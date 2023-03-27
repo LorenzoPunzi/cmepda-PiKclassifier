@@ -4,7 +4,9 @@
 
 
 
-  Cut on Variables Distribution: 
-    K fraction = 0.46204359615028373 +- 0 (stat) +- 0.008187719050219335 (syst)  |  M0_Mpipi 
-    Misid = 0.8381485396481471  |  M0_Mpipi 
-    AUC = 0.6344987262396837  |  M0_Mpipi 
+  Deep Neural Network: 
+    K fraction = 0.4167 +- 0 (stat) +- 0.0021 (syst)
+    Efficiency = 0.9
+    Misid = 0.26010239732800106
+    Cut = 0.4533465504646301
+    AUC = 0.9257805018962174
