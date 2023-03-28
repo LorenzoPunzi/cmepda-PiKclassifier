@@ -222,26 +222,28 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
                       figname=f'{figpath}/{fignames[2]}')
 
-    test_eval = eval_dnn(deepnn, test_set, flag_data=False, savefig=False)
 
-    expected_fraction = 1.*len(k_test)/len(test_set)
+    data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
+                         plot_opt=['Data_eval', 'blue', 'Evaluated data'],
+                         figname=f'{figpath}/{fignames[3]}')
+
     used_eff = 0
-    FOM = 0
+    df_opt = -99999
 
     if efficiency == 0:  # Enables FOM maximization
-        efficiencies = np.linspace(0.5, 0.9999, 100)
-        for eff in efficiencies:
-            tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, eff)
-            tmp_frac = ((test_eval > tmp_cut).sum()/test_eval.size
-                        - tmp_misid)/(eff-tmp_misid)
-            tmp_FOM = 1./abs(tmp_frac-expected_fraction)
-            if tmp_FOM >= FOM:
-                FOM = tmp_FOM
-                used_eff = eff
+        efficiencies = np.linspace(0.25, 0.999, 300)
+        for tmp_eff in efficiencies:
+            tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, tmp_eff)
+            tmp_frac = ((data_eval > tmp_cut).sum()/data_eval.size
+                        - tmp_misid)/(tmp_eff-tmp_misid)
+            tmp_dfopt = -np.sqrt(stat_error(tmp_frac,data_eval.size,tmp_eff,tmp_misid)**2+syst_error(tmp_frac,(pi_eval.size, k_eval.size),tmp_eff,tmp_misid)**2)
+            if tmp_dfopt >= df_opt:
+                df_opt = tmp_dfopt
+                used_eff = tmp_eff
     else:
         used_eff = efficiency
 
-    print(used_eff, FOM)
+    print(used_eff, -df_opt)
 
     cut, misid = find_cut(pi_eval, k_eval, used_eff)
 
@@ -249,13 +251,6 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         plt.axvline(x=cut, color='green', label=f'y cut for eff={used_eff}')
         plt.legend()
         plt.savefig(f'{figpath}/eval_Templates.png')
-
-    estim_f_test = ((test_eval > cut).sum()
-                    / test_eval.size - misid)/(used_eff-misid)
-
-    data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
-                         plot_opt=['Data_eval', 'blue', 'Evaluated data'],
-                         figname=f'{figpath}/{fignames[3]}')
 
     fraction = ((data_eval > cut).sum()
                 / data_eval.size - misid)/(used_eff-misid)
@@ -268,19 +263,6 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     print(fraction, df_stat, df_syst)
 
     fr = (fraction, df_stat, df_syst)
-
-    '''
-    if stat_split:
-        subdata = np.array_split(data_eval, stat_split)
-        fractions = [((dat > cut).sum()/dat.size-misid)/(used_eff-misid)
-                     for dat in subdata]
-        plt.figure('Fraction distribution for deepnn')
-        plt.hist(fractions, bins=20, histtype='step')
-        plt.savefig(default_figpath('dnn_distrib')) if figpath == '' \
-            else plt.savefig(figpath+'/dnn_distrib.png')
-        stat_err = np.sqrt(np.var(fractions, ddof=1, dtype='float64'))
-        fr = fr + (stat_err,)
-    '''
 
     algorithm_parameters = (used_eff, misid, cut)
     eval_test = (pi_eval, k_eval)

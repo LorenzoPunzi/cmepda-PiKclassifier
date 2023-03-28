@@ -31,7 +31,7 @@ from utilities.cornerplot import overlaid_cornerplot
 from utilities.gen_from_toy import gen_from_toy
 from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_resultsdir, \
-                            default_vars, roc, plot_rocs
+                            default_vars, find_cut, roc, plot_rocs
 from var_cut.var_cut import var_cut
 import warnings
 
@@ -84,7 +84,7 @@ parser_gen = subparsers.add_parser(
 parser_gen.add_argument('-rpt', '--rootpaths_toy', nargs=2, default=default_toyMC_path,
                         help='Path of the toyMC root files taken as input')
 
-parser_gen.add_argument('-ndat', '--num_events', nargs=2, type=int, default=0,
+parser_gen.add_argument('-ndat', '--num_events', nargs=2, default=[0,0], type=int,
                         help='Number of events in each MC dataset and in the mixed one (in this order)')
 
 parser_gen.add_argument('-f', '--fraction', type=float, default=0.42,
@@ -107,7 +107,7 @@ parser_an.add_argument('-ld', '--load_dnn', action='store_true',
                        help='Loads DNN model and weights saved as .json and .h5 files')
 
 parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
-                       help='Variable(s) on which "variable cut" analysis is performed')
+                       help='Variable(s) on which cut evaluation is performed')
 '''
 parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
                        help='Flag(s) that select the inverse mode to perform the variable(s) cut analysis')
@@ -115,13 +115,9 @@ parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
 parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
-'''
 parser_an.add_argument('-su', '--stat_uncertainties', action='store_true',
                        help='Performs the statistical analysis for the methods selected')
 
-parser_an.add_argument('-fom', '--fom_optimization', action='store_true',
-                       help='Performs FOM optimization instead of using a fixed efficiency value')
-'''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -157,7 +153,7 @@ if hasattr(args, 'rootpaths_toy'):
     NUM_MC, NUM_DATA = args.num_events
     print(NUM_MC, NUM_DATA)
     gen_from_toy(filepaths_in=tuple(args.rootpaths_toy), tree=args.tree,
-                 f=args.fraction, vars=tuple(args.variables),
+                 fraction=args.fraction, vars=tuple(args.variables),
                  num_mc=NUM_MC, num_data=NUM_DATA)
 
 
@@ -250,13 +246,14 @@ if hasattr(args, "methods"):
 
         if opt in ["dnn", "all"]:
             # ~~~~~~~~ Setup of the DNN - free to edit ~~~~~~~~~~~~~~~~~~~~~~~
-            LAYERS = (75, 60, 45, 30, 20)
-            VALIDATION_FRACTION = 0.5
-            BATCH_SIZE = 128
-            EPOCHNUM = 400
-            LEARNING_RATE = 5e-4
-            DROPOUT = 0
-            VERBOSE = 2
+            settings = DnnSettings()
+            settings.layers = (75, 60, 45, 30, 20)
+            # settings.val_fraction = 0.5
+            settings.batch_size = 128
+            settings.epochnum = 400
+            settings.verbose = 2
+            settings.dropout = 0
+            settings.learning_rate = 5e-4
             MODEL_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.json'
             WEIGHTS_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.h5'
             INVERSE = False
@@ -265,15 +262,10 @@ if hasattr(args, "methods"):
             fignames = ("DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
                         "eval_Data.png")
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
             method_title = 'Deep Neural Network'
             with open(results_file, encoding='utf-8', mode='a') as file_dnn:
                 file_dnn.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
-
-            settings = DnnSettings(layers=LAYERS, val_fraction=VALIDATION_FRACTION,
-                                   epochnum=EPOCHNUM, learning_rate=LEARNING_RATE,
-                                   batch_size=BATCH_SIZE, dropout=DROPOUT, verbose=VERBOSE)
 
             fr, stats, eval_test = dnn(
                 source=('root', filepaths), root_tree=tree,
@@ -346,7 +338,7 @@ if hasattr(args, "methods"):
                 fr, stats, eval_arr = var_cut(
                     rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
-                    savefig=figure_cut, figpath=respath)
+                    draw_fig=figure_cut, figpath=respath)
 
                 rocx, rocy, auc = roc(
                     eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
