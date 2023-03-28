@@ -250,10 +250,10 @@ if hasattr(args, "methods"):
             settings.layers = (75, 60, 45, 30, 20)
             # settings.val_fraction = 0.5
             settings.batch_size = 128
-            settings.epochnum = 400
+            settings.epochnum = 600
             settings.verbose = 2
             settings.dropout = 0
-            settings.learning_rate = 5e-4
+            settings.learning_rate = 1e-4
             MODEL_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.json'
             WEIGHTS_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.h5'
             INVERSE = False
@@ -338,7 +338,7 @@ if hasattr(args, "methods"):
                 fr, stats, eval_arr = var_cut(
                     rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
-                    draw_fig=figure_cut, figpath=respath)
+                    savefig=figure_cut, figpath=respath)
 
                 rocx, rocy, auc = roc(
                     eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,

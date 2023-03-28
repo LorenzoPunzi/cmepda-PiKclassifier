@@ -231,7 +231,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     df_opt = -99999
 
     if efficiency == 0:  # Enables FOM maximization
-        efficiencies = np.linspace(0.25, 0.999, 300)
+        efficiencies = np.linspace(0.25, 0.999, 200)
         for tmp_eff in efficiencies:
             tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, tmp_eff)
             tmp_frac = ((data_eval > tmp_cut).sum()/data_eval.size

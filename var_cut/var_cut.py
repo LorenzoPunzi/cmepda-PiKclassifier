@@ -46,16 +46,35 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
                              [cut_var], flag_column=False)
     var_data, _ = loadvars(rootpath_data, rootpath_data, tree,
                            [cut_var], flag_column=False)
+    
+    used_eff = 0
+    df_opt = -99999
 
-    cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
+    if eff == 0:  # Enables FOM maximization
+        efficiencies = np.linspace(0.25, 0.999, 200)
+        for tmp_eff in efficiencies:
+            tmp_cut, tmp_misid = find_cut(var_pi, var_k, tmp_eff, inverse_mode=inverse_mode,
+                          specificity_mode=False)
+            tmp_frac = ((var_data < tmp_cut).sum()/var_data.size - tmp_misid)/(tmp_eff - tmp_misid) \
+                if inverse_mode else ((var_data > tmp_cut).sum()/var_data.size-tmp_misid)/(tmp_eff - tmp_misid)
+            tmp_dfopt = -np.sqrt(stat_error(tmp_frac,var_data.size,tmp_eff,tmp_misid)**2+syst_error(tmp_frac,(var_pi.size, var_k.size),tmp_eff,tmp_misid)**2)
+            if tmp_dfopt >= df_opt:
+                df_opt = tmp_dfopt
+                used_eff = tmp_eff
+    else:
+        used_eff = eff
+
+    print(used_eff, -df_opt)
+
+    cut, misid = find_cut(var_pi, var_k, used_eff, inverse_mode=inverse_mode,
                           specificity_mode=specificity_mode)
 
-    if (specificity_mode is not True and misid > eff) or \
-            (specificity_mode is True and 1 - eff > misid):
+    if (specificity_mode is not True and misid > used_eff) or \
+            (specificity_mode is True and 1 - used_eff > misid):
         msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in var_cut, but the test is not unbiased this way, switching to inverse_mode = {not inverse_mode}'
         warnings.warn(msg, stacklevel=2)
         inverse_mode = not inverse_mode
-        cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
+        cut, misid = find_cut(var_pi, var_k, used_eff, inverse_mode=inverse_mode,
                               specificity_mode=specificity_mode)
 
     if savefig:
@@ -67,7 +86,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
         plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
-                    + str(eff)+' efficiency')
+                    + str(used_eff)+' efficiency')
         plt.draw()
         plt.xlabel(cut_var)
         plt.ylabel(f'Events per {range[1]-range[0]/nbins} {cut_var}')
@@ -75,43 +94,25 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         plt.savefig(default_figpath('cut_'+cut_var)) \
             if figpath == '' else plt.savefig(figpath+'/cut_'+cut_var+'.png')
 
-    fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
-        if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
+    fraction = ((var_data < cut).sum()/var_data.size - misid)/(used_eff - misid) \
+        if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(used_eff - misid)
 
     if specificity_mode:
-        eff, misid = misid, 1-eff
-        fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
-            if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
+        used_eff, misid = misid, 1-used_eff
+        fraction = ((var_data < cut).sum()/var_data.size - misid)/(used_eff - misid) \
+            if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(used_eff - misid)
 
-    df_stat = stat_error(fraction, var_data.size, eff, misid)
+    df_stat = stat_error(fraction, var_data.size, used_eff, misid)
 
-    df_syst = syst_error(fraction, (var_pi.size, var_k.size), eff, misid)
+    df_syst = syst_error(fraction, (var_pi.size, var_k.size), used_eff, misid)
 
     fr = (fraction, df_stat, df_syst)
 
-    print(f'{cut_var} cut is {cut} for {eff} efficiency')
-    print(f'Misid is {misid} for {eff} efficiency')
+    print(f'{cut_var} cut is {cut} for {used_eff} efficiency')
+    print(f'Misid is {misid} for {used_eff} efficiency')
     print(f'The estimated fraction of K events is {fraction}')
 
-    '''
-    if stat_split:
-        subdata = np.array_split(var_data, stat_split)
-        fractions = [((dat < cut).sum()/dat.size-misid)/(eff-misid)
-                     for dat in subdata] if inverse_mode \
-            else [((dat > cut).sum()/dat.size-misid)/(eff-misid)
-                  for dat in subdata]
-        plt.figure('Fraction distribution for '+cut_var+' cut')
-        plt.axvline(x=fraction, color='green')
-        plt.hist(fractions, bins=7, histtype='step')
-        plt.savefig(default_figpath('cut_'+cut_var+'_distrib')) if figpath == ''\
-            else plt.savefig(figpath+'/cut_'+cut_var+'_distrib.png')
-        stat_err = np.sqrt(np.var(fractions, ddof=1))
-        # print(f"Mean = {np.mean(fractions, dtype=np.float64)}")
-        # print(f"Sqrt_var = {stat_err}")
-        fr = fr + (stat_err,)
-    '''
-
-    algorithm_parameters = (eff, misid, cut)
+    algorithm_parameters = (used_eff, misid, cut)
 
     eval_arrays = (var_pi, var_k)
 
