@@ -2,6 +2,7 @@
 Module that takes two variables from the MC root files and combines them to
 build a new one. The goal of this operation is to have more separated
 distributions for the the two species
+
 """
 import sys
 import os
@@ -29,7 +30,7 @@ def KS_optimization(v_pi, v_k, parlims=(-20, 20), n_try=1001):
     :type v_pi: numpy.array
     :param v_k: Two-column array containing the variables to be mixed, taken from the Kaon template dataset
     :type v_k: numpy.array
-    :param parlims : Limits of the parameter "m" where to apply the algorithm
+    :param parlims: Limits of the parameter "m" where to apply the algorithm
     :type parlims: tuple[float]
     :param n_try: Number of attempts of the algorithm
     :type n_try: int
