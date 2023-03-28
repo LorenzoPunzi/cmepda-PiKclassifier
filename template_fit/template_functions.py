@@ -115,8 +115,8 @@ def GaussJohnson(func_limits, funcname='Gauss+Johnson',
     """
     Function that creates a ROOT::TF1 function corresponding to a weighted sum
     of an SU-Johnson and a Gaussian; its expression is written in a C++ shared
-    library and is imported in the Python environment by the I
-    nitializeFunctionsLibrary() function.
+    library and is imported in the Python environment by the
+    InitializeFunctionsLibrary() function.
 
     :param func_limits: Limits of the axis where the function is defined
     :type func_limits: tuple[float]

@@ -1,3 +1,6 @@
+"""
+Module containing general-use functions
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -8,7 +11,7 @@ def default_rootpaths():
     """
     Returns the default root file paths of the package.
 
-    :return: Path tuple, containing the pion MC, the kaon Mc and the mixed data root files respectively.
+    :return: Tuple containing the paths of the pion MC, the kaon MC and the mixed data root files, respectively.
     :rtype: tuple[str]
 
     """
@@ -22,9 +25,10 @@ def default_rootpaths():
 
 def default_txtpaths():
     """
-    Returns the txt file paths of the package.
+    Returns the .txt file paths containing the templates array and the
+    mixed-set array, to be used in DNN or DTC analyses.
 
-    :return: Path tuple, containing the pion MC, the kaon Mc and the mixed data txt files respectively.
+    :return: Tuple containing the paths of the pion MC, the kaon MC and the mixed data root files, respectively.
     :rtype: tuple[str]
 
     """
@@ -220,6 +224,29 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
     return rocx, rocy, auc
 
 
+def stat_error(fraction, data_size, eff, misid):
+    """
+    Evaluates the systematic error on fraction estimate due to the finite sample
+    used to evaluate the "efficiency" and "misid" parameters.
+
+    :param fraction: Estimated fraction
+    :type fraction: float
+    :param data_size: Size of the data array
+    :type template_sizes: int
+    :param eff: Efficiency of the algorithm
+    :type eff: float
+    :param misid: Misidentification probability (false positive) of the algorithm
+    :type misid: float
+    :return: The statistic error associated to the fraction
+    :rtype: float
+
+    """
+
+    d_frac = np.sqrt(fraction*(1-fraction)/data_size)/(eff-misid)
+
+    return d_frac
+
+
 def syst_error(fraction, template_sizes, eff, misid):
     """
     Evaluates the systematic error on fraction estimate due to the finite sample
@@ -233,7 +260,7 @@ def syst_error(fraction, template_sizes, eff, misid):
     :type eff: float
     :param misid: Misidentification probability (false positive) of the algorithm
     :type misid: float
-    :return: The systematic error associated with the fraction
+    :return: The systematic error associated to the fraction
     :rtype: float
 
     """

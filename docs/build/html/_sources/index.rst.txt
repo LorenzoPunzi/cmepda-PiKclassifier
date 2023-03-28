@@ -19,6 +19,8 @@ cmepda-PiKclassifier documentation
    exceptions
    merge_variables
    test_import_datasets
+   test_utils
+   test_var_cut
    deepnn
    dtc
    template_fit

@@ -37,25 +37,29 @@
 <p>Documentation for the  <code class="docutils literal notranslate"><span class="pre">var_cut.var_cut.var_cut()</span></code> function:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="var_cut.var_cut.var_cut">
-<span class="sig-prename descclassname"><span class="pre">var_cut.var_cut.</span></span><span class="sig-name descname"><span class="pre">var_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootpaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tree;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'M0_Mpipi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_cut/var_cut.html#var_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_cut.var_cut.var_cut" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">var_cut.var_cut.</span></span><span class="sig-name descname"><span class="pre">var_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootpaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tree;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'M0_Mpipi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_cut/var_cut.html#var_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_cut.var_cut.var_cut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimates the fraction of kaons in the mixed sample by performing a cut on
-the distribution of the templates. The cut point is chosen so that the
-probability that a Kaon event has a larger value than that (smaller, in the
-inverse-mode) is equal to the efficiency chosen (parameter “eff”)</p>
+a specified variable in the template dataset. The cut point is chosen so
+that the probability that a Kaon event has a larger value than that
+(smaller, in the inverse-mode) is equal to the efficiency (“eff”) chosen</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rootpaths</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – Three rootpaths where to search for the root files. The first is the rootpath for the “negative” species, the second for the “positive” species, the third  for the data to be evaluated</p></li>
-<li><p><strong>tree</strong> (<em>str</em>) – Tree from which to load</p></li>
+<li><p><strong>rootpaths</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple containing three .root file paths, for the “background” sample (flag=0), the “signal” sample (flag=1) and the mixed one, in this order.</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Name of the tree from which to load</p></li>
 <li><p><strong>cut_var</strong> (<em>str</em>) – Variable to load and test</p></li>
 <li><p><strong>eff</strong> (<em>float</em>) – Sensitivity required from the test (specificity in specificity mode)</p></li>
-<li><p><strong>inverse_mode</strong> (<em>bool</em>) – To activate if the “positive” events have lower values of the cut variable</p></li>
-<li><p><strong>specificity_mode</strong> (<em>bool</em>) – To activate if the efficiency given is the specificity</p></li>
-<li><p><strong>draw_roc</strong> (<em>bool</em>) – Draw the roc function of the test</p></li>
-<li><p><strong>draw_fig</strong> (<em>bool</em>) – Draw the figure of the variable distribution for the two species and the cut</p></li>
+<li><p><strong>inverse_mode</strong> (<em>bool</em>) – Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> if the “signal” events have lower values of the cut variable than the “background” ones</p></li>
+<li><p><strong>specificity_mode</strong> (<em>bool</em>) – Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> if the efficiency given is the specificity</p></li>
+<li><p><strong>savefig</strong> (<em>bool</em>) – Draw the figure of the variable distribution for the two species and the cut</p></li>
 <li><p><strong>figpath</strong> (<em>str</em>) – Path to where to save the figure</p></li>
-<li><p><strong>stat_split</strong> (<em>int</em>) – How many parts to split the dataset in, to study the distribution of the fraction estimated with this test</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated fraction of Kaons (with uncertainties), parameters of the test algorithm and arrays containing the DNN evaluation of the testing array (divided for species)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[float], tuple[float], tuple[numpy.array[float]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -93,6 +97,8 @@ inverse-mode) is equal to the efficiency chosen (parameter “eff”)</p>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="merge_variables.html">merge_variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_import_datasets.html">test_import_datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_utils.html">test_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_var_cut.html">test_var_cut</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dtc.html">dtc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_fit.html">template_fit</a></li>

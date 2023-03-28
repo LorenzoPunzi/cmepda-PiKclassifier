@@ -83,32 +83,32 @@ def global_fit(filepath, tree, var, Nbins=1000, histo_lims=(5.0, 5.6),
     ROOT.TemplateComposition (external library) and the parameters given by the
     fit on MC datasets are passed into this function.
 
-    :param filepath: Root file where the MC dataset is stored
+    :param filepath: Root files where the datasets (the two templates and the mixed set) are stored
     :type filepath: tuple[str]
-    :param tree: Name of the tree in root file where the events are stored
+    :param tree: Name of the tree in the root files where the events are stored
     :type tree: str
     :param var: Variable the fit is performed on
     :type var: str
-    :param Nbins: Number of bins of the histogram, defaults to 1000
-    :type Nbins: int, optional
-    :param histo_lims: Range of the histogram, defaults to (5.0, 5.6)
-    :type histo_lims: tuple[float], optional
+    :param Nbins: Number of bins of the histogram
+    :type Nbins: int
+    :param histo_lims: Range of the histogram
+    :type histo_lims: tuple[float]
     :param histo_name: Name of the histogram
-    :type histo_name: str, optional
+    :type histo_name: str
     :param histo_title: Title of the histogram
-    :type histo_name: str, optional
+    :type histo_name: str
     :param pars_mc1: Best-fit parameters for the first template function
     :type pars_mc1: tuple[float]
     :param pars_mc2: Best-fit parameters for the second template function
     :type pars_mc2: tuple[float]
     :param fit_range: Range where the fit is performed
     :type fit_range: tuple[float]
-    :param savefig: If is ``True`` saves the image of the fit, defaults to ``False``
-    :type savefig: bool, optional
+    :param savefig: If is ``True`` saves the image of the fit
+    :type savefig: bool
     :param img_name: Name of the image to be saved
-    :type img_name: str, optional
+    :type img_name: str
     :return: Root object containing the fit details
-    :rtype: Root::TFitResult
+    :rtype: ROOT::TFitResult
     """
     if histo_name == '':
         histo_name = var

@@ -1,12 +1,15 @@
 """
-
+Builds and tests a Decision Tree Classifier with multiple variables (features)
+in numpy arrays, performs an evaluation on a mixed dataset and applies them the
+algorithm that estimates the fraction of Kaons.
 """
 import sys
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from utilities.utils import default_txtpaths, default_vars, default_rootpaths, default_figpath, syst_error
+from utilities.utils import default_rootpaths, default_txtpaths, default_vars,\
+                            default_figpath, stat_error, syst_error
 from utilities.import_datasets import array_generator
 from utilities.exceptions import InvalidSourceError
 
@@ -16,34 +19,30 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
                   test_size=0.3, min_leaf_samp=1, crit='gini',
                   print_tree='printed_dtc', figpath=''):
     """
-    Trains a decision tree classifier and evaluates it on a dataset.
+    Builds and tests a Decision Tree Classifier with multiple variables (features)
+    in numpy arrays, performs an evaluation on a mixed dataset and applies them the
+    algorithm that estimates the fraction of Kaons.
 
-    :param source: Two element tuple containing respectively the option for how to build the DTC and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt the second element of source must be a tuple containing two .txt paths, one relative to the training set .txt file and the other to the set to evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix to be evaluated.
+    :param source: Two element tuple containing respectively the option for how to build the DTC and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt the second element of source must be a tuple containing two .txt paths, one relative to the template set .txt file and the other to the set to be evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root, the second element of source must be a tuple containing three .root file paths: the first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix to be evaluated.
     :type source: tuple[{'root','txt'},tuple[str]]
     :param root_tree: In case of 'root' source, the name of the tree from which to load variables.
     :type root_tree: str
-    :param vars: In case of 'root' source, tuple containing the names of the variables to load and with which  the DTC should be built.
+    :param vars: In case of 'root' source, tuple containing the names of the variables to load and with which the DTC should be built.
     :type vars: tuple[str]
-    :param n_mc: In case of 'root' source, number of events to take from the root files for the training set
+    :param n_mc: In case of 'root' source, number of events to take from the root files as template dataset
     :type n_mc: int
-    :param n_data: In case of 'root' source, number of events to take from the root file for the mixed evaluation set
+    :param n_data: In case of 'root' source, number of events to take from the root file as mixed dataset
     :type n_data: int
-    :param test_size: The fraction of events in the training set to be used as "validation" in the DTC training.
+    :param test_size: The fraction of events in the template dataset to be used as testing dataset for the DTC.
     :type test_size: float
     :param min_leaf_samp: The minimum number of samples required to split an internal node. If it's an int, it's the minimum number. If it's a float, it's the fraction.
     :type min_leaf_samp: int or float
-    :param test_size: The fraction of events in the training set to be used as "validation" in the DTC training.
-    :type test_size: float
     :param crit: The function to measure the quality of a split. Supported criteria are 'gini' for the Gini impurity and 'log_loss' and 'entropy' both for the Shannon information gain.
     :type crit: {'gini','log_loss','entropy'}
-    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test
-    :type stat_split: int
-    :param print_tree: If different from '', prints the tree on a print_tree.txt file
+    :param print_tree: If different from '', prints the tree on a .txt file with the given name
     :type print_tree: str
-    :param figpath: If stat_split is not 0, gives the path where to save the figure of the distribution of the estimated fractions
-    :type figpath: str
-    :return: Three element tuple. The first element is a tuple containing the estimated fraction of signal events and, if stat_split is not 0, the statndard deviation of its distribution. The second element is the sensitivity of the classifier. The third element is the misidentification probability for the background species.
-    :rtype: tuple[float]
+    :return: Estimated fraction of Kaons (with uncertainties) and parameters of the test algorithm
+    :rtype: tuple[float], tuple[float]
 
     """
     try:
@@ -95,7 +94,7 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
                     + (deff*((data_eval.sum()/data_eval.size-misid)-misid))**2)/(efficiency-misid)**2
     '''
 
-    df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
+    df_stat = stat_error(fraction, data_eval.size, efficiency, misid)
 
     df_syst = syst_error(
         fraction, (pi_eval.size, k_eval.size), efficiency, misid)

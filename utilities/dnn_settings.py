@@ -8,29 +8,29 @@ class DnnSettings:
     """
     Class that stores the most important options for the keras DNN algorithm
 
-    Attributes:
-        layers : list or tuple
-            List of integers, that indicate the number of neurons in each
-            internal dense layer
-        val_fraction : float
-            Fraction of the training dataset used for validation
-        epochnum : int
-            Number of epochs
-        learning_rate : float
-            Value given as learning rate to Adam optimizer
-        batch_size : int
-            Size of the batches in the dnn
-        dropout : float
-            Drop probability in the AlphaDropout layer
-        verbose : int
-            Control of what to print on shell during the training.
+    :param layers: Tuple of integers, that indicate the number of neurons in each internal dense layer
+    :type layers: tuple[int]
+    :param val_fraction: Fraction of the training dataset used for validation
+    :type val_fraction: float
+    :param epochnum: Number of epochs for the training
+    :type val_fraction: float
+    :param epochnum: Number of epochs for the training
+    :type epochnum: int
+    :param learning_rate: Value given as learning rate to Adam optimizer
+    :type learning_rate: float
+    :param batch_size: Size of the batches used in the training
+    :type batch_size: int
+    :param dropout: Drop probability in the AlphaDropout layer
+    :type dropout: float
+    :param verbose: Control of what to print on shell during the training
+    :type verbose: int
     """
 
     def __init__(self, layers=(75, 60, 45, 30, 20), val_fraction=0.5,
                  epochnum=200, learning_rate=0.001, batch_size=128,
                  dropout=0, verbose=2):
         """
-        Initializes the class instance with default values
+        Constructor method
         """
         self._layers = layers
         self._val_fraction = val_fraction
@@ -113,4 +113,4 @@ class DnnSettings:
         if verb in [0, 1, 2]:
             self._verbose = verb
         else:
-            print('ERROR: uncorrect value given to \"verbose\" method')
+            print('ERROR: incorrect value given to \"verbose\" method')

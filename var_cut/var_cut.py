@@ -1,9 +1,10 @@
 """
-Estimates f using a cut on Mhh only
+
 """
 import numpy as np
 from matplotlib import pyplot as plt
-from utilities.utils import default_rootpaths, default_figpath, find_cut, roc, syst_error
+from utilities.utils import default_rootpaths, default_figpath, \
+                            find_cut, roc, stat_error, syst_error
 from utilities.import_datasets import loadvars
 import warnings
 
@@ -12,34 +13,32 @@ warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 
 def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
-            eff=0.95, inverse_mode=False, specificity_mode=False,
-            draw_fig=False, figpath=''):
+            eff=0.90, inverse_mode=False, specificity_mode=False,
+            savefig=False, figpath=''):
     """
     Estimates the fraction of kaons in the mixed sample by performing a cut on
-    the distribution of the templates. The cut point is chosen so that the
-    probability that a Kaon event has a larger value than that (smaller, in the
-    inverse-mode) is equal to the efficiency chosen (parameter "eff")
+    a specified variable in the template dataset. The cut point is chosen so
+    that the probability that a Kaon event has a larger value than that
+    (smaller, in the inverse-mode) is equal to the efficiency ("eff") chosen
 
-    :param rootpaths: Three rootpaths where to search for the root files. The first is the rootpath for the "negative" species, the second for the "positive" species, the third  for the data to be evaluated
+    :param rootpaths: Tuple containing three .root file paths, for the "background" sample (flag=0), the "signal" sample (flag=1) and the mixed one, in this order.
     :type rootpaths: tuple[str]
-    :param tree: Tree from which to load
+    :param tree: Name of the tree from which to load
     :type tree: str
     :param cut_var: Variable to load and test
     :type cut_var: str
     :param eff: Sensitivity required from the test (specificity in specificity mode)
     :type eff: float
-    :param inverse_mode: To activate if the "positive" events have lower values of the cut variable
+    :param inverse_mode: Set to ``True`` if the "signal" events have lower values of the cut variable than the "background" ones
     :type inverse_mode: bool
-    :param specificity_mode: To activate if the efficiency given is the specificity
+    :param specificity_mode: Set to ``True`` if the efficiency given is the specificity
     :type specificity_mode: bool
-    :param draw_roc: Draw the roc function of the test
-    :type draw_roc: bool
-    :param draw_fig: Draw the figure of the variable distribution for the two species and the cut
-    :type draw_fig: bool
+    :param savefig: Draw the figure of the variable distribution for the two species and the cut
+    :type savefig: bool
     :param figpath: Path to where to save the figure
     :type figpath: str
-    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test
-    :type stat_split: int
+    :return: Estimated fraction of Kaons (with uncertainties), parameters of the test algorithm and arrays containing the DNN evaluation of the testing array (divided for species)
+    :rtype: tuple[float], tuple[float], tuple[numpy.array[float]]
 
     """
     rootpath_pi, rootpath_k, rootpath_data = rootpaths
@@ -61,7 +60,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
                               specificity_mode=specificity_mode)
 
-    if draw_fig:
+    if savefig:
         nbins = 300
         range = (min(min(var_pi), min(var_k)), max(max(var_pi), max(var_k)))
         plt.figure('Cut on ' + cut_var)
@@ -86,7 +85,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         fraction = ((var_data < cut).sum()/var_data.size - misid)/(eff - misid) \
             if inverse_mode else ((var_data > cut).sum()/var_data.size-misid)/(eff - misid)
 
-    df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
+    df_stat = stat_error(fraction, var_data.size, eff, misid)
 
     df_syst = syst_error(fraction, (var_pi.size, var_k.size), eff, misid)
 

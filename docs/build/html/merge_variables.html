@@ -46,62 +46,44 @@
 <span class="sig-prename descclassname"><span class="pre">utilities.merge_variables.</span></span><span class="sig-name descname"><span class="pre">KS_optimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v_pi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parlims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-20,</span> <span class="pre">20)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_try</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utilities/merge_variables.html#KS_optimization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.merge_variables.KS_optimization" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs different attempts of variable mixing, using mix_function(),
 calculating for each case the Kolmogorov-Smirnov statistic.</p>
-<dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>v_pi<span class="classifier">numpy array</span></dt><dd><p>Two-column array containing the variables to be mixed, taken
-from the Pion MC dataset</p>
-</dd>
-<dt>v_k<span class="classifier">numpy array</span></dt><dd><p>Two-column array containing the variables to be mixed, taken
-from the Kaon MC dataset</p>
-</dd>
-<dt>parlims<span class="classifier">tuple</span></dt><dd><p>Limits of the parameter ‘m’ where to apply the algorithm</p>
-</dd>
-<dt>n_try<span class="classifier">int</span></dt><dd><p>Number of attempts of the algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v_pi</strong> (<em>numpy.array</em>) – Two-column array containing the variables to be mixed, taken from the Pion template dataset</p></li>
+<li><p><strong>v_k</strong> (<em>numpy.array</em>) – Two-column array containing the variables to be mixed, taken from the Kaon template dataset</p></li>
+</ul>
 </dd>
 </dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>max_stat<span class="classifier">float</span></dt><dd><p>Maximum value of the Kolmogorov-Smirnov statistic found</p>
-</dd>
-<dt>selected_m<span class="classifier">float</span></dt><dd><p>Value of ‘m’ corresponding to the maximum KS statistic value</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<p>:param parlims : Limits of the parameter “m” where to apply the algorithm
+:type parlims: tuple[float]
+:param n_try: Number of attempts of the algorithm
+:type n_try: int
+:return: The maximum value found of the KS statistic and the corresponding value of “m”
+:rtype: float, float</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utilities.merge_variables.mergevar">
-<span class="sig-prename descclassname"><span class="pre">utilities.merge_variables.</span></span><span class="sig-name descname"><span class="pre">mergevar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savetxt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utilities/merge_variables.html#mergevar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.merge_variables.mergevar" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">utilities.merge_variables.</span></span><span class="sig-name descname"><span class="pre">mergevar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0PiPi_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/B0sKK_MC.root',</span> <span class="pre">'/home/rubenforti/cmepda/cmepda-PiKclassifier/utilities/../data/root_files/Bhh_data.root')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tree;1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('M0_MKpi',</span> <span class="pre">'M0_MpiK')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savetxt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utilities/merge_variables.html#mergevar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.merge_variables.mergevar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that takes two variables stored in TTrees and mixes them to create
 a new feature, by using the algorithm defined implemented previously in
 this module. This feature is then computed for both the MCs and for data
 and stored in 3 arrays, returned by the function.</p>
-<dl class="simple">
-<dt>Parameters:</dt><dd><dl class="simple">
-<dt>filepaths<span class="classifier">tuple</span></dt><dd><p>Paths (with name) of the root files where the variables are stored.
-It must include both the MC files for Pi and K and the mixed data
-file, in this order</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepaths</strong> (<em>tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple containing three .root file paths, for the “background” sample (flag=0), the “signal” sample (flag=1) and the mixed one, in this order.</p></li>
+<li><p><strong>tree</strong> (<em>str</em>) – Name of the tree from which to load</p></li>
+<li><p><strong>vars</strong> (<em>tuple</em>) – Couple of variables that are going to be merged</p></li>
+<li><p><strong>savefig</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> the figure of the new variable’s distribution is saved</p></li>
+<li><p><strong>savetxt</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> the array containing the new variable’s events is saved as .txt file</p></li>
+</ul>
 </dd>
-<dt>tree<span class="classifier">string</span></dt><dd><p>Tree containing the datasets (is the same for both the files)</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple con containing the three sets of the new variable; a tuple with the value retrieved by KS_optimization() and the KS statistic of the original variables; the parameter “m” which the original variables were merged with</p>
 </dd>
-<dt>vars<span class="classifier">tuple</span></dt><dd><p>Couple of variables that are going to be merged</p>
-</dd>
-<dt>savefig, savetxt<span class="classifier">bool</span></dt><dd><p>Flags that allow to save the figure of the distributions of the new
-variable and to save on .txt files the new datasets
-Default: False</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>merged_arr<span class="classifier">tuple</span></dt><dd><p>Tuple containing the three sets of the new variable</p>
-</dd>
-<dt>ks_stats<span class="classifier">tuple</span></dt><dd><p>Value of the Kolmogorov-Smirnov retrieved by KS_optimization() and
-values of the KS statistic for the original values</p>
-</dd>
-<dt>m<span class="classifier">float</span></dt><dd><p>Value of ‘m’ which the original variables were merged with</p>
-</dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[numpy.array], tuple[float], float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -141,6 +123,8 @@ values of the KS statistic for the original values</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="test_import_datasets.html">test_import_datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_utils.html">test_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_var_cut.html">test_var_cut</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dtc.html">dtc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_fit.html">template_fit</a></li>

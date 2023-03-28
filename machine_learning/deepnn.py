@@ -1,7 +1,8 @@
 """
-Trains a DNN with a numpy array with variable data columns to
-distinguish between pions and Kaons given multiple variables (features)
-on which to train simultaneously
+Module containing the functions to train a DNN with multiple variables
+(features) in numpy arrays, to perform an evaluation on a given dataset and to
+apply them the algorithm that estimates the fraction of Kaons present in a
+mixed dataset
 """
 
 import time
@@ -9,13 +10,14 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from keras.layers import Dense, Input, Normalization, AlphaDropout
+from keras.layers import Dense, Input, AlphaDropout
 from keras.models import Model, model_from_json
 from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
 from utilities.dnn_settings import DnnSettings
-from utilities.utils import default_rootpaths, default_txtpaths, default_vars, \
-                            default_figpath, find_cut, roc, syst_error
+from utilities.utils import default_rootpaths, default_txtpaths, \
+                            default_vars, default_figpath, \
+                            find_cut, roc, stat_error, syst_error
 from utilities.exceptions import InvalidSourceError
 
 
@@ -24,13 +26,13 @@ def train_dnn(training_set, settings, savefig=True, figname='',
     """
     Trains a Keras deep neural network.
 
-    :param mc_set: 2D numpy array with flag {0,1} as last column for training the DNN.
-    :type mc_set: 2D numpy.array[float]
+    :param training_set: 2D numpy array with flag={0,1} as last column for training the DNN.
+    :type training_set: 2D numpy.array[float]
     :param settings: DnnSettings instance with the settings for the generation of the DNN.
     :type settings: utilities.import_datasets.DnnSettings class instance
     :param savefig: If ``True``, saves the history plot of the training.
     :type savefig: bool
-    :param figname: If savefig=``True``, saves the history figure with this name.
+    :param figname: If savefig=``True``, saves the loss history figure with this name.
     :type figname: str
     :param trained_filenames: Two element tuple containing respectively the name of the .json of the file where to save the DNN and the .h5 where to store its weigths.
     :type trained_filenames: tuple[str]
@@ -130,13 +132,15 @@ def eval_dnn(dnn, eval_set, flag_data=True,
 
 def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         vars=default_vars(), n_mc=560000, n_data=50000, test_split=0.2,
-        settings=DnnSettings(), efficiency=0,
+        settings=DnnSettings(), efficiency=0.9,
         load=False, trained_filenames=('deepnn.json', 'deepnn.h5'),
         savefigs=False, figpath='', fignames=("", "", "", "")):
     """
-    Trains or loads a deep neural network and uses it to estimate the fraction \'f\' of Kaons in the mixed dataset. To do that, a previous evaluation of the dnn on the \"testing dataset\" with a fixed value of efficiency is required. If the given value of efficiency is zero, an algorithm maximizes the Figure of Merit (FOM) defined by the inverse of the (absolute) difference between the evaluated fraction of kaons in the testing dataset and the expected one (that is known since the testing dataset's events hold the flag indicating their specie)
+    Trains or loads a deep neural network and uses it to estimate the fraction
+    \'f\' of Kaons in the mixed dataset. To do that, an evaluation of the dnn
+    on the "testing dataset" with a fixed value of efficiency is required
 
-    :param source: Two element tuple containing the options for how to build the datasets for the DNN and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt, the second element of source must be a tuple containing two .txt paths, one relative to the training set and the other to the set to be evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths, containing the "background" sample (flag=0), the "signal" one (flag=1) and the mixed one, in this order.
+    :param source: Two element tuple containing the options for how to build the datasets for the DNN and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt, the second element of source must be a tuple containing two .txt paths, one relative to the training set and the other to the set to be evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths, for the "background" sample (flag=0), the "signal" sample (flag=1) and the mixed one, in this order.
     :type source: tuple[{'root','txt'},tuple[str]]
     :param root_tree: In case of 'root' source, the name of the tree from which to load variables.
     :type root_tree: str
@@ -146,24 +150,24 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     :type n_mc: int
     :param n_data: In case of 'root' source, number of events to take from the root file for the mixed set.
     :type n_data: int
+    :param test_split: Fraction of the array containing the template events to be used for the testing
+    :type test_split: float
     :param settings: DnnSettings instance with the settings for the generation of the DNN.
     :type settings: utilities.import_datasets.DnnSettings class instance
     :param load: If ``True``, instead of training a new DNN, it loads it from the files given in "trained_model".
     :type load: bool
     :param trained_filenames: Two element tuple containing respectively the name of the .json and .h5 files from which to load the DNN structure and weights, if load=``True``.
     :type trained_filenames: tuple[str]
-    :param efficiency: Sensitivity required from the test. If efficiency=0 (default), the F.o.M. is maximixed
+    :param efficiency: Sensitivity required from the test
     :type efficiency: float
     :param savefigs: If ``True``, saves the training history (if the DNN was not loaded) and the histograms of the evaluation results on the training and mixed datasets.
     :type savefigs: bool
-    :param stat_split: How many parts to split the dataset in, to study the distribution of the fraction estimated with this test
-    :type stat_split: int
     :param figpath: Path where to save the figures (in case savefigs=``True``)
     :type figpath: str
     :param fignames: Four element tuple containing the figure names (in case savefigs=``True``) for: DNN training history figure, evaluated training species figures, evaluated mixed dataset figure.
     :type fignames: tuple[str]
-    :return: Tuple of numpy arrays, containing the evaluated background set, the evaluated signal set and the evaluated data set (in this order).
-    :rtype: tuple[numpy.array[float]]
+    :return: Estimated fraction of Kaons (with uncertainties), parameters of the test algorithm and arrays containing the DNN evaluation of the testing array (divided for species)
+    :rtype: tuple[float], tuple[float], tuple[numpy.array[float]]
 
     """
     try:
@@ -224,7 +228,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     used_eff = 0
     FOM = 0
 
-    if efficiency == 0:  # Enambels FOM maximization
+    if efficiency == 0:  # Enables FOM maximization
         efficiencies = np.linspace(0.5, 0.9999, 100)
         for eff in efficiencies:
             tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, eff)
@@ -256,7 +260,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     fraction = ((data_eval > cut).sum()
                 / data_eval.size - misid)/(used_eff-misid)
 
-    df_stat = 0  # AGGIUNGERE QUI FUNZIONE PER LA INCERTEZZA STATISTICA
+    df_stat = stat_error(fraction, data_eval.size, used_eff, misid)
 
     df_syst = syst_error(
         fraction, (pi_eval.size, k_eval.size), used_eff, misid)

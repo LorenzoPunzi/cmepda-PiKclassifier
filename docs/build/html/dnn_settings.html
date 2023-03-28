@@ -38,31 +38,25 @@
 <dt class="sig sig-object py" id="utilities.dnn_settings.DnnSettings">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utilities.dnn_settings.</span></span><span class="sig-name descname"><span class="pre">DnnSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(75,</span> <span class="pre">60,</span> <span class="pre">45,</span> <span class="pre">30,</span> <span class="pre">20)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utilities/dnn_settings.html#DnnSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.dnn_settings.DnnSettings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class that stores the most important options for the keras DNN algorithm</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><dl class="simple">
-<dt>layers<span class="classifier">list or tuple</span></dt><dd><p>List of integers, that indicate the number of neurons in each
-internal dense layer</p>
-</dd>
-<dt>val_fraction<span class="classifier">float</span></dt><dd><p>Fraction of the training dataset used for validation</p>
-</dd>
-<dt>epochnum<span class="classifier">int</span></dt><dd><p>Number of epochs</p>
-</dd>
-<dt>learning_rate<span class="classifier">float</span></dt><dd><p>Value given as learning rate to Adam optimizer</p>
-</dd>
-<dt>batch_size<span class="classifier">int</span></dt><dd><p>Size of the batches in the dnn</p>
-</dd>
-<dt>dropout<span class="classifier">float</span></dt><dd><p>Drop probability in the AlphaDropout layer</p>
-</dd>
-<dt>verbose<span class="classifier">int</span></dt><dd><p>Control of what to print on shell during the training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layers</strong> (<em>tuple</em><em>[</em><em>int</em><em>]</em>) – Tuple of integers, that indicate the number of neurons in each internal dense layer</p></li>
+<li><p><strong>val_fraction</strong> (<em>float</em>) – Fraction of the training dataset used for validation</p></li>
+<li><p><strong>epochnum</strong> (<em>int</em>) – Number of epochs for the training</p></li>
+<li><p><strong>epochnum</strong> – Number of epochs for the training</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – Value given as learning rate to Adam optimizer</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Size of the batches used in the training</p></li>
+<li><p><strong>dropout</strong> (<em>float</em>) – Drop probability in the AlphaDropout layer</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Control of what to print on shell during the training</p></li>
+</ul>
 </dd>
 </dl>
-</dd>
-</dl>
-<p>Initializes the class instance with default values</p>
+<p>Constructor method</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="utilities.dnn_settings.DnnSettings.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(75,</span> <span class="pre">60,</span> <span class="pre">45,</span> <span class="pre">30,</span> <span class="pre">20)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utilities/dnn_settings.html#DnnSettings.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.dnn_settings.DnnSettings.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the class instance with default values</p>
+<dd><p>Constructor method</p>
 </dd></dl>
 
 <dl class="py property">
@@ -135,6 +129,8 @@ internal dense layer</p>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="merge_variables.html">merge_variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_import_datasets.html">test_import_datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_utils.html">test_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_var_cut.html">test_var_cut</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deepnn.html">deepnn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dtc.html">dtc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_fit.html">template_fit</a></li>

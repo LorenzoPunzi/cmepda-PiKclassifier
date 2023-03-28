@@ -25,25 +25,18 @@ def KS_optimization(v_pi, v_k, parlims=(-20, 20), n_try=1001):
     Performs different attempts of variable mixing, using mix_function(),
     calculating for each case the Kolmogorov-Smirnov statistic.
 
-    Parameters:
-        v_pi : numpy array
-            Two-column array containing the variables to be mixed, taken
-            from the Pion MC dataset
-        v_k : numpy array
-            Two-column array containing the variables to be mixed, taken
-            from the Kaon MC dataset
-        parlims : tuple
-            Limits of the parameter \'m\' where to apply the algorithm
-        n_try : int
-            Number of attempts of the algorithm
+    :param v_pi: Two-column array containing the variables to be mixed, taken from the Pion template dataset
+    :type v_pi: numpy.array
+    :param v_k: Two-column array containing the variables to be mixed, taken from the Kaon template dataset
+    :type v_k: numpy.array
+    :param parlims : Limits of the parameter "m" where to apply the algorithm
+    :type parlims: tuple[float]
+    :param n_try: Number of attempts of the algorithm
+    :type n_try: int
+    :return: The maximum value found of the KS statistic and the corresponding value of "m"
+    :rtype: float, float
 
-    Returns:
-        max_stat : float
-            Maximum value of the Kolmogorov-Smirnov statistic found
-        selected_m : float
-            Value of \'m\' corresponding to the maximum KS statistic value
     """
-
     pars = np.linspace(parlims[0], parlims[1], n_try)
     ks_stats = np.zeros(n_try)
     idx_sel = 0
@@ -61,35 +54,27 @@ def KS_optimization(v_pi, v_k, parlims=(-20, 20), n_try=1001):
     return max_stat, selected_m
 
 
-def mergevar(filepaths, tree, vars, savefig=False, savetxt=False):
+def mergevar(filepaths=default_rootpaths(), tree='tree;1',
+             vars=('M0_MKpi', 'M0_MpiK'), savefig=False, savetxt=False):
     """
     Function that takes two variables stored in TTrees and mixes them to create
     a new feature, by using the algorithm defined implemented previously in
     this module. This feature is then computed for both the MCs and for data
     and stored in 3 arrays, returned by the function.
 
-    Parameters:
-        filepaths : tuple
-            Paths (with name) of the root files where the variables are stored.
-            It must include both the MC files for Pi and K and the mixed data
-            file, in this order
-        tree : string
-            Tree containing the datasets (is the same for both the files)
-        vars : tuple
-            Couple of variables that are going to be merged
-        savefig, savetxt : bool
-            Flags that allow to save the figure of the distributions of the new
-            variable and to save on .txt files the new datasets
-            Default: False
+    :param filepaths: Tuple containing three .root file paths, for the "background" sample (flag=0), the "signal" sample (flag=1) and the mixed one, in this order.
+    :type filepaths: tuple[str]
+    :param tree: Name of the tree from which to load
+    :type tree: str
+    :param vars: Couple of variables that are going to be merged
+    :type vars: tuple
+    :param savefig: If ``True`` the figure of the new variable's distribution is saved
+    :type savefig: bool
+    :param savetxt: If ``True`` the array containing the new variable's events is saved as .txt file
+    :type savetxt: bool
+    :return: A tuple con containing the three sets of the new variable; a tuple with the value retrieved by KS_optimization() and the KS statistic of the original variables; the parameter "m" which the original variables were merged with
+    :rtype: tuple[numpy.array], tuple[float], float
 
-    Returns:
-        merged_arr : tuple
-            Tuple containing the three sets of the new variable
-        ks_stats : tuple
-            Value of the Kolmogorov-Smirnov retrieved by KS_optimization() and
-            values of the KS statistic for the original values
-        m : float
-            Value of \'m\' which the original variables were merged with
     """
 
     if len(filepaths) != 3:
