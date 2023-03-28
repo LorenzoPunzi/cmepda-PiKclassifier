@@ -98,3 +98,15 @@ class IncorrectNumGenError(ValueError):
             " values: make sure that the toyMC files contain a sufficient" \
             " number of events and lower the values of these two inputs!"
         super().__init__(self.message)
+
+
+class IncorrectEfficiencyError(ValueError):
+    """
+    Exception that gives an error if the given value of efficiency is not in
+    the physical interval [0,1]
+    """
+
+    def __init__(self):
+        self.message = "Incorrect value of efficiency given. Make sure it is"
+        "included in the range [0,1]"
+        super().__init__(self.message)

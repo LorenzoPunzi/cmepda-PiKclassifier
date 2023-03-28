@@ -22,7 +22,7 @@ import argparse
 import time
 import numpy as np
 from random import randint
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from machine_learning.deepnn import dnn
 from machine_learning.dtc import dt_classifier
 from template_fit.template_fit import fit_mc_template, global_fit
@@ -31,7 +31,7 @@ from utilities.cornerplot import overlaid_cornerplot
 from utilities.gen_from_toy import gen_from_toy
 from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_resultsdir, \
-                            default_vars, find_cut, roc, plot_rocs
+                            default_vars, roc, plot_rocs
 from var_cut.var_cut import var_cut
 import warnings
 
@@ -84,7 +84,7 @@ parser_gen = subparsers.add_parser(
 parser_gen.add_argument('-rpt', '--rootpaths_toy', nargs=2, default=default_toyMC_path,
                         help='Path of the toyMC root files taken as input')
 
-parser_gen.add_argument('-ndat', '--num_events', nargs=2, default=[0,0], type=int,
+parser_gen.add_argument('-ndat', '--num_events', nargs=2, type=int, default=[0, 0],
                         help='Number of events in each MC dataset and in the mixed one (in this order)')
 
 parser_gen.add_argument('-f', '--fraction', type=float, default=0.42,
@@ -107,7 +107,7 @@ parser_an.add_argument('-ld', '--load_dnn', action='store_true',
                        help='Loads DNN model and weights saved as .json and .h5 files')
 
 parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
-                       help='Variable(s) on which cut evaluation is performed')
+                       help='Variable(s) on which "variable cut" analysis is performed')
 '''
 parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
                        help='Flag(s) that select the inverse mode to perform the variable(s) cut analysis')
@@ -115,8 +115,8 @@ parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
 parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
-parser_an.add_argument('-su', '--stat_uncertainties', action='store_true',
-                       help='Performs the statistical analysis for the methods selected')
+parser_an.add_argument('-fom', '--fom_optimization', action='store_true',
+                       help='Performs FOM optimization instead of using a fixed efficiency value')
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,9 +177,10 @@ if args.cornerplot is True:
 
 
 if hasattr(args, "methods"):
-    # Initialize a list with the requesteds method of analysis, also removing
-    # duplicates
+    fractions_list = []
     SINGULAR_ROCS = True
+    # Initialize a list with the requesteds method of analysis, also removing
+    # duplicates.
     if 'all' in args.methods:
         analysis = ['all']
         SINGULAR_ROCS = False
@@ -211,7 +212,6 @@ if hasattr(args, "methods"):
             FIGNAME_TEMPL_K = 'Template_fit_K.pdf'
             FIGNAME_GLOBAL = 'Template_fit_Data.pdf'
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            t0 = time.time()
             method_title = 'Template fit with ROOT'
             with open(results_file, encoding='utf-8', mode='a') as file_tfit:
                 file_tfit.write(f'\n\n  {method_title}: \n')
@@ -236,24 +236,25 @@ if hasattr(args, "methods"):
                              histo_lims=histo_lims, savefig=figures,
                              img_name=f'{respath}/{FIGNAME_GLOBAL}')
 
+            fr = (res.Parameters()[1], res.Errors()[1], 0.002)
+            fractions_list.append(fr)
+
             add_result(
                 "K fraction", f'{res.Parameters()[1]} +- {res.Errors()[1]}')
             add_result("Chi2", res.Chi2())
             add_result("Probability", res.Prob())
-            t1 = time.time()
             print(
-                f'  {method_title} - ended successfully in {t1-t0} s \n\n')
+                f'  {method_title} - ended successfully')
 
         if opt in ["dnn", "all"]:
             # ~~~~~~~~ Setup of the DNN - free to edit ~~~~~~~~~~~~~~~~~~~~~~~
-            settings = DnnSettings()
-            settings.layers = (75, 60, 45, 30, 20)
-            # settings.val_fraction = 0.5
-            settings.batch_size = 128
-            settings.epochnum = 600
-            settings.verbose = 2
-            settings.dropout = 0
-            settings.learning_rate = 1e-4
+            LAYERS = (75, 60, 45, 30, 20)
+            VALIDATION_FRACTION = 0.5
+            BATCH_SIZE = 128
+            EPOCHNUM = 600
+            LEARNING_RATE = 1e-4
+            DROPOUT = 0
+            VERBOSE = 2
             MODEL_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.json'
             WEIGHTS_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.h5'
             INVERSE = False
@@ -267,12 +268,18 @@ if hasattr(args, "methods"):
                 file_dnn.write(f'\n\n  {method_title}: \n')
             print(f'\n  {method_title} - working...\n')
 
+            settings = DnnSettings(layers=LAYERS, val_fraction=VALIDATION_FRACTION,
+                                   epochnum=EPOCHNUM, learning_rate=LEARNING_RATE,
+                                   batch_size=BATCH_SIZE, dropout=DROPOUT, verbose=VERBOSE)
+
             fr, stats, eval_test = dnn(
                 source=('root', filepaths), root_tree=tree,
                 vars=args.variables, settings=settings, load=args.load_dnn,
                 trained_filenames=(MODEL_FILE, WEIGHTS_FILE),
                 efficiency=args.efficiency,
                 savefigs=figs, figpath=respath, fignames=fignames)
+
+            fractions_list.append(fr)
 
             rocx_dnn, rocy_dnn, auc_dnn = roc(
                 eval_test[0], eval_test[1], eff=stats[2], inverse_mode=INVERSE,
@@ -308,6 +315,8 @@ if hasattr(args, "methods"):
                 min_leaf_samp=ML_SAMP, crit=CRIT,
                 print_tree=f'{respath}/{PRINTED_TREE_FILE}', figpath=respath)
 
+            fractions_list.append(fr)
+
             if SINGULAR_ROCS is not True:
                 x_pnts.append(stats[1])
                 y_pnts.append(stats[0])
@@ -326,10 +335,10 @@ if hasattr(args, "methods"):
             figure_cut = args.figures
             figure_roc = bool(args.figures*SINGULAR_ROCS)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            type_title = 'Cut on Variables Distribution'
+            method_title = 'Cut on Variables Distribution'
             with open(results_file, encoding='utf-8', mode='a') as file_vcut:
-                file_vcut.write(f'\n\n  {type_title}: \n')
-            print(f'\n  {type_title} - working...\n')
+                file_vcut.write(f'\n\n  {method_title}: \n')
+            print(f'\n  {method_title} - working...\n')
 
             rocx_vcut, rocy_vcut, labels_vcut = [], [], []
 
@@ -339,6 +348,8 @@ if hasattr(args, "methods"):
                     rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
                     inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
                     savefig=figure_cut, figpath=respath)
+
+                fractions_list.append(fr)
 
                 rocx, rocy, auc = roc(
                     eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
@@ -354,7 +365,7 @@ if hasattr(args, "methods"):
                     rocx_array.append(rocx)
                     rocy_array.append(rocy)
                     roc_labels.append(f'{vc}')
-            print(f"\n  {type_title} - ended successfully! \n\n")
+            print(f"\n  {method_title} - ended successfully! \n\n")
 
     if SINGULAR_ROCS is not True:
         for i in range(len(roc_labels)):
@@ -363,7 +374,45 @@ if hasattr(args, "methods"):
         plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
                   tuple(roc_linestyles), tuple(roc_colors),
                   x_pnts=x_pnts, y_pnts=y_pnts, point_labels=point_labels,
-                  eff=args.efficiency, figtitle='ROCs', figname=f'{respath}/ROCs.png')
+                  eff=args.efficiency, figtitle='ROCs',
+                  figname=f'{respath}/ROCs.png')
+
+    if args.figures is True:
+        if 'all' in analysis:
+            analysis = ['tfit', 'dnn', 'dtc', 'vcut']
+        npts = len(fractions_list)
+        print(npts)
+        y = np.linspace(0.25, 0.75, npts)
+        idx = 0
+        fig = plt.figure(999)
+        plt.title("K fraction estimates")
+        plt.xlabel("Fraction")
+        plt.ylim(0, 1)
+        plt.yticks(y, analysis)
+        plt.xlim(0.39, 0.5)
+
+        for fr in fractions_list:
+
+            lwdth_stat = 1 if fr[2] <= fr[1] else 2
+            lwdth_syst = 1 if fr[1] <= fr[2] else 2
+
+            plt.plot(fr[0], y[idx], color='black', marker='o')
+            plt.errorbar(fr[0], y[idx], 0, fr[1], fmt='',
+                         ecolor='blue', elinewidth=lwdth_stat)
+
+            plt.errorbar(fr[0], y[idx], 0, fr[2], fmt='',
+                         ecolor='green', elinewidth=lwdth_syst)
+            idx += 1
+        plt.plot([], [], marker='', linestyle='-',
+                 color='blue', label="Stat. error bars")
+        plt.plot([], [], marker='', linestyle='-',
+                 color='green', label="Syst. error bars")
+        plt.axvline(x=0.42, linestyle='--', color='red',
+                    label='True K fraction')
+
+        plt.draw()
+        plt.legend()
+        plt.savefig(f'{respath}/fractions.png')
 
 
 print("END OF FILE")
