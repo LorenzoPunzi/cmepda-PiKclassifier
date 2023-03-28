@@ -9,8 +9,8 @@ from var_cut.var_cut import var_cut
 
 current_dir = os.path.dirname(__file__)
 
-path_A = os.path.join(current_dir, 'dummy/dummy_A.root')
-path_B = os.path.join(current_dir, 'dummy/dummy_B.root')
+path_A = os.path.join(current_dir, 'dummy/dummy_A.root') # uniformly distributed between 0 and 1.0
+path_B = os.path.join(current_dir, 'dummy/dummy_B.root') # uniformly distributed between 0.5 and 1.5
 
 
 class TestVarCut(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestVarCut(unittest.TestCase):
         efficiency = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=0.90, inverse_mode=False, specificity_mode=False, draw_fig=False)
+                                eff=efficiency, inverse_mode=False, specificity_mode=False, draw_fig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -44,7 +44,7 @@ class TestVarCut(unittest.TestCase):
         efficiency = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=0.90, inverse_mode=True, specificity_mode=False, draw_fig=False)
+                                eff=efficiency, inverse_mode=True, specificity_mode=False, draw_fig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -66,7 +66,7 @@ class TestVarCut(unittest.TestCase):
         efficiency = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=0.90, inverse_mode=False, specificity_mode=True, draw_fig=False)
+                                eff=efficiency, inverse_mode=False, specificity_mode=True, draw_fig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -74,8 +74,8 @@ class TestVarCut(unittest.TestCase):
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
         print('SPECIFICITY')
-        print(f'efficiency = {misid}')
-        print(f'misid = {1-efficiency}')
+        print(f'efficiency = {efficiency}')
+        print(f'misid = {misid}')
         print(f'cut = {cut}')
         print(f'fract = {fr[0]}')
         print('**********\n\n\n\n')
@@ -88,7 +88,7 @@ class TestVarCut(unittest.TestCase):
         efficiency = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=0.90, inverse_mode=True, specificity_mode=True, draw_fig=False)
+                                eff=efficiency, inverse_mode=True, specificity_mode=True, draw_fig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -96,8 +96,8 @@ class TestVarCut(unittest.TestCase):
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
         print('SPECIFICITY+INVERSE')
-        print(f'efficiency = {misid}')
-        print(f'misid = {1-efficiency}')
+        print(f'efficiency = {efficiency}')
+        print(f'misid = {misid}')
         print(f'cut = {cut}')
         print(f'fract = {fr[0]}')
         print('**********\n\n\n\n')
@@ -110,7 +110,7 @@ class TestVarCut(unittest.TestCase):
         efficiency = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=0.90, inverse_mode=True, specificity_mode=False, draw_fig=False)
+                                eff=efficiency, inverse_mode=True, specificity_mode=False, draw_fig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
