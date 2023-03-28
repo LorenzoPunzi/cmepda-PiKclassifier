@@ -245,7 +245,7 @@ def stat_error(fraction, data_size, eff, misid):
     d_Nk = data_size*fraction*eff*(1-eff)
     d_Npi = data_size*(1-fraction)*misid*(1-misid)
 
-    d_frac = np.sqrt((d_Nk+d_Npi)/data_size)/(eff-misid)
+    d_frac = np.sqrt(d_Nk+d_Npi)/(data_size*(eff-misid))
 
     return d_frac
 
