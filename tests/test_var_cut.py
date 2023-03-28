@@ -19,109 +19,94 @@ class TestVarCut(unittest.TestCase):
         Test var_cut() with a two uniformly distributed histograms
         """
         rootpaths = (path_A, path_B, path_A)
-        efficiency = 0.9
+        eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=efficiency, inverse_mode=False, specificity_mode=False, draw_fig=False)
+                                eff=eff, inverse_mode=False, specificity_mode=False, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
 
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
-        print('NORMAL')
-        print(f'efficiency = {efficiency}')
-        print(f'misid = {misid}')
-        print(f'cut = {cut}')
-        print(f'fract = {fr[0]}')
-        print('**********\n\n\n\n')
+        self.assertAlmostEqual(efficiency, eff, delta=1e-3)
+        self.assertAlmostEqual(misid, 0.4, delta=1e-3)
+        self.assertAlmostEqual(cut, 0.6, delta=1e-3)
 
     def test_uniform_inverse(self):
         """
         Test var_cut() with a two uniformly distributed histograms in inverse mode
         """
         rootpaths = (path_B, path_A, path_B)
-        efficiency = 0.9
+        eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=efficiency, inverse_mode=True, specificity_mode=False, draw_fig=False)
+                                eff=eff, inverse_mode=True, specificity_mode=False, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
 
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
-        print('INVERSE')
-        print(f'efficiency = {efficiency}')
-        print(f'misid = {misid}')
-        print(f'cut = {cut}')
-        print(f'fract = {fr[0]}')
-        print('**********\n\n\n\n')
+        self.assertAlmostEqual(efficiency, eff, delta=1e-3)
+        self.assertAlmostEqual(misid, 0.4, delta=1e-3)
+        self.assertAlmostEqual(cut, 0.9, delta=1e-3)
 
     def test_uniform_specificity(self):
         """
         Test var_cut() with a two uniformly distributed histograms in specificity mode
         """
         rootpaths = (path_A, path_B, path_A)
-        efficiency = 0.9
+        eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=efficiency, inverse_mode=False, specificity_mode=True, draw_fig=False)
+                                eff=eff, inverse_mode=False, specificity_mode=True, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
 
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
-        print('SPECIFICITY')
-        print(f'efficiency = {efficiency}')
-        print(f'misid = {misid}')
-        print(f'cut = {cut}')
-        print(f'fract = {fr[0]}')
-        print('**********\n\n\n\n')
+        self.assertAlmostEqual(efficiency, 0.6, delta=1e-3)
+        self.assertAlmostEqual(misid, 1-eff, delta=1e-3)
+        self.assertAlmostEqual(cut, 0.9, delta=1e-3)
 
     def test_uniform_inverse_specificity(self):
         """
         Test var_cut() with a two uniformly distributed histograms in inverse and specificity mode
         """
         rootpaths = (path_B, path_A, path_B)
-        efficiency = 0.9
+        eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=efficiency, inverse_mode=True, specificity_mode=True, draw_fig=False)
+                                eff=eff, inverse_mode=True, specificity_mode=True, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
 
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
-        print('SPECIFICITY+INVERSE')
-        print(f'efficiency = {efficiency}')
-        print(f'misid = {misid}')
-        print(f'cut = {cut}')
-        print(f'fract = {fr[0]}')
-        print('**********\n\n\n\n')
+        self.assertAlmostEqual(efficiency, 0.6, delta=1e-3)
+        self.assertAlmostEqual(misid, 1-eff, delta=1e-3)
+        self.assertAlmostEqual(cut, 0.6, delta=1e-3)
 
     def test_uniform_false_inverse(self):
         """
-        Test var_cut() with a two uniformly distributed histograms in inverse and specificity mode
+        Test var_cut() with a two uniformly distributed histograms when inverse mode is given but should not be
         """
         rootpaths = (path_A, path_B, path_A)
-        efficiency = 0.9
+        eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=efficiency, inverse_mode=True, specificity_mode=False, draw_fig=False)
+                                eff=eff, inverse_mode=True, specificity_mode=False, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
         self.assertGreaterEqual(efficiency, misid)
         self.assertAlmostEqual(fr[0], 0, delta=1e-3)
-        print('FALSE INVERSE')
-        print(f'efficiency = {efficiency}')
-        print(f'misid = {misid}')
-        print(f'cut = {cut}')
-        print(f'fract = {fr[0]}')
-        print('**********\n\n\n\n')
+        self.assertAlmostEqual(efficiency, eff, delta=1e-3)
+        self.assertAlmostEqual(misid, 0.4, delta=1e-3)
+        self.assertAlmostEqual(cut, 0.6, delta=1e-3)
 
 
 if __name__ == '__main__':

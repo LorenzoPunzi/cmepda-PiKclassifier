@@ -52,9 +52,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
 
     if (specificity_mode is not True and misid > eff) or \
             (specificity_mode is True and 1 - eff > misid):
-        msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in \
-        var_cut, but the test is not unbiased this way, switching \
-        to inverse_mode = {not inverse_mode}'
+        msg = f'***WARNING*** \ninverse mode was called as {inverse_mode} in var_cut, but the test is not unbiased this way, switching to inverse_mode = {not inverse_mode}'
         warnings.warn(msg, stacklevel=2)
         inverse_mode = not inverse_mode
         cut, misid = find_cut(var_pi, var_k, eff, inverse_mode=inverse_mode,
