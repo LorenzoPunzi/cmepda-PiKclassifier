@@ -19,7 +19,6 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     Generates mixed signal+background datasets to be analysed, starting from root files of
     toyMC events of background only and sognal only processes.
 
-
     :param filepaths_in: 2 element tuple with path to the toyMC, first being backgorund, the second being signal species.
     :type filepaths_in: list[str] or tuple[str]
     :param filepaths_out: Three element tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix to be generated.
@@ -32,8 +31,9 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     :type num_data: int
     :param fraction: Ideal fraction of signal events in the generated mixed sample. Actual fraction will be different if fraction*num_data is not an integer.
     :type fraction: double
-    :param vars: List or tuple of variables to export from the toyMC files 
+    :param vars: List or tuple of variables to export from the toyMC files
     :type vars: list[str] or tuple[str]
+    
     """
 
     if tree.endswith(";1"):
