@@ -13,8 +13,10 @@ sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
+autodoc_mock_imports = ['ROOT']
 
 project = 'cmepda-PiKclassifier'
 copyright = '2023, Ruben Forti and Lorenzo Punzi'
