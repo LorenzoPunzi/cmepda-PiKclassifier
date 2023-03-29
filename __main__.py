@@ -69,7 +69,7 @@ parser.add_argument('-v', '--variables', nargs='+', default=default_vars(),
 parser.add_argument('-fig', '--figures', action='store_true',
                     help='Saves the generated figures')
 
-parser.add_argument('-rd', '--resdir', default=default_resultsdir(dir='cmepda-PiKclassifier/outputs_main'),
+parser.add_argument('-rd', '--resdir', default=default_resultsdir(dir='cmepda-PiKclassifier/outputs_main'),  # 'PiKclassifier_results'
                     help='Directory where to save the results')
 
 parser.add_argument('-cr', '--cornerplot', action='store_true',
@@ -202,51 +202,44 @@ if hasattr(args, "methods"):
 
     for opt in analysis:
 
-        if opt in ["tfit", "all"]:
-            # ~~~~~~~~ Setup of the template fit - free to edit ~~~~~~~~~~~~~~
-            NBINS_HISTO = 1000
-            histo_lims = (5.0, 5.6)  # Limits of the histograms
-            fit_range = (5.02, 5.42)  # Range where the templates are fitted
-            p0_pi = (1e5, 0.16, 5.28, 0.08, 5.29, 0.04)
-            p0_k = (1e5, 0.97, 1.6, 0.046, 5.30, 1.1, 5.27, 0.00045)
-            figures = args.figures
-            FIGNAME_TEMPL_PI = 'Template_fit_Pi.pdf'
-            FIGNAME_TEMPL_K = 'Template_fit_K.pdf'
-            FIGNAME_GLOBAL = 'Template_fit_Data.pdf'
+        if opt in ["vcut", "all"]:
+            # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
+            INVERSE = True
+            SPECIFICITY = False
+            figure_cut = args.figures
+            figure_roc = bool(args.figures*SINGULAR_ROCS)
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            method_title = 'Template fit with ROOT'
-            with open(results_file, encoding='utf-8', mode='a') as file_tfit:
-                file_tfit.write(f'\n\n  {method_title}: \n')
-            print(f'\n {method_title} - working...\n')
-            var = args.var_fit
+            method_title = 'Cut on Variables Distribution'
+            with open(results_file, encoding='utf-8', mode='a') as file_vcut:
+                file_vcut.write(f'\n\n  {method_title}: \n')
+            print(f'\n  {method_title} - working...\n')
 
-            templ_pars_pi = fit_mc_template(
-                filepaths[0], args.tree, var,
-                DoubleGaussian(fit_range, pars=p0_pi),
-                Nbins=NBINS_HISTO, histo_lims=histo_lims,
-                histo_title=f'{var} distribution (B0->PiPi MC)',
-                savefig=figures, img_name=f'{respath}/{FIGNAME_TEMPL_PI}')
-            templ_pars_k = fit_mc_template(
-                filepaths[1], args.tree, var,
-                GaussJohnson(fit_range, pars=p0_k),
-                Nbins=NBINS_HISTO, histo_lims=histo_lims,
-                histo_title=f'{var} distribution (B0s->KK MC)',
-                savefig=figures, img_name=f'{respath}/{FIGNAME_TEMPL_K}')
+            rocx_vcut, rocy_vcut, labels_vcut = [], [], []
 
-            res = global_fit(filepaths[2], args.tree, var, Nbins=NBINS_HISTO,
-                             pars_mc1=templ_pars_k, pars_mc2=templ_pars_pi,
-                             histo_lims=histo_lims, savefig=figures,
-                             img_name=f'{respath}/{FIGNAME_GLOBAL}')
+            print(args.var_cut)
+            for vc in [args.var_cut]:
+                fr, stats, eval_arr = var_cut(
+                    rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
+                    inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
+                    savefig=figure_cut, figpath=respath)
 
-            fr = (res.Parameters()[1], res.Errors()[1], 0.002)
-            fractions_list.append(fr)
+                fractions_list.append(fr)
 
-            add_result(
-                "K fraction", f'{res.Parameters()[1]} +- {res.Errors()[1]}')
-            add_result("Chi2", res.Chi2())
-            add_result("Probability", res.Prob())
-            print(
-                f'  {method_title} - ended successfully')
+                rocx, rocy, auc = roc(
+                    eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
+                    makefig=figure_roc, name=f'{respath}/ROC_{vc}_cut')
+
+                add_result(
+                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc)
+                add_result("Efficiency", stats[0], vc)
+                add_result("Misid", stats[1], vc)
+                add_result("Cut", stats[2], vc)
+                add_result("AUC", auc, vc)
+                if SINGULAR_ROCS is not True:
+                    rocx_array.append(rocx)
+                    rocy_array.append(rocy)
+                    roc_labels.append(f'{vc}')
+            print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dnn", "all"]:
             # ~~~~~~~~ Setup of the DNN - free to edit ~~~~~~~~~~~~~~~~~~~~~~~
@@ -330,44 +323,51 @@ if hasattr(args, "methods"):
             add_result("Misid", stats[1])
             print(f'\n  {method_title} - ended successfully! \n\n')
 
-        if opt in ["vcut", "all"]:
-            # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
-            INVERSE = True
-            SPECIFICITY = False
-            figure_cut = args.figures
-            figure_roc = bool(args.figures*SINGULAR_ROCS)
+        if opt in ["tfit", "all"]:
+            # ~~~~~~~~ Setup of the template fit - free to edit ~~~~~~~~~~~~~~
+            NBINS_HISTO = 1000
+            histo_lims = (5.0, 5.6)  # Limits of the histograms
+            fit_range = (5.02, 5.42)  # Range where the templates are fitted
+            p0_pi = (1e5, 0.16, 5.28, 0.08, 5.29, 0.04)
+            p0_k = (1e5, 0.97, 1.6, 0.046, 5.30, 1.1, 5.27, 0.00045)
+            figures = args.figures
+            FIGNAME_TEMPL_PI = 'Template_fit_Pi.pdf'
+            FIGNAME_TEMPL_K = 'Template_fit_K.pdf'
+            FIGNAME_GLOBAL = 'Template_fit_Data.pdf'
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            method_title = 'Cut on Variables Distribution'
-            with open(results_file, encoding='utf-8', mode='a') as file_vcut:
-                file_vcut.write(f'\n\n  {method_title}: \n')
-            print(f'\n  {method_title} - working...\n')
+            method_title = 'Template fit with ROOT'
+            with open(results_file, encoding='utf-8', mode='a') as file_tfit:
+                file_tfit.write(f'\n\n  {method_title}: \n')
+            print(f'\n {method_title} - working...\n')
+            var = args.var_fit
 
-            rocx_vcut, rocy_vcut, labels_vcut = [], [], []
+            templ_pars_pi = fit_mc_template(
+                filepaths[0], args.tree, var,
+                DoubleGaussian(fit_range, pars=p0_pi),
+                Nbins=NBINS_HISTO, histo_lims=histo_lims,
+                histo_title=f'{var} distribution (B0->PiPi MC)',
+                savefig=figures, img_name=f'{respath}/{FIGNAME_TEMPL_PI}')
+            templ_pars_k = fit_mc_template(
+                filepaths[1], args.tree, var,
+                GaussJohnson(fit_range, pars=p0_k),
+                Nbins=NBINS_HISTO, histo_lims=histo_lims,
+                histo_title=f'{var} distribution (B0s->KK MC)',
+                savefig=figures, img_name=f'{respath}/{FIGNAME_TEMPL_K}')
 
-            print(args.var_cut)
-            for vc in [args.var_cut]:
-                fr, stats, eval_arr = var_cut(
-                    rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
-                    inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
-                    savefig=figure_cut, figpath=respath)
+            res = global_fit(filepaths[2], args.tree, var, Nbins=NBINS_HISTO,
+                             pars_mc1=templ_pars_k, pars_mc2=templ_pars_pi,
+                             histo_lims=histo_lims, savefig=figures,
+                             img_name=f'{respath}/{FIGNAME_GLOBAL}')
 
-                fractions_list.append(fr)
+            fr = (res.Parameters()[1], res.Errors()[1], 0.002)
+            fractions_list.append(fr)
 
-                rocx, rocy, auc = roc(
-                    eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
-                    makefig=figure_roc, name=f'{respath}/ROC_{vc}_cut')
-
-                add_result(
-                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc)
-                add_result("Efficiency", stats[0], vc)
-                add_result("Misid", stats[1], vc)
-                add_result("Cut", stats[2], vc)
-                add_result("AUC", auc, vc)
-                if SINGULAR_ROCS is not True:
-                    rocx_array.append(rocx)
-                    rocy_array.append(rocy)
-                    roc_labels.append(f'{vc}')
-            print(f"\n  {method_title} - ended successfully! \n\n")
+            add_result(
+                "K fraction", f'{res.Parameters()[1]} +- {res.Errors()[1]}')
+            add_result("Chi2", res.Chi2())
+            add_result("Probability", res.Prob())
+            print(
+                f'  {method_title} - ended successfully')
 
     if SINGULAR_ROCS is not True:
         for i in range(len(roc_labels)):
