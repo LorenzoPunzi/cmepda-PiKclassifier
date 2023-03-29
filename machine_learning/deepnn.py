@@ -246,8 +246,6 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     else:
         used_eff = efficiency
 
-    print(used_eff, -df_opt)
-
     cut, misid = find_cut(pi_eval, k_eval, used_eff)
 
     if savefigs:
@@ -264,7 +262,9 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     df_syst = syst_error(
         fraction, (pi_eval.size, k_eval.size), used_eff, misid)
 
-    print(fraction, df_stat, df_syst)
+    print(f'y cut is {cut} for {used_eff} efficiency\n')
+    print(f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/pi_eval.size)} for {used_eff} efficiency\n')
+    print(f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
 
     fr = (fraction, df_stat, df_syst)
 

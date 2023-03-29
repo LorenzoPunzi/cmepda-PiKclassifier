@@ -99,8 +99,6 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     df_syst = syst_error(
         fraction, (pi_eval.size, k_eval.size), efficiency, misid)
 
-    print(df_syst)
-
     if print_tree:
         if print_tree.endswith('.txt') is not True:
             print_tree += '.txt'
@@ -110,10 +108,9 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
             file.write(f'Max depth = {max_depth} \n \n')
             file.write(tree_diagram)
 
-    print(f'Efficiency = {efficiency}')
-    print(f'Misidentification probability = {misid}')
-    # print(
-    #    f'The predicted K fraction is : {fraction} +- {dfrac} (syst)')
+    print(f'Efficiency is {efficiency} +- {np.sqrt(efficiency*(1-efficiency)/k_eval.size)}\n')
+    print(f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/pi_eval.size)}\n')
+    print(f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
 
     fr = (fraction, df_stat, df_syst)
 

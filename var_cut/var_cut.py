@@ -65,8 +65,6 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     else:
         used_eff = eff
 
-    print(used_eff, -df_opt)
-
     cut, misid = find_cut(var_pi, var_k, used_eff, inverse_mode=inverse_mode,
                           specificity_mode=specificity_mode)
 
@@ -111,9 +109,9 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
 
     fr = (fraction, df_stat, df_syst)
 
-    print(f'{cut_var} cut is {cut} for {used_eff} efficiency')
-    print(f'Misid is {misid} for {used_eff} efficiency')
-    print(f'The estimated fraction of K events is {fraction}')
+    print(f'{cut_var} cut is {cut} for {used_eff} efficiency\n')
+    print(f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/var_pi.size)} for {used_eff} efficiency\n')
+    print(f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
 
     algorithm_parameters = (used_eff, misid, cut)
 

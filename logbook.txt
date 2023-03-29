@@ -747,7 +747,6 @@ FINAL
 
 
 - FOM procedure
-- readme
 - input parameters exceptions
 - !!!! in code
 
