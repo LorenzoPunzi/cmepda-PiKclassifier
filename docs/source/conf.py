@@ -16,7 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
-autodoc_mock_imports = ['ROOT']
+autodoc_mock_imports = ['ROOT', 'keras']
 
 project = 'cmepda-PiKclassifier'
 copyright = '2023, Ruben Forti and Lorenzo Punzi'
