@@ -748,7 +748,11 @@ FINAL
 - requirements.txt ?
 - init.py
 - where to save outputs_main
-- general vs pion-kaon
+- general vs pion-kaon (template fit)
+- testing vs validation in dtc ???
+- chisq of template fit
+
+
 - eliminare logbook.txt dal package
 
 
