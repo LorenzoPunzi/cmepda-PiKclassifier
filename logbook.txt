@@ -745,7 +745,7 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 FINAL
 
-- requirements.txt ?
+
 - FOM procedure
 - readme
 - input parameters exceptions

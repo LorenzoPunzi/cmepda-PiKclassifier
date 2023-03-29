@@ -23,39 +23,34 @@ A brief description of what this project does and who it's for
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/LorenzoPunzi/cmepda-PiKclassifier.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd my-project
+  cd cmepda-PiKclassifier
 ```
 
-Install dependencies
+Install dependencies from inside the project directory
 
 ```bash
-  npm install
+  pip install -r requirements.txt
 ```
+!!!PLEASE NOTE!!! : ROOT is not in requirements.txt file but is needed to run the template fit module. The package works as of ROOT v6.26/10.
+Also, the requirements are NOT strict, meaning that former versions could potentially work.
 
-Start the server
+To run the package as a whole using the main with parser
 
 ```bash
-  npm run start
+  python cmepda-Pikclassifier [generic options] <subparser name> [subparser options]
 ```
-
+for example "python cmepda-Pikclassifier -fig analysis -m dnn dtc -ld"
 
 ## Running Tests
 
-To run tests, run the following command
+To run tests, run the following command inside the project directory
 
 ```bash
-  npm run test
+  python -m unittest discover -s tests
 ```
-
-
-
-
-
-
-CMEPDA Final assignment : Measuring the fraction of pions in a Pi-K mixed sample
