@@ -1,12 +1,12 @@
 """
 
 """
+import warnings
 import numpy as np
 from matplotlib import pyplot as plt
 from utilities.utils import default_rootpaths, default_figpath, \
-                            find_cut, roc, stat_error, syst_error
+                            find_cut, stat_error, syst_error
 from utilities.import_datasets import loadvars
-import warnings
 
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
@@ -46,7 +46,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
                              [cut_var], flag_column=False)
     var_data, _ = loadvars(rootpath_data, rootpath_data, tree,
                            [cut_var], flag_column=False)
-    
+
     used_eff = 0
     df_opt = -99999
 
@@ -54,10 +54,11 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
         efficiencies = np.linspace(0.25, 0.999, 200)
         for tmp_eff in efficiencies:
             tmp_cut, tmp_misid = find_cut(var_pi, var_k, tmp_eff, inverse_mode=inverse_mode,
-                          specificity_mode=False)
+                                          specificity_mode=False)
             tmp_frac = ((var_data < tmp_cut).sum()/var_data.size - tmp_misid)/(tmp_eff - tmp_misid) \
                 if inverse_mode else ((var_data > tmp_cut).sum()/var_data.size-tmp_misid)/(tmp_eff - tmp_misid)
-            tmp_dfopt = -np.sqrt(stat_error(tmp_frac,var_data.size,tmp_eff,tmp_misid)**2+syst_error(tmp_frac,(var_pi.size, var_k.size),tmp_eff,tmp_misid)**2)
+            tmp_dfopt = -np.sqrt(stat_error(tmp_frac, var_data.size, tmp_eff, tmp_misid)
+                                 ** 2+syst_error(tmp_frac, (var_pi.size, var_k.size), tmp_eff, tmp_misid)**2)
             if tmp_dfopt >= df_opt:
                 df_opt = tmp_dfopt
                 used_eff = tmp_eff
@@ -85,11 +86,12 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
                  color='red', label=cut_var + ' for Pions')
         plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=cut_var + ' for Kaons')
-        plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
-                    + str(used_eff)+' efficiency')
+        plt.axvline(x=cut, color='green',
+                    label=f'{cut_var} Cut for {used_eff} efficiency')
         plt.title(f'Varibale Cut on {cut_var}')
         plt.xlabel(cut_var)
-        plt.ylabel(f'Events per {(range[1]-range[0])/nbins} [{cut_var}]')
+        plt.ylabel(
+            f'Events per {round((range[1]-range[0])/nbins, 4)} [{cut_var}]')
         plt.legend()
         plt.draw()
         plt.savefig(default_figpath('cut_'+cut_var)) \

@@ -112,13 +112,14 @@ def eval_dnn(dnn, eval_set, flag_data=True,
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
 
-    if savefig and len(plot_opt) == 3:  # !!!! MAKE IT BETTER (E.G. KWARGS), if len!=3 what happens!!!
+    # !!!! MAKE IT BETTER (E.G. KWARGS), if len!=3 what happens!!!
+    if savefig and len(plot_opt) == 3:
         nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
         plt.hist(prediction_array, bins=nbins, histtype='step',
                  color=plot_opt[1], label=plot_opt[2])
-        plt.title(figname)
+        plt.title(plotname)
         plt.xlabel('y')
         plt.ylabel(f'Events per 1/{nbins}')
         plt.yscale('log')
@@ -224,7 +225,6 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
                       plot_opt=['Templ_eval', 'blue', 'Evaluated kaons'],
                       figname=f'{figpath}/{fignames[2]}')
 
-
     data_eval = eval_dnn(deepnn, data_set, flag_data=True, savefig=savefigs,
                          plot_opt=['Data_eval', 'blue', 'Evaluated data'],
                          figname=f'{figpath}/{fignames[3]}')
@@ -238,7 +238,8 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
             tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, tmp_eff)
             tmp_frac = ((data_eval > tmp_cut).sum()/data_eval.size
                         - tmp_misid)/(tmp_eff-tmp_misid)
-            tmp_dfopt = -np.sqrt(stat_error(tmp_frac,data_eval.size,tmp_eff,tmp_misid)**2+syst_error(tmp_frac,(pi_eval.size, k_eval.size),tmp_eff,tmp_misid)**2)
+            tmp_dfopt = -np.sqrt(stat_error(tmp_frac, data_eval.size, tmp_eff, tmp_misid)
+                                 ** 2+syst_error(tmp_frac, (pi_eval.size, k_eval.size), tmp_eff, tmp_misid)**2)
             if tmp_dfopt >= df_opt:
                 df_opt = tmp_dfopt
                 used_eff = tmp_eff
@@ -250,6 +251,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     cut, misid = find_cut(pi_eval, k_eval, used_eff)
 
     if savefigs:
+        plt.figure('Templ_eval')
         plt.axvline(x=cut, color='green', label=f'y cut for eff={used_eff}')
         plt.legend()
         plt.savefig(f'{figpath}/eval_Templates.png')

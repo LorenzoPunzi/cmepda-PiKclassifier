@@ -4,12 +4,6 @@
 
 
 
-  Template fit with ROOT: 
-    K fraction = 0.42700512132752055 +- 0.008168394644204834
-    Chi2 = 624.3738511983407
-    Probability = 0.8684596733192889
-
-
   Deep Neural Network: 
     K fraction = 0.4085 +- 0.0036 (stat) +- 0.0027 (syst)
     Efficiency = 0.9
@@ -18,15 +12,15 @@
     AUC = 0.8983684728634167
 
 
-  Decision Tree Classifier: 
-    K fraction = 0.4186 +- 0.0017 (stat) +- 0.001 (syst)
-    Efficiency = 0.9066919929865576
-    Misid = 0.09773831119433554
-
-
   Cut on Variables Distribution: 
     K fraction = 0.462 +- 0.0256 (stat) +- 0.0082 (syst)  |  M0_Mpipi 
     Efficiency = 0.9  |  M0_Mpipi 
     Misid = 0.8381485396481471  |  M0_Mpipi 
     Cut = 5.302145435297932  |  M0_Mpipi 
     AUC = 0.6344987262396837  |  M0_Mpipi 
+
+
+  Decision Tree Classifier: 
+    K fraction = 0.4182 +- 0.0017 (stat) +- 0.001 (syst)
+    Efficiency = 0.9060184507248499
+    Misid = 0.09769947157913175

@@ -57,6 +57,7 @@ def overlaid_cornerplot(filepaths=default_rootpaths(), tree='t_M0pipi;1',
     figure = corner.corner(
         array_tuple[0], bins=100, color=colors[0], labels=vars)
 
+    figure.suptitle("Corner-plot of some variables")
     for i in range(1, num):
         figure = corner.corner(array_tuple[i], bins=100, fig=figure,
                                color=colors[i+7], labels=vars)
@@ -74,10 +75,10 @@ if __name__ == '__main__':
     vars = default_vars()
     print(vars)
 
-    # variables = vars[:4]
+    variables = vars[:4]
     # variables = vars[7:]
     # variables = ['M0_p', 'h1_thetaC0', 'h1_thetaC1', 'h1_thetaC2']
-    variables = ['M0_p', 'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2']
+    # variables = ['M0_p', 'h2_thetaC0', 'h2_thetaC1', 'h2_thetaC2']
 
     overlaid_cornerplot((file_mc_pi, file_mc_k), tree, variables)
     plt.show()

@@ -174,6 +174,8 @@ if args.cornerplot is True:
                 vars=args.variables[ind:ind+4], figpath=respath)
             ind += 5
         overlaid_cornerplot(vars=args.variables[ind:], figpath=respath)
+    else:
+        overlaid_cornerplot(vars=args.variables, figpath=respath)
 
 
 if hasattr(args, "methods"):

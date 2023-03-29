@@ -155,6 +155,7 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
 
     """
     plt.figure(figtitle)
+    plt.title(figtitle)
     plt.xlabel('False Positive Probability')
     plt.xlim(0, 1)
     plt.ylabel('True Positive Probability')
