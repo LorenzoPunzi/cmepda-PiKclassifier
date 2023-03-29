@@ -746,9 +746,6 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 FINAL
 
 - requirements.txt ?
-- where to save outputs_main
-- general vs pion-kaon (template fit)
-- titoli figure 
 - FOM procedure
 - readme
 - input parameters exceptions
