@@ -87,10 +87,11 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
                  color='blue', label=cut_var + ' for Kaons')
         plt.axvline(x=cut, color='green', label=cut_var + ' Cut for '
                     + str(used_eff)+' efficiency')
-        plt.draw()
+        plt.title(f'Varibale Cut on {cut_var}')
         plt.xlabel(cut_var)
-        plt.ylabel(f'Events per {range[1]-range[0]/nbins} {cut_var}')
+        plt.ylabel(f'Events per {(range[1]-range[0])/nbins} [{cut_var}]')
         plt.legend()
+        plt.draw()
         plt.savefig(default_figpath('cut_'+cut_var)) \
             if figpath == '' else plt.savefig(figpath+'/cut_'+cut_var+'.png')
 

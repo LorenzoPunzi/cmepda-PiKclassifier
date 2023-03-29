@@ -68,6 +68,7 @@ def train_dnn(training_set, settings, savefig=True, figname='',
 
     if savefig:
         plt.figure('Losses')
+        plt.title('Loss History')
         plt.xlabel('Epoch')
         plt.ylabel('Binary CrossEntropy Loss')
         plt.plot(history.history['val_loss'], label='Validation Loss')
@@ -111,12 +112,13 @@ def eval_dnn(dnn, eval_set, flag_data=True,
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
 
-    if savefig and len(plot_opt) == 3:  # !!!! MAKE IT BETTER (E.G. KWARGS)
+    if savefig and len(plot_opt) == 3:  # !!!! MAKE IT BETTER (E.G. KWARGS), if len!=3 what happens!!!
         nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
         plt.hist(prediction_array, bins=nbins, histtype='step',
                  color=plot_opt[1], label=plot_opt[2])
+        plt.title(figname)
         plt.xlabel('y')
         plt.ylabel(f'Events per 1/{nbins}')
         plt.yscale('log')
