@@ -743,6 +743,10 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 
 
+FINAL
+
+- requirements.txt ?
+- eliminare logbook.txt dal package
 
 
 
