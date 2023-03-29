@@ -753,6 +753,8 @@ FINAL
 - chisq of template fit
 - titoli figure 
 - FOM procedure
+- readme
+
 
 
 - eliminare logbook.txt dal package
