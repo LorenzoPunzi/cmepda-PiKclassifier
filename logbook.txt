@@ -751,6 +751,8 @@ FINAL
 - general vs pion-kaon (template fit)
 - testing vs validation in dtc ???
 - chisq of template fit
+- titoli figure 
+- FOM procedure
 
 
 - eliminare logbook.txt dal package
