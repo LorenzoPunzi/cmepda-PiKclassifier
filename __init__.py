@@ -1,3 +1,3 @@
 """
-This is to make it a package
+This module serves to make this project a package
 """
