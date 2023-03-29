@@ -26,16 +26,10 @@ Clone the project
   git clone https://github.com/LorenzoPunzi/cmepda-PiKclassifier.git
 ```
 
-Go to the project directory
-
-```bash
-  cd cmepda-PiKclassifier
-```
-
 Install dependencies from inside the project directory
 
 ```bash
-  pip install -r requirements.txt
+  pip install -r cmepda-PiKclassifier/requirements.txt
 ```
 !!!PLEASE NOTE!!! : ROOT is not in requirements.txt file but is needed to run the template fit module. The package works as of ROOT v6.26/10.
 Also, the requirements are NOT strict, meaning that former versions could potentially work.

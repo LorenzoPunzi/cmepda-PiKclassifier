@@ -106,18 +106,17 @@ parser_an.add_argument('-vfit', '--var_fit', default='M0_Mpipi',
 parser_an.add_argument('-ld', '--load_dnn', action='store_true',
                        help='Loads DNN model and weights saved as .json and .h5 files')
 
-parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_Mpipi',
+parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_MKK',
                        help='Variable(s) on which "variable cut" analysis is performed')
-'''
-parser_an.add_argument('-inv', -'vcut_inverse', nargs='+', default=True,
+
+parser_an.add_argument('-inv', '--vcut_inverse', nargs='+', default=True,
                        help='Flag(s) that select the inverse mode to perform the variable(s) cut analysis')
-'''
+
 parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
 parser_an.add_argument('-fom', '--fom_optimization', action='store_true',
                        help='Performs FOM optimization instead of using a fixed efficiency value')
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -204,7 +203,7 @@ if hasattr(args, "methods"):
 
         if opt in ["vcut", "all"]:
             # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
-            INVERSE = True
+            INVERSE = args.vcut_inverse
             SPECIFICITY = False
             figure_cut = args.figures
             figure_roc = bool(args.figures*SINGULAR_ROCS)
@@ -216,29 +215,30 @@ if hasattr(args, "methods"):
 
             rocx_vcut, rocy_vcut, labels_vcut = [], [], []
 
-            print(args.var_cut)
-            for vc in [args.var_cut]:
+            vars = zip([args.var_cut], [args.vcut_inverse])
+
+            for vc in vars:
                 fr, stats, eval_arr = var_cut(
-                    rootpaths=filepaths, tree=tree, cut_var=vc, eff=args.efficiency,
-                    inverse_mode=INVERSE, specificity_mode=SPECIFICITY,
+                    rootpaths=filepaths, tree=tree, cut_var=vc[0], eff=args.efficiency,
+                    inverse_mode=vc[1], specificity_mode=SPECIFICITY,
                     savefig=figure_cut, figpath=respath)
 
                 fractions_list.append(fr)
 
                 rocx, rocy, auc = roc(
                     eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
-                    makefig=figure_roc, name=f'{respath}/ROC_{vc}_cut')
+                    makefig=figure_roc, name=f'{respath}/ROC_{vc[0]}_cut')
 
                 add_result(
-                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc)
-                add_result("Efficiency", stats[0], vc)
-                add_result("Misid", stats[1], vc)
-                add_result("Cut", stats[2], vc)
-                add_result("AUC", auc, vc)
+                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc[0])
+                add_result("Efficiency", stats[0], vc[0])
+                add_result("Misid", stats[1], vc[0])
+                add_result("Cut", stats[2], vc[0])
+                add_result("AUC", auc, vc[0])
                 if SINGULAR_ROCS is not True:
                     rocx_array.append(rocx)
                     rocy_array.append(rocy)
-                    roc_labels.append(f'{vc}')
+                    roc_labels.append(f'{vc[0]}')
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dnn", "all"]:
@@ -382,6 +382,10 @@ if hasattr(args, "methods"):
     if args.figures is True:
         if 'all' in analysis:
             analysis = ['tfit', 'dnn', 'dtc', 'vcut']
+        if len([args.var_cut]) > 1:
+            variables = [f'{vcut}_cut' for vcut in args.var_cut]
+            analysis = [args.var_cut] + analysis[1:]
+            print(analysis)
         npts = len(fractions_list)
         print(npts)
         y = np.linspace(0.25, 0.75, npts)
