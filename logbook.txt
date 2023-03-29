@@ -746,6 +746,9 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 FINAL
 
 - requirements.txt ?
+- init.py
+- where to save outputs_main
+- general vs pion-kaon
 - eliminare logbook.txt dal package
 
 
