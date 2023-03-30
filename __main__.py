@@ -115,13 +115,8 @@ parser_an.add_argument('-inv', '--vcut_inverse', nargs='+', type=int, default=1,
 parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
-<<<<<<< HEAD
 parser_an.add_argument('-err', '--err_opt', action='store_true',
                        help='Performs error optimization in DNN and var_cut analyses instead of using a fixed value')
-=======
-parser_an.add_argument('-fom', '--fom_optimization', action='store_true',
-                       help='Performs FOM optimization instead of using a fixed efficiency value')
->>>>>>> e9e11a1a973044ca14294a50a071c33c027f3fa2
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -395,6 +390,7 @@ if hasattr(args, "methods"):
             roc_colors.append('#%06X' % randint(0, 0xFFFFFF))
             roc_linestyles.append('-')
         if args.err_opt is True:
+            roc_labels = [f'{lab} roc' for lab in roc_labels]
             plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
                       tuple(roc_linestyles), tuple(roc_colors),
                       x_pnts=x_pnts, y_pnts=y_pnts, point_labels=point_labels,
@@ -413,9 +409,9 @@ if hasattr(args, "methods"):
         analysis = variables + analysis[1:]
         print(analysis)
         npts = len(fractions_list)
-        y = np.linspace(0.25, 0.75, npts)
+        y = np.linspace(0.2, 0.8, npts)
         idx = 0
-        fig = plt.figure(999)
+        fig = plt.figure("fractions")
         plt.title("K fraction estimates")
         plt.xlabel("Fraction")
         plt.ylim(0, 1)
@@ -424,24 +420,14 @@ if hasattr(args, "methods"):
 
         for fr in fractions_list:
 
-<<<<<<< HEAD
             lwdth_stat = 2 if fr[2] <= fr[1] else 3
             lwdth_syst = 2 if fr[1] <= fr[2] else 3
-=======
-            lwdth_stat = 1 if fr[2] <= fr[1] else 2
-            lwdth_syst = 1 if fr[1] <= fr[2] else 2
->>>>>>> e9e11a1a973044ca14294a50a071c33c027f3fa2
 
             plt.plot(fr[0], y[idx], color='black', marker='o')
             plt.errorbar(fr[0], y[idx], 0, fr[1], fmt='',
                          ecolor='blue', elinewidth=lwdth_stat)
-
             plt.errorbar(fr[0], y[idx], 0, fr[2], fmt='',
                          ecolor='green', elinewidth=lwdth_syst)
-<<<<<<< HEAD
-
-=======
->>>>>>> e9e11a1a973044ca14294a50a071c33c027f3fa2
             idx += 1
         plt.plot([], [], marker='', linestyle='-',
                  color='blue', label="Stat. error bars")
