@@ -27,8 +27,8 @@ from machine_learning.deepnn import dnn
 from machine_learning.dtc import dt_classifier
 from template_fit.template_fit import fit_mc_template, global_fit
 from template_fit.template_functions import DoubleGaussian, GaussJohnson
-from utilities.cornerplot import overlaid_cornerplot
 from utilities.gen_from_toy import gen_from_toy
+from utilities.import_datasets import overlaid_cornerplot
 from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_resultsdir, \
                             default_vars, roc, plot_rocs
@@ -37,6 +37,7 @@ from var_cut.var_cut import var_cut
 import warnings
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
+
 
 print(" ----------------------------------------------- ")
 print("|  Welcome to the PiK Classifier package!       |")
@@ -121,14 +122,14 @@ parser_an.add_argument('-err', '--err_opt', action='store_true',
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 args = parser.parse_args()
 
 filepaths = args.rootpaths_gen
 tree = args.tree
-
 respath = os.path.join(os.getcwd(), args.resdir)
 
+
+# Initialize results txt file
 results_file = os.path.join(respath, 'results.txt')
 with open(results_file, encoding='utf-8', mode='w') as f:
     f.write('\n Results of the analysis performed with PiK classifier package \n'
@@ -150,7 +151,7 @@ if hasattr(args, 'rootpaths_toy'):
     # Generates the datasets with the requested fraction of signal events in
     # the data set. If the following two quantities are BOTH set to zero, the
     # function generates the datasets with the maximum possible number of events
-    if len(args.num_events) >= 2:
+    if len(args.num_events) >= 3:
         msg = '***WARNING*** \nList with number of events to be generated \
 contains more than two values. Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
@@ -173,7 +174,7 @@ if args.cornerplot is True:
         overlaid_cornerplot(vars=args.variables[7:], figpath=respath)
         overlaid_cornerplot(
             vars=('M0_p',)+args.variables[7:9], figpath=respath)
-    elif len(args.variables) > 5:
+    elif len(args.variables) >= 6:
         msg = "***WARNING*** \nNumber of variables to print in the corner plot \
 exceeds the maximum suggested (5). Running the \'cornerplot\' function on \
 groups of five contiguous variables in the list\n*************\n"
@@ -206,11 +207,13 @@ if hasattr(args, "methods"):
         if flag >= 2 or len(args.var_cut) > 1:
             SINGULAR_ROCS = False
 
+    # Initializing lists if multiple rocs are plotted together
     if SINGULAR_ROCS is not True:
         rocx_array, rocy_array = [], []
         roc_labels, roc_linestyles, roc_colors = [], [], []
         x_pnts, y_pnts, point_labels = [], [], []
 
+    # Running the selected analyses
     for opt in analysis:
 
         if opt in ["vcut", "all"]:

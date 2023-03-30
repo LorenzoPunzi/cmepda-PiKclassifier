@@ -13,6 +13,7 @@ from utilities.exceptions import IncorrectFractionError, IncorrectNumGenError, I
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
+
 def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
                                '../data/root_files/toyMC_B0sKK.root'),
                  filepaths_out=default_rootpaths(), tree='t_M0pipi;1',
@@ -35,7 +36,6 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     :type fraction: double
     :param vars: List or tuple of variables to export from the toy files.
     :type vars: list[str] or tuple[str]
-    
     """
 
     if tree.endswith(";1"):
@@ -48,34 +48,37 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         print(traceback.format_exc())
         sys.exit()
 
-    if len(filepaths_in)>=3:
-        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...\n*************\n'
+    if len(filepaths_in) >= 3:
+        msg = '***WARNING*** \nInput filepaths given are more than two. \
+Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_in)<2 or not (type(filepaths_in)==list or type(filepaths_in)==tuple):
-            raise IncorrectIterableError(filepaths_in,2,'filepaths_in') 
+        if len(filepaths_in) < 2 or not (type(filepaths_in) == list or type(filepaths_in) == tuple):
+            raise IncorrectIterableError(filepaths_in, 2, 'filepaths_in')
     except IncorrectIterableError:
         print(traceback.format_exc())
         sys.exit()
 
-    if len(filepaths_out)>=4:
-        msg = f'***WARNING*** \nOutput filepaths given are more than three. Using only the first three...\n*************\n'
+    if len(filepaths_out) >= 4:
+        msg = '***WARNING*** \nOutput filepaths given are more than three. \
+Using only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_out)<3 or not (type(filepaths_out)==list or type(filepaths_out)==tuple):
-            raise IncorrectIterableError(filepaths_out,3,'filepaths_out') 
+        if len(filepaths_out) < 3 or not (type(filepaths_out) == list or type(filepaths_out) == tuple):
+            raise IncorrectIterableError(filepaths_out, 3, 'filepaths_out')
     except IncorrectIterableError:
         print(traceback.format_exc())
         sys.exit()
-    
-
 
     dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths_in]
 
+    # Number of events in the dataframes
     n_evts_toymc_pi = dataframes[0].Count()
     n_evts_toymc_pi = n_evts_toymc_pi.GetValue()
     n_evts_toymc_k = dataframes[1].Count()
     n_evts_toymc_k = n_evts_toymc_k.GetValue()
+
+    alpha = 0.2
 
     # If num_mc and num_data are BOTH set to zero, the datasets are generated
     # by taking from the toyMCs the maximum possible number of events (*) and
@@ -83,7 +86,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     # (*): for the cases fraction<0.5 and fraction>=0.5 respectively, we impose
     #      the following conditions:  n_evts_toymc_pi == num_mc+num_pions,
     #                                 n_evts_toymc_k == num_mc+num_kaons
-    alpha = 0.2
+
     if int(num_mc) == 0 and int(num_data) == 0:
         if fraction < 0.5:
             num_mc = n_evts_toymc_pi/(1 + (2*alpha*(1-fraction)))
@@ -100,7 +103,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
                 (1-fraction)*num_data), int(fraction*num_data)
             if (num_pions+num_mc > n_evts_toymc_pi) or \
                (num_kaons+num_mc > n_evts_toymc_k):
-                raise IncorrectNumGenError(num_mc, num_pions+num_kaons, n_evts_toymc_pi, n_evts_toymc_k)
+                raise IncorrectNumGenError(
+                    num_mc, num_pions+num_kaons, n_evts_toymc_pi, n_evts_toymc_k)
         except IncorrectNumGenError:
             print(traceback.format_exc())
             sys.exit()
@@ -120,7 +124,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     df_data_k = dataframes[1].Range(num_mc, num_mc+num_kaons)
 
     # Since data set needs to be shuffled, passing through numpy arrays
-    var_list = [] 
+    var_list = []
     for var in vars:
         v_temp_pi = df_data_pi.AsNumpy()[var]
         v_temp_k = df_data_k.AsNumpy()[var]
@@ -131,7 +135,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
 
     np.random.shuffle(var_array)
 
-    var_dictionary = {} # Dictionary of vars to be saved in the data outfile
+    var_dictionary = {}  # Dictionary of vars to be saved in the data outfile
     for idx in range(len(vars)):
         var_dictionary.update({vars[idx]: var_array[:, idx]})
 
@@ -142,5 +146,5 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
 
 
 if __name__ == '__main__':
-    print('Running this module as main module is not supported. Feel free to add \
-          a custom main or run the package as a whole (see README.md)')
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

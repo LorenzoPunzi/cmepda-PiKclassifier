@@ -12,7 +12,6 @@ cmepda-PiKclassifier documentation
 
    utils
    var_cut
-   cornerplot
    gen_from_toy
    import_datasets
    dnn_settings

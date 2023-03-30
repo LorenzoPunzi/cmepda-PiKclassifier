@@ -114,7 +114,7 @@ def eval_dnn(dnn, eval_set, flag_data=True,
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
 
-    if len(plot_opt) >= 3:
+    if len(plot_opt) >= 4:
         msg = '***WARNING*** \nPlot options given are more than three. Using\
 only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)

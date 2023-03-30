@@ -31,7 +31,7 @@ Install dependencies from inside the project directory
 ```bash
   pip install -r cmepda-PiKclassifier/requirements.txt
 ```
-!!!PLEASE NOTE!!! : ROOT is not in requirements.txt file but is needed to run the template fit module. The package works as of ROOT v6.26/10.
+_PLEASE NOTE_ : ROOT is not in requirements.txt file but is needed to run the template fit module. The package works as of ROOT v6.26/10.
 Also, the requirements are NOT strict, meaning that former versions could potentially work.
 
 To run the project as a package, add the following code in the .bashrc (or .bash_profile, for MAC users):
