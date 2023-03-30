@@ -8,7 +8,7 @@ import warnings
 import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
-from utilities.exceptions import InvalidArrayGenRequestError
+from utilities.exceptions import InvalidArrayGenRequestError, IncorrectIterableError
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
@@ -79,15 +79,27 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
 
     """
 
-    if len(filepaths_in>=3):
-        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...'
+    if len(rootpaths)>=4:
+        msg = f'***WARNING*** \nInput rootpaths given are more than three. Using only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_in<2):
-            raise IncorrectIterableError(filepaths_in,2) 
+        if len(rootpaths)<3 or not (type(rootpaths)==list or type(rootpaths)==tuple):
+            raise IncorrectIterableError(rootpaths,3) 
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
+    
+    if len(initial_arrays)>=4:
+        msg = f'***WARNING*** \nInput rootpaths given are more than three. Using only the first three...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+    try:
+        if len(initial_arrays)<3 or not (type(initial_arrays)==list or type(initial_arrays)==tuple):
+            raise IncorrectIterableError(initial_arrays,3) 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+    
+    
 
     n_old_vars = len(initial_arrays[2][0, :])
     new_arrays = []
@@ -152,12 +164,12 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
     :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
     """
 
-    if len(filepaths_in>=3):
-        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...'
+    if len(rootpaths)>=4:
+        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_in<2):
-            raise IncorrectIterableError(filepaths_in,2) 
+        if len(rootpaths)<3 or not (type(rootpaths)==list or type(rootpaths)==tuple):
+            raise IncorrectIterableError(rootpaths,3) 
     except IncorrectIterableError as err:
         print(err)
         sys.exit()

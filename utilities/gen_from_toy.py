@@ -48,21 +48,21 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         print(err)
         sys.exit()
 
-    if len(filepaths_in>=3):
-        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...'
+    if len(filepaths_in)>=3:
+        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_in<2):
+        if len(filepaths_in)<2 or not (type(filepaths_in)==list or type(filepaths_in)==tuple):
             raise IncorrectIterableError(filepaths_in,2) 
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
 
-    if len(filepaths_out>=4):
-        msg = f'***WARNING*** \nOutput filepaths given are more than three. Using only the first three...'
+    if len(filepaths_out)>=4:
+        msg = f'***WARNING*** \nOutput filepaths given are more than three. Using only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_out<3):
+        if len(filepaths_out)<3 or not (type(filepaths_out)==list or type(filepaths_out)==tuple):
             raise IncorrectIterableError(filepaths_out,3) 
     except IncorrectIterableError as err:
         print(err)

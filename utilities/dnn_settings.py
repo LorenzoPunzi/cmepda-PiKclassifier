@@ -5,21 +5,21 @@ Class to set and store some important characteristics of a Keras DNN
 
 class DnnSettings:
     """
-    Class to set and store some important characteristics of a Keras DNN
+    Class to set and store some important characteristics of a Keras DNN.
 
-    :param layers: List or tuple of integers, that indicate the number of neurons in each internal dense layer
+    :param layers: List or tuple of integers, that indicate the number of neurons in each internal dense layer.
     :type layers: list[int] or tuple[int]
-    :param val_fraction: Fraction of the training dataset used for validation
+    :param val_fraction: Fraction of the training dataset used for validation.
     :type val_fraction: float
-    :param epochnum: Number of epochs for the training
+    :param epochnum: Number of epochs for the training.
     :type epochnum: float
-    :param learning_rate: Value given as learning rate to the Adam optimizer
+    :param learning_rate: Value given as learning rate to the Adam optimizer.
     :type learning_rate: float
-    :param batch_size: Size of the batches used in the training
+    :param batch_size: Size of the batches used in the training.
     :type batch_size: int
-    :param dropout: Drop probability in the AlphaDropout layer
+    :param dropout: Drop probability in the AlphaDropout layer.
     :type dropout: float
-    :param verbose: Set how verbose the training is on shell
+    :param verbose: Set how verbose the training is on shell.
     :type verbose: int
     """
 

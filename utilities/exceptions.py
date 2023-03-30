@@ -105,10 +105,10 @@ class IncorrectNumGenError(ValueError):
         :param num_toys: Number of events in the signal toy.
         :type num_toys: int
         """
-        self.message = f"Invalid combinations of num_mc = {num_mc} and num_data = {num_data}"\
-            ": make sure that the toyMC files contain a sufficient" \
-            f" number of events and lower the values of these two inputs! Current number of events are" \
-            f" {num_toyb} for the background toy and {num_toys} for the signal toy"
+        self.message = f"Invalid combinations of num_mc = {num_mc} and num_data = {num_data}\
+: make sure that the toyMC files contain a sufficient number of events and lower \
+the values of these two inputs! Current number of events are \
+{num_toyb} for the background toy and {num_toys} for the signal toy"
         super().__init__(self.message)
 
 
@@ -139,8 +139,8 @@ class IncorrectIterableError(Exception):
         :param target_length: Minimum length required for the list/tuple by the function.
         :type target_length: int
         """
-        self.message = f"{input} given has length {len(input)}, which is less than the minumum number\
-            of arguments {target_length}"
+        self.message = f"\nIncorrectIterableError:{input} given has length {len(input)}, which is less than \
+the minumum number of arguments {target_length}\n"
         if not (type(input)==list or type(input)==tuple):
-            self.message = f"{input} given in not a list/tuple!"
+            self.message = f"\nIncorrectIterableError:{input} given in not a list/tuple!\n"
         super().__init__(self.message)

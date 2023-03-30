@@ -28,11 +28,11 @@ def overlaid_cornerplot(filepaths=default_rootpaths(), tree='t_M0pipi;1',
     :type figpath: str
 
     """
-    if len(filepaths>=3):
-        msg = f'***WARNING*** \nFilepaths given are more than two. Using only the first two...'
+    if len(filepaths)>=3:
+        msg = f'***WARNING*** \nFilepaths given are more than two. Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths<2):
+        if len(filepaths)<2 or not (type(filepaths)==list or type(filepaths)==tuple):
             raise IncorrectIterableError(filepaths,2) 
     except IncorrectIterableError as err:
         print(err)
