@@ -8,10 +8,10 @@ from utilities.import_datasets import loadvars, array_generator
 import os
 
 current_dir = os.path.dirname(__file__)
-
-path_pi = os.path.join(current_dir, 'dummy/dummy_pi.root')
-path_k = os.path.join(current_dir, 'dummy/dummy_k.root')
-path_dat = os.path.join(current_dir, 'dummy/dummy_dat.root')
+# All have three branches 'A','B','C' 100 events each
+path_pi = os.path.join(current_dir, 'dummy/dummy_pi.root')  # A = 1, B = 2, C = 3
+path_k = os.path.join(current_dir, 'dummy/dummy_k.root')  # A = 4, B = 5, C = 6
+path_dat = os.path.join(current_dir, 'dummy/dummy_dat.root')  # A = 7, B = 8, C = 9
 
 
 class TestLoadvars(unittest.TestCase):
@@ -108,30 +108,9 @@ class TestArrayGenerator(unittest.TestCase):
         self.assertEqual(v_mc.shape, (100, 3))
         self.assertEqual(v_dat.shape, (50, 2))
 
-        # !!!! How to assert wether the flag column is EITHER 0 or 1???
         self.assertAlmostEqual(tuple(v_dat[:, 0]), tuple(7*np.ones(50)))
         self.assertAlmostEqual(tuple(v_dat[:, 1]), tuple(9*np.ones(50)))
 
-
-'''
-class TestIncludeMergedVariables(unittest.TestCase):
-    """
-    """
-
-    def test_append_training(self):
-        """
-        Tests the correct formation of a training array that includes the
-        mixed-variable arrays previously saved
-        """
-        pass
-
-    def test_append_testing(self):
-        """
-        Tests the correct formation of a testing array that includes the
-        mixed-variable arrays previously saved
-        """
-        pass
-'''
 
 if __name__ == '__main__':
     unittest.main()

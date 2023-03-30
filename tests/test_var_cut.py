@@ -1,4 +1,5 @@
 """
+Tests some functions inside var_cut/var_cut.py
 """
 
 import unittest
