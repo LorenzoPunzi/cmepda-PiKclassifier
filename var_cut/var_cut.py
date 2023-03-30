@@ -2,11 +2,13 @@
 
 """
 import warnings
+import sys
 import numpy as np
 from matplotlib import pyplot as plt
 from utilities.utils import default_rootpaths, default_figpath, \
                             find_cut, stat_error, syst_error
 from utilities.import_datasets import loadvars
+from utilities.exceptions import IncorrectEfficiencyError
 
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
@@ -49,6 +51,13 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
 
     used_eff = 0
     df_opt = -99999
+
+    try:
+        if (eff<=0 or eff=>1 or type(eff) is not float):
+            raise IncorrectEfficiencyError(eff)
+    except IncorrectEfficiencyError as err:
+            print(err)
+            sys.exit()
 
     if eff == 0:  # Enables FOM maximization
         efficiencies = np.linspace(0.25, 0.999, 200)

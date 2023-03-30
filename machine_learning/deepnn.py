@@ -18,7 +18,7 @@ from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_txtpaths, \
                             default_vars, default_figpath, \
                             find_cut, roc, stat_error, syst_error
-from utilities.exceptions import InvalidSourceError
+from utilities.exceptions import InvalidSourceError, IncorrectEfficiencyError
 
 
 def train_dnn(training_set, settings, savefig=True, figname='',
@@ -188,6 +188,13 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     except InvalidSourceError as err:
         print(err)
         sys.exit()
+    
+    try:
+        if (efficiency<=0 or efficiency=>1 or type(efficiency) is not float):
+            raise IncorrectEfficiencyError(efficiency)
+    except IncorrectEfficiencyError as err:
+            print(err)
+            sys.exit()
 
     num_mc = len(mc_set[:, 0])
 
