@@ -4,7 +4,7 @@ Tests some functions inside utilities/import_datasets.py
 
 import unittest
 import numpy as np
-from utilities.import_datasets import loadvars, include_merged_variables, array_generator
+from utilities.import_datasets import loadvars, array_generator
 import os
 
 current_dir = os.path.dirname(__file__)
