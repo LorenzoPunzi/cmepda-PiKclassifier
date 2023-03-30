@@ -9,12 +9,12 @@ from matplotlib import pyplot as plt
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from utilities.utils import default_rootpaths, default_txtpaths, default_vars,\
-                            default_figpath, stat_error, syst_error
+                            stat_error, syst_error
 from utilities.import_datasets import array_generator
 from utilities.exceptions import InvalidSourceError
 
 
-def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
+def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
                   vars=default_vars(), n_mc=560000, n_data=50000,
                   test_size=0.3, min_leaf_samp=1, crit='gini',
                   print_tree='printed_dtc', figpath=''):
@@ -29,13 +29,13 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     :type root_tree: str
     :param vars: In case of 'root' source, tuple containing the names of the variables to load and with which the DTC should be built.
     :type vars: tuple[str]
-    :param n_mc: In case of 'root' source, number of events to take from the root files as template dataset
+    :param n_mc: In case of 'root' source, number of events to take from the root files as mc set
     :type n_mc: int
-    :param n_data: In case of 'root' source, number of events to take from the root file as mixed dataset
+    :param n_data: In case of 'root' source, number of events to take from the root file as data set
     :type n_data: int
-    :param test_size: The fraction of events in the template dataset to be used as testing dataset for the DTC.
+    :param test_size: The fraction of events in the mc set to be used as testing dataset for the DTC.
     :type test_size: float
-    :param min_leaf_samp: The minimum number of samples required to split an internal node. If it's an int, it's the minimum number. If it's a float, it's the fraction.
+    :param min_leaf_samp: The minimum number of samples required to split an internal node. If it's an ``int``, it's the minimum number. If it's a ``float``, it's the fraction.
     :type min_leaf_samp: int or float
     :param crit: The function to measure the quality of a split. Supported criteria are 'gini' for the Gini impurity and 'log_loss' and 'entropy' both for the Shannon information gain.
     :type crit: {'gini','log_loss','entropy'}
@@ -72,8 +72,9 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
     max_depth = dtc.tree_.max_depth
 
     print(
-        f'Number of nodes of the generated decision tree classifier = {n_nodes}')
-    print(f'Max depth of the generated decision tree classifier = {max_depth}')
+        f'Number of nodes of the generated decision tree classifier = {n_nodes}\n')
+    print(
+        f'Max depth of the generated decision tree classifier = {max_depth}\n')
 
     pi_test = np.array([X_test[i, :]
                         for i in range(np.shape(X_test)[0]) if y_test[i] == 0])
@@ -86,13 +87,8 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
 
     efficiency = (k_eval == 1).sum()/k_eval.size
     misid = (pi_eval == 1).sum()/pi_eval.size
+
     fraction = ((data_eval.sum()/data_eval.size) - misid)/(efficiency-misid)
-    '''
-    deff = np.sqrt(efficiency*(1-efficiency)/k_eval.size)
-    dmisid = np.sqrt(misid*(1-misid)/pi_eval.size)
-    dfrac = np.sqrt((dmisid*((data_eval.sum()/data_eval.size-misid)-efficiency))**2 +
-                    + (deff*((data_eval.sum()/data_eval.size-misid)-misid))**2)/(efficiency-misid)**2
-    '''
 
     df_stat = stat_error(fraction, data_eval.size, efficiency, misid)
 
@@ -108,53 +104,19 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='tree;1',
             file.write(f'Max depth = {max_depth} \n \n')
             file.write(tree_diagram)
 
-    print(f'Efficiency is {efficiency} +- {np.sqrt(efficiency*(1-efficiency)/k_eval.size)}\n')
+    print(
+        f'Efficiency is {efficiency} +- {np.sqrt(efficiency*(1-efficiency)/k_eval.size)}\n')
     print(f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/pi_eval.size)}\n')
-    print(f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
+    print(
+        f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
 
     fr = (fraction, df_stat, df_syst)
 
     algorithm_parameters = (efficiency, misid)
 
-    '''
-    if stat_split:
-        subdata = np.array_split(pred_array, stat_split)
-        fractions = [data.sum()/len(data) for data in subdata]
-        plt.figure('Fraction distribution for dtc')
-        plt.hist(fractions, bins=10, histtype='step')
-        plt.axvline(x=pred_array.sum()/len(pred_array), color='green')
-        plt.savefig(default_figpath('dtc_distrib')) if figpath == '' \
-            else plt.savefig(figpath+'/dtc_distrib.png')
-        stat_err = np.sqrt(np.var(fractions, ddof=1))
-        # print(f"Mean = {np.mean(fractions, dtype=np.float64)}")
-        # print(f"Sqrt_var = {stat_err}")
-        fr = fr + (stat_err,)
-    '''
-
     return fr, algorithm_parameters
 
 
-"""
-    dtr = tree.DecisionTreeRegressor()
-    dtr = dtr.fit(X_train, y_train)
-
-    r_pred_array, r_pi_eval, r_k_eval = dtr.predict(data_set), dtr.predict(pi_test), dtr.predict(k_test)
-
-    r_efficiency = (r_k_eval == 1).sum()/r_k_eval.size
-    r_misid = (r_pi_eval == 1).sum()/r_pi_eval.size
-
-    print(f'Regressor Efficiency = {r_efficiency}')
-    print(f'Regressor Misidentification probability = {r_misid}')
-    print(f'The Regressor predicted K fraction is : {r_pred_array.sum()/len(r_pred_array)}')
-
-    plt.hist(r_k_eval,bins=3000,histtype='step', color='blue')
-    plt.hist(r_pi_eval,bins=3000,histtype='step',color = 'red')
-
-"""
-
-
 if __name__ == '__main__':
-
-    predicted_array, eff, misid = dt_classifier(stat_split=20)
-
-    plt.show()
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

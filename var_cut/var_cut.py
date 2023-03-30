@@ -1,4 +1,6 @@
 """
+Estimates the signal fraction in the data set by performing a cut on a
+specified variable in the MC sets.
 """
 import sys
 import warnings
@@ -137,7 +139,5 @@ inverse_mode = {not inverse_mode} \n*************\n'
 
 
 if __name__ == '__main__':
-
-    var_cut(eff=0.9, inverse_mode=True,
-            specificity_mode=False, draw_roc=True)
-    plt.show()
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

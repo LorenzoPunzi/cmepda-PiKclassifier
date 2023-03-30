@@ -16,7 +16,7 @@ class InvalidSourceError(ValueError):
         """
         self.source = source
         self.message = f"\n\n\'{self.source}\' is not a valid source! Only \
-            \'.txt\' and \'.root\' are allowed, \'.root\' being the default\n"
+\'.txt\' and \'.root\' are allowed, \'.root\' being the default\n"
         super().__init__(self.message)
 
 
@@ -38,8 +38,9 @@ class LoadHeadError(Exception):
 
 class IncorrectFractionError(ValueError):
     """
-    Exception that gives an error message if the given fraction of signal events (to be
-    used in the dataset generation) is not in the physical interval (0,1).
+    Exception that gives an error message if the given fraction of signal
+    events (to be used in the dataset generation) is not in the physical
+    interval (0,1).
     """
 
     def __init__(self, f):
@@ -49,8 +50,7 @@ class IncorrectFractionError(ValueError):
         """
         self.fraction = f
         self.message = f"\n\n{self.fraction} is not a valid value for the \
-            fraction of signal events in the mixed dataset! Make sure it is in\
-            the range (0,1)\n"
+fraction of signal events in the mixed dataset! Make sure it is in the range (0,1)\n"
         super().__init__(self.message)
 
 
@@ -71,10 +71,10 @@ class IncorrectNumGenError(ValueError):
         :param num_toys: Number of events in the signal toy.
         :type num_toys: int
         """
-        self.message = f"\n\nInvalid combinations of num_mc = {num_mc} and num_data = {num_data}\
-: make sure that the toyMC files contain a sufficient number of events and lower \
-the values of these two inputs! Current number of events are \
-{num_toyb} for the background toy and {num_toys} for the signal toy\n"
+        self.message = f"\n\nInvalid combinations of num_mc = {num_mc} and  \
+num_data = {num_data}: make sure that the toyMC files contain a sufficient \
+number of events and lower the values of these two inputs! Current number of \
+events are {num_toyb} for the background toy and {num_toys} for the signal toy\n"
         super().__init__(self.message)
 
 
@@ -89,16 +89,17 @@ class IncorrectEfficiencyError(ValueError):
         :param eff: Invalid efficiency/specificity given by the user.
         :type eff: float
         """
-        self.message = f"{eff} is not a valid value for efficiency/specificity. Make sure it is"
-        "in the range (0,1)\n"
+        self.message = f"\n\n{eff} is not a valid value for efficiency/specificity. \
+Make sure it is in the range (0,1)\n"
         super().__init__(self.message)
+
 
 class IncorrectIterableError(Exception):
     """
     Exception that gives an error if the length of a list/tuple is incorrect.
     """
 
-    def __init__(self, input, target_length, input_name= 'input'):
+    def __init__(self, input, target_length, input_name='input'):
         """
         :param input: Invalid input given by the user.
         :type input: any
@@ -107,12 +108,11 @@ class IncorrectIterableError(Exception):
         :param input_name: Name of invalid input given by the user.
         :type input: str
         """
-        if not (type(input)==list or type(input)==tuple):
+        if not (type(input) == list or type(input) == tuple):
             self.message = f"\n\n{input_name}={input} given in not a list/tuple!\n"
         else:
-            self.message = f"\n\n{input_name}={input} given has length {len(input)}, \
-which is less than the minumum number of arguments {target_length}!\n"
-        
+            self.message = f"\n\n{input_name}={input} given has length \
+{len(input)}, which is less than the minumum number of arguments {target_length}!\n"
         super().__init__(self.message)
 
 
@@ -123,6 +123,6 @@ class IncoherentRocPlotError(Exception):
 
     def __init__(self):
         self.message = f"\n\nThe lists/tuples ``rocx_arrays``, ``rocy_arrays``, \
- ``roc_labels``, ``roc_linestyles``, ``roc_colors`` are not all of the same length!\n"
- 
+``roc_labels``, ``roc_linestyles``, ``roc_colors`` are not all of the same length!\n"
+
         super().__init__(self.message)

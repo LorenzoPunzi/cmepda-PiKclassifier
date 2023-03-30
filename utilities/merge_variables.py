@@ -59,7 +59,7 @@ def KS_optimization(v_pi, v_k, parlims=(-20, 20), n_try=1001):
     return max_stat, selected_m
 
 
-def mergevar(rootpaths=default_rootpaths(), tree='tree;1',
+def mergevar(rootpaths=default_rootpaths(), tree='t_M0pipi',
              vars=('M0_MKpi', 'M0_MpiK'), savefig=False, savetxt=False):
     """
     Function that takes two variables stored in TTrees and mixes them to create
