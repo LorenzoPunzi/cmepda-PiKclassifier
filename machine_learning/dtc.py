@@ -3,6 +3,8 @@ Builds and tests a Decision Tree Classifier with multiple variables (features)
 in numpy arrays, performs an evaluation on a mixed dataset and applies them the
 algorithm that estimates the fraction of Kaons.
 """
+import warnings
+import traceback
 import sys
 import numpy as np
 from matplotlib import pyplot as plt
@@ -11,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from utilities.utils import default_rootpaths, default_txtpaths, default_vars,\
                             stat_error, syst_error
 from utilities.import_datasets import array_generator
-from utilities.exceptions import InvalidSourceError
+from utilities.exceptions import InvalidSourceError, IncorrectIterableError
 
 
 def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
@@ -46,19 +48,60 @@ def dt_classifier(source=('root', default_rootpaths()), root_tree='t_M0pipi;1',
 
     """
     try:
+        if (type(source) is not list and type(source) is not tuple):
+            raise IncorrectIterableError(source, 2, 'source')
+        elif len(source) < 2:
+            raise IncorrectIterableError(source, 2, 'source')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
+    if len(source) >= 3:
+        msg = f'***WARNING*** \nInput source given is longer than two.\
+Using only the first two...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        source = source[:2]
+
+    
+    try:
         if source[0] == 'txt':
+            try:
+                if (type(source[1]) is not list and type(source[1]) is not tuple):
+                    raise IncorrectIterableError(source[1], 2, 'paths')
+                elif len(source[1]) < 2:
+                    raise IncorrectIterableError(source[1], 2, 'paths')
+            except IncorrectIterableError:
+                print(traceback.format_exc())
+                sys.exit()
+            if len(source[1]) >= 3:
+                msg = f'***WARNING*** \nInput source paths given are more than two.\
+Using only the first two...\n*************\n'
+                warnings.warn(msg, stacklevel=2)
+                source[1] = source[1][:3]
             mc_array_path, data_array_path = source[1] if source[1] \
                 else default_txtpaths()
             mc_set, data_set = np.loadtxt(mc_array_path), \
                 np.loadtxt(data_array_path)
         elif source[0] == 'root':
+            try:
+                if (type(source[1]) is not list and type(source[1]) is not tuple):
+                    raise IncorrectIterableError(source[1], 3, 'paths')
+                elif len(source[1]) < 3:
+                    raise IncorrectIterableError(source[1], 3, 'paths')
+            except IncorrectIterableError:
+                print(traceback.format_exc())
+                sys.exit()
+            if len(source[1]) >= 4:
+                msg = f'***WARNING*** \nInput source paths given are more than three.\
+Using only the first three...\n*************\n'
+                warnings.warn(msg, stacklevel=2)
+                source[1] = source[1][:3]
             mc_set, data_set = array_generator(rootpaths=source[1],
                                                tree=root_tree, vars=vars,
                                                n_mc=n_mc, n_data=n_data)
         else:
             raise InvalidSourceError(source[0])
-    except InvalidSourceError as err:
-        print(err)
+    except InvalidSourceError:
+        print(traceback.format_exc())
         sys.exit()
 
     dtc = tree.DecisionTreeClassifier(criterion=crit,

@@ -48,8 +48,10 @@ class IncorrectFractionError(ValueError):
         :param f: Invalid fraction given by the user.
         :type f: float
         """
-        self.fraction = f
-        self.message = f"\n\n{self.fraction} is not a valid value for the \
+        if type(f) is not float:
+            self.message = f"\n\nFraction={f} given in not a float!\n"
+        else:
+            self.message = f"\n\nFraction={f} is not a valid value for the \
 fraction of signal events in the mixed dataset! Make sure it is in the range (0,1)\n"
         super().__init__(self.message)
 
@@ -89,7 +91,10 @@ class IncorrectEfficiencyError(ValueError):
         :param eff: Invalid efficiency/specificity given by the user.
         :type eff: float
         """
-        self.message = f"\n\n{eff} is not a valid value for efficiency/specificity. \
+        if type(eff) is not float:
+            self.message = f"\n\nEfficiency={eff} given in not a float!\n"
+        else:
+            self.message = f"\n\nEfficiency={eff} is not a valid value for efficiency/specificity. \
 Make sure it is in the range (0,1)\n"
         super().__init__(self.message)
 
@@ -108,7 +113,7 @@ class IncorrectIterableError(Exception):
         :param input_name: Name of invalid input given by the user.
         :type input: str
         """
-        if not (type(input) == list or type(input) == tuple):
+        if type(input) is not list and type(input) is not tuple:
             self.message = f"\n\n{input_name}={input} given in not a list/tuple!\n"
         else:
             self.message = f"\n\n{input_name}={input} given has length \

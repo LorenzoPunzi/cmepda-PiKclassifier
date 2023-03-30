@@ -3,6 +3,7 @@ Module containing functions that import the dataset from the TTrees and store
 the variables of interest in numpy arrays for ML treatment
 """
 
+import traceback
 import sys
 import warnings
 import uproot
@@ -81,17 +82,20 @@ def overlaid_cornerplot(rootpaths=default_rootpaths(), tree='t_M0pipi;1',
     :type figpath: str
 
     """
+
+    try:
+        if (type(rootpaths) is not list and type(rootpaths) is not tuple):
+            raise IncorrectIterableError(rootpaths, 2, 'rootpaths')
+        elif len(rootpaths) < 2:
+            raise IncorrectIterableError(rootpaths, 2, 'rootpaths')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
     if len(rootpaths) >= 3:
         msg = '***WARNING*** \nFilepaths given are more than three. \
 Using only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
         rootpaths = rootpaths[:3]
-    try:
-        if len(rootpaths) < 2 or not (type(rootpaths) == list or type(rootpaths) == tuple):
-            raise IncorrectIterableError(rootpaths, 2, 'rootpaths')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
 
     arr_mc_pi, arr_mc_k = loadvars(rootpaths[0], rootpaths[1],
                                    tree, vars, flag_column=False)
@@ -137,22 +141,27 @@ def include_merged_variables(rootpaths, tree, initial_vars, new_variables):
 
     """
 
+    
+    try:
+        if (type(rootpaths) is not list and type(rootpaths) is not tuple):
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+        elif len(rootpaths) < 3:
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
     if len(rootpaths) >= 4:
         msg = f'***WARNING*** \nInput rootpaths given are more than three. Using only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
-    try:
-        if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
-            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
 
     for var in new_variables:
         try:
-            if len(var) != 2 or not (type(var) is list or type(var) is tuple):
+            if (type(var) is not list and type(var) is not tuple):
                 raise IncorrectIterableError(var, 2, 'new_variables')
-        except IncorrectIterableError as err:
-            print(err)
+            elif len(var) != 2:
+                raise IncorrectIterableError(var, 2, 'new_variables')
+        except IncorrectIterableError:
+            print(traceback.format_exc())
             sys.exit()
 
     v1, v2 = loadvars(rootpaths[0], rootpaths[1], tree, vars)
@@ -220,17 +229,20 @@ def array_generator(rootpaths, tree, vars, n_mc=560000, n_data=50000,
     :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
     """
 
+    
+    try:
+        if (type(rootpaths) is not list and type(rootpaths) is not tuple):
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+        elif len(rootpaths) < 3:
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
     if len(rootpaths) >= 4:
         msg = f'***WARNING*** \nInput filepaths given are more than three.\
 Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
         rootpaths = rootpaths[:3]
-    try:
-        if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
-            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
 
     train_array, data_array = np.zeros(len(vars)), np.zeros(len(vars))
 

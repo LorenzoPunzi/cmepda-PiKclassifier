@@ -42,33 +42,40 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         tree = tree.replace(";1", "")
 
     try:
-        if fraction <= 0.0 or fraction >= 1.0:
+        if type(fraction) is not float:
+            raise IncorrectFractionError(fraction)
+        elif fraction<=0 or fraction>=1:
             raise IncorrectFractionError(fraction)
     except IncorrectFractionError:
         print(traceback.format_exc())
         sys.exit()
 
-    if len(filepaths_in) >= 3:
-        msg = '***WARNING*** \nInput filepaths given are more than two. \
-Using only the first two...\n*************\n'
-        warnings.warn(msg, stacklevel=2)
     try:
-        if len(filepaths_in) < 2 or not (type(filepaths_in) == list or type(filepaths_in) == tuple):
+        if (type(filepaths_in) is not list and type(filepaths_in) is not tuple):
+            raise IncorrectIterableError(filepaths_in, 2, 'filepaths_in')
+        elif len(filepaths_in) < 2:
             raise IncorrectIterableError(filepaths_in, 2, 'filepaths_in')
     except IncorrectIterableError:
         print(traceback.format_exc())
         sys.exit()
-
-    if len(filepaths_out) >= 4:
-        msg = '***WARNING*** \nOutput filepaths given are more than three. \
-Using only the first three...\n*************\n'
+    if len(filepaths_in) >= 3:
+        msg = '***WARNING*** \nInput filepaths given are more than two. \
+Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
+
+    
     try:
-        if len(filepaths_out) < 3 or not (type(filepaths_out) == list or type(filepaths_out) == tuple):
+        if (type(filepaths_out) is not list and type(filepaths_out) is not tuple):
+            raise IncorrectIterableError(filepaths_out, 3, 'filepaths_out')
+        elif len(filepaths_out) < 3:
             raise IncorrectIterableError(filepaths_out, 3, 'filepaths_out')
     except IncorrectIterableError:
         print(traceback.format_exc())
         sys.exit()
+    if len(filepaths_out) >= 4:
+        msg = '***WARNING*** \nOutput filepaths given are more than three. \
+Using only the first three...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
 
     dataframes = [ROOT.RDataFrame(tree, filepath) for filepath in filepaths_in]
 

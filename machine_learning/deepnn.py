@@ -4,7 +4,7 @@ Module containing the functions to train a DNN with multiple variables
 apply them the algorithm that estimates the fraction of Kaons present in a
 mixed dataset
 """
-
+import traceback
 import time
 import os
 import sys
@@ -46,6 +46,8 @@ def train_dnn(training_set, settings, savefig=True, figname='',
     seed = np.random.seed(int(time.time()))
     pid = training_set[:, -1]
     features = training_set[:, :-1]
+
+    
 
     neurons = settings.layers
 
@@ -114,17 +116,20 @@ def eval_dnn(dnn, eval_set, flag_data=True,
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
 
+    
+    try:
+        if (type(plot_opt) is not list and type(plot_opt) is not tuple):
+            raise IncorrectIterableError(plot_opt, 3, 'plot_opt')
+        elif len(plot_opt) < 3:
+            raise IncorrectIterableError(plot_opt, 3, 'plot_opt')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
     if len(plot_opt) >= 4:
         msg = '***WARNING*** \nPlot options given are more than three. Using\
 only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
         plot_opt = plot_opt[:3]
-    try:
-        if len(plot_opt) < 3 or not (type(plot_opt) is list or type(plot_opt) is tuple):
-            raise IncorrectIterableError(plot_opt, 3, 'plot_opt')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
 
     if savefig is True:
         nbins = 300
@@ -188,27 +193,71 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     :rtype: tuple[float], tuple[float], tuple[numpy.array[float]]
 
     """
+
+    try:
+        if (type(source) is not list and type(source) is not tuple):
+            raise IncorrectIterableError(source, 2, 'source')
+        elif len(source) < 2:
+            raise IncorrectIterableError(source, 2, 'source')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
+    if len(source) >= 3:
+        msg = f'***WARNING*** \nInput source given is longer than two.\
+Using only the first two...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        source = source[:2]
+
+    
     try:
         if source[0] == 'txt':
+            try:
+                if (type(source[1]) is not list and type(source[1]) is not tuple):
+                    raise IncorrectIterableError(source[1], 2, 'paths')
+                elif len(source[1]) < 2:
+                    raise IncorrectIterableError(source[1], 2, 'paths')
+            except IncorrectIterableError:
+                print(traceback.format_exc())
+                sys.exit()
+            if len(source[1]) >= 3:
+                msg = f'***WARNING*** \nInput source paths given are more than two.\
+Using only the first two...\n*************\n'
+                warnings.warn(msg, stacklevel=2)
+                source[1] = source[1][:3]
             mc_array_path, data_array_path = source[1] if source[1] \
                 else default_txtpaths()
-            mc_set = np.loadtxt(mc_array_path)
-            data_set = np.loadtxt(data_array_path)
+            mc_set, data_set = np.loadtxt(mc_array_path), \
+                np.loadtxt(data_array_path)
         elif source[0] == 'root':
+            try:
+                if (type(source[1]) is not list and type(source[1]) is not tuple):
+                    raise IncorrectIterableError(source[1], 3, 'paths')
+                elif len(source[1]) < 3:
+                    raise IncorrectIterableError(source[1], 3, 'paths')
+            except IncorrectIterableError:
+                print(traceback.format_exc())
+                sys.exit()
+            if len(source[1]) >= 4:
+                msg = f'***WARNING*** \nInput source paths given are more than three.\
+Using only the first three...\n*************\n'
+                warnings.warn(msg, stacklevel=2)
+                source[1] = source[1][:3]
             mc_set, data_set = array_generator(rootpaths=source[1],
                                                tree=root_tree, vars=vars,
                                                n_mc=n_mc, n_data=n_data)
         else:
             raise InvalidSourceError(source[0])
-    except InvalidSourceError as err:
-        print(err)
+    except InvalidSourceError:
+        print(traceback.format_exc())
         sys.exit()
 
     try:
-        if efficiency <= 0 or efficiency >= 1:
+        if type(efficiency) is not float:
             raise IncorrectEfficiencyError(efficiency)
-    except IncorrectEfficiencyError as err:
-        print(err)
+        elif efficiency<=0 or efficiency>=1:
+            raise IncorrectEfficiencyError(efficiency)
+    except IncorrectEfficiencyError:
+        print(traceback.format_exc())
         sys.exit()
 
     num_mc = len(mc_set[:, 0])

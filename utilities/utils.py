@@ -1,6 +1,7 @@
 """
 Module containing general-use functions
 """
+import traceback
 import os
 import sys
 import warnings
@@ -116,14 +117,8 @@ def find_cut(pi_array, k_array, efficiency,
     :type inverse_mode: bool
     :return: Two element tuple containing cut value and misidentification probability for the negative species (or sensitivity if ``specificity_mode = True``)
     :rtype: tuple[double]
-
-    """
-    try:
-        if (efficiency <= 0 or efficiency >= 1):
-            raise IncorrectEfficiencyError(efficiency)
-    except IncorrectEfficiencyError as err:
-        print(err)
-        sys.exit()
+"""
+    
 
     if inverse_mode:
         efficiency = 1 - efficiency
@@ -180,40 +175,40 @@ def plot_rocs(rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors,
     try:
         if (type(rocx_arrays) == list or type(rocx_arrays) == tuple) is not True:
             raise IncorrectIterableError(rocx_arrays, 3, 'rocx_arrays')
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
     try:
         if (type(rocy_arrays) == list or type(rocy_arrays) == tuple) is not True:
             raise IncorrectIterableError(rocy_arrays, 3, 'rocy_arrays')
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
     try:
         if (type(roc_labels) == list or type(roc_labels) == tuple) is not True:
             raise IncorrectIterableError(roc_labels, 3, 'roc_labels')
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
     try:
         if (type(roc_linestyles) == list or type(roc_linestyles) == tuple) is not True:
             raise IncorrectIterableError(roc_linestyles, 3, 'roc_linestyles')
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
     try:
         if (type(roc_colors) == list or type(roc_colors) == tuple) is not True:
             raise IncorrectIterableError(roc_colors, 3, 'roc_colors')
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
 
     # Check if all the lists/tuples have same lengths
     try:
         if len(set([len(i) for i in [rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors]])) != 1:
             raise IncoherentRocPlotError
-    except IncoherentRocPlotError as err:
-        print(err)
+    except IncoherentRocPlotError:
+        print(traceback.format_exc())
         sys.exit()
 
     for idx in range(len(rocx_arrays)):

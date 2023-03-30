@@ -4,6 +4,7 @@ build a new one. The goal of this operation is to have more separated
 distributions for the the two species
 
 """
+import traceback
 import sys
 import os
 import warnings
@@ -81,30 +82,33 @@ def mergevar(rootpaths=default_rootpaths(), tree='t_M0pipi',
     :rtype: tuple[tuple[numpy.array[float]], tuple[float], float]
 
     """
-
+    try:
+        if (type(rootpaths) is not list and type(rootpaths) is not tuple):
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+        elif len(rootpaths) < 3:
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
     if len(rootpaths) >= 4:
         msg = f'***WARNING*** \nInput filepaths given are more than three.\
 Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
         rootpaths = rootpaths[:3]
-    try:
-        if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
-            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
 
+    try:
+        if (type(vars) is not list and type(vars) is not tuple):
+            raise IncorrectIterableError(vars, 2, 'vars')
+        elif len(vars) < 2:
+            raise IncorrectIterableError(vars, 2, 'vars')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
     if len(vars) >= 3:
         msg = '***WARNING*** \nVars to merge given are more than two.\
 Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
         vars = vars[:2]
-    try:
-        if len(vars) < 2 or not (type(vars) is list or type(vars) is tuple):
-            raise IncorrectIterableError(vars, 2, 'vars')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
 
     tree_pi, tree_k, tree_data = [
         uproot.open(file)[tree] for file in rootpaths]

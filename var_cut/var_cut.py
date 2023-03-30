@@ -2,6 +2,7 @@
 Estimates the signal fraction in the data set by performing a cut on a
 specified variable in the MC sets.
 """
+import traceback
 import sys
 import warnings
 import numpy as np
@@ -9,7 +10,7 @@ from matplotlib import pyplot as plt
 from utilities.utils import default_rootpaths, default_figpath, \
                             find_cut, stat_error, syst_error
 from utilities.import_datasets import loadvars
-from utilities.exceptions import IncorrectEfficiencyError
+from utilities.exceptions import IncorrectEfficiencyError, IncorrectIterableError
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
@@ -44,6 +45,20 @@ def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi'
 
     """
 
+    try:
+        if (type(rootpaths) is not list and type(rootpaths) is not tuple):
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+        elif len(rootpaths) < 3:
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
+    except IncorrectIterableError:
+        print(traceback.format_exc())
+        sys.exit()
+    if len(rootpaths) >= 4:
+        msg = '***WARNING*** \nRootpaths given are more than three. \
+Using only the first three...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        rootpaths = rootpaths[:3]
+
     var_pi, var_k = loadvars(
         rootpaths[0], rootpaths[1], tree, [cut_var], flag_column=False)
     var_data, _ = loadvars(
@@ -53,10 +68,12 @@ def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi'
     df_opt = -99999
 
     try:
-        if (eff <= 0) or (eff >= 1):
+        if type(eff) is not float:
             raise IncorrectEfficiencyError(eff)
-    except IncorrectEfficiencyError as err:
-        print(err)
+        elif eff<=0 or eff>=1:
+            raise IncorrectEfficiencyError(eff)
+    except IncorrectEfficiencyError:
+        print(traceback.format_exc())
         sys.exit()
 
     if error_optimization is True:  # Enables FOM maximization
@@ -125,7 +142,7 @@ inverse_mode = {not inverse_mode} \n*************\n'
 
     fr = (fraction, df_stat, df_syst)
 
-    print(f'{cut_var} cut is {cut} for {used_eff} efficiency')
+    print(f'\n{cut_var} cut is {cut} for {used_eff} efficiency')
     print(
         f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/var_pi.size)} for {used_eff} efficiency')
     print(
