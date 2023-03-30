@@ -8,6 +8,7 @@ mixed dataset
 import time
 import os
 import sys
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.layers import Dense, Input, AlphaDropout
@@ -15,10 +16,12 @@ from keras.models import Model, model_from_json
 from keras.optimizers import Adam
 from utilities.import_datasets import array_generator
 from utilities.dnn_settings import DnnSettings
-from utilities.utils import default_rootpaths, default_txtpaths, \
-                            default_vars, default_figpath, \
-                            find_cut, roc, stat_error, syst_error
-from utilities.exceptions import InvalidSourceError, IncorrectEfficiencyError
+from utilities.utils import default_rootpaths, default_txtpaths, default_vars,\
+                            default_figpath, find_cut, stat_error, syst_error
+from utilities.exceptions import InvalidSourceError, IncorrectEfficiencyError,\
+                                 IncorrectIterableError
+
+warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 
 def train_dnn(training_set, settings, savefig=True, figname='',
@@ -32,7 +35,7 @@ def train_dnn(training_set, settings, savefig=True, figname='',
     :type settings: utilities.import_datasets.DnnSettings class instance
     :param savefig: If ``True``, saves the history plot of the training.
     :type savefig: bool
-    :param figname: If savefig=``True``, saves the loss history figure with this name.
+    :param figname: If ``savefig==True``, saves the loss history figure with this name.
     :type figname: str
     :param trained_filenames: Two element tuple containing respectively the name of the .json of the file where to save the DNN and the .h5 where to store its weigths.
     :type trained_filenames: tuple[str]
@@ -43,11 +46,10 @@ def train_dnn(training_set, settings, savefig=True, figname='',
     seed = np.random.seed(int(time.time()))
     pid = training_set[:, -1]
     features = training_set[:, :-1]
-    # print(np.shape(features))
-    # print(pid)
 
     neurons = settings.layers
 
+    # Sets the dropout probability to pass in a keras AlphaDropout layer
     if settings.dropout != 0:
         dr_layer = AlphaDropout(settings.dropout, seed=seed)
         features = dr_layer(features, training=True)
@@ -66,7 +68,7 @@ def train_dnn(training_set, settings, savefig=True, figname='',
                          epochs=settings.epochnum, verbose=settings.verbose,
                          batch_size=settings.batch_size)
 
-    if savefig:
+    if savefig is True:
         plt.figure('Losses')
         plt.title('Loss History')
         plt.xlabel('Epoch')
@@ -79,6 +81,7 @@ def train_dnn(training_set, settings, savefig=True, figname='',
         else:
             plt.savefig(figname)
 
+    # Model and weights are saved in the apposite files
     model_json = deepnn.to_json()
     with open(trained_filenames[0], "w") as json_file:
         json_file.write(model_json)
@@ -90,30 +93,40 @@ def train_dnn(training_set, settings, savefig=True, figname='',
 def eval_dnn(dnn, eval_set, flag_data=True,
              savefig=True, plot_opt=[], figname=""):
     """
-    Evaluates a given keras deep neural network on a given dataset and
-    optionally plots the results.
+    Evaluates a given keras deep neural network on a given dataset.
 
     :param dnn: Trained deep neural network to be used in the evaluation.
     :type dnn: keras.models.Model
     :param eval_set: 2D numpy array to evaluate.
     :type eval_set: 2D numpy.array[float]
-    :param flag_data: If ``True`` assumes the eval_set array has no flag column at the end, otherwise it stripsa away the last column before evaluation.
+    :param flag_data: If ``True`` assumes the eval_set array has no flag column at the end, otherwise it strips away the last column before evaluation.
     :type flag_data: bool
-    :param savefig: If ``True``, saves the histogram of the evaluation results of the given set.
+    :param savefig: If ``True`` saves the histogram of the evaluation results of the given set.
     :type savefig: bool
-    :param plot_opt: Three-element list, containing the name of the plot, the color of the histogram and its label (in this order).
-    :type plot_opt: list[str]
+    :param plot_opt: Three-element tuple or list, containing the name of the plot, the color of the histogram and its label (in this order).
+    :type plot_opt: tuple[str] or list[str]
     :param figname: If savefig=``True``, saves the evaluation figure with this name.
     :type figname: str
-    :return: Predictions of the events (rows) of the eval_set.
+    :return: Predictions of the of the eval_set's events.
     :rtype: numpy.array[float]
 
     """
     prediction_array = dnn.predict(eval_set).flatten() \
         if flag_data else dnn.predict(eval_set[:, :-1]).flatten()
 
-    # !!!! MAKE IT BETTER (E.G. KWARGS), if len!=3 what happens!!!
-    if savefig and len(plot_opt) == 3:
+    if len(plot_opt) >= 3:
+        msg = '***WARNING*** \nPlot options given are more than three. Using\
+only the first three...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        plot_opt = plot_opt[:3]
+    try:
+        if len(plot_opt) < 3 or not (type(plot_opt) is list or type(plot_opt) is tuple):
+            raise IncorrectIterableError(plot_opt, 3, 'plot_opt')
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+
+    if savefig is True:
         nbins = 300
         plotname = plot_opt[0]
         plt.figure(plotname)
@@ -143,8 +156,8 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     \'f\' of Kaons in the mixed dataset. To do that, an evaluation of the dnn
     on the "testing dataset" with a fixed value of efficiency is required
 
-    :param source: Two element tuple containing the options for how to build the datasets for the DNN and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt, the second element of source must be a tuple containing two .txt paths, one relative to the training set and the other to the set to be evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths, for the "background" sample (flag=0), the "signal" sample (flag=1) and the mixed one, in this order.
-    :type source: tuple[{'root','txt'},tuple[str]]
+    :param source: Two element tuple containing the options for how to build the datasets for the DNN and the relative paths. The first item can be either 'txt' or 'root'. In case it is built from txt, the second element of source must be a tuple containing two .txt paths, one relative to the training set and the other to the data set to be evaluated. The .txt files must be in a format compatible with numpy's loadtxt() and savetxt() methods. In case it is built from root the second element of source must be a tuple containing three .root file paths, for the "background" set (flag=0), the "signal" set (flag=1) and the data one, in this order.
+    :type source: tuple[{'root','txt'}, tuple[str]]
     :param root_tree: In case of 'root' source, the name of the tree from which to load variables.
     :type root_tree: str
     :param vars: In case of 'root' source, tuple containing the names of the features to load for the DNN.
@@ -153,13 +166,13 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     :type n_mc: int
     :param n_data: In case of 'root' source, number of events to take from the root file for the mixed set.
     :type n_data: int
-    :param test_split: Fraction of the array containing the template events to be used for the testing
+    :param test_split: Fraction of the training array that is used for the testing
     :type test_split: float
     :param settings: DnnSettings instance with the settings for the generation of the DNN.
     :type settings: utilities.import_datasets.DnnSettings class instance
     :param load: If ``True``, instead of training a new DNN, it loads it from the files given in "trained_model".
     :type load: bool
-    :param trained_filenames: Two element tuple containing respectively the name of the .json and .h5 files from which to load the DNN structure and weights, if load=``True``.
+    :param trained_filenames: Two element tuple containing respectively the name of the .json and .h5 files from which to load the DNN structure and weights, if ``load==True``.
     :type trained_filenames: tuple[str]
     :param efficiency: Sensitivity required from the test
     :type efficiency: float
@@ -167,11 +180,11 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     :type error_optimization: bool
     :param savefigs: If ``True``, saves the training history (if the DNN was not loaded) and the histograms of the evaluation results on the training and mixed datasets.
     :type savefigs: bool
-    :param figpath: Path where to save the figures (in case savefigs=``True``)
+    :param figpath: Path where to save the figures (in case ``savefigs==True``)
     :type figpath: str
-    :param fignames: Four element tuple containing the figure names (in case savefigs=``True``) for: DNN training history figure, evaluated training species figures, evaluated mixed dataset figure.
+    :param fignames: Four element tuple containing the figure names (in case ``savefigs==True``) for: DNN training history figure, evaluated training species figures, evaluated mixed dataset figure.
     :type fignames: tuple[str]
-    :return: Estimated fraction of Kaons (with uncertainties), parameters of the test algorithm and arrays containing the DNN evaluation of the testing array (divided for species)
+    :return: Estimated signal fraction (with uncertainties), parameters of the test algorithm and arrays containing the DNN evaluation of the testing array (divided for the two species)
     :rtype: tuple[float], tuple[float], tuple[numpy.array[float]]
 
     """
@@ -200,6 +213,9 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
     num_mc = len(mc_set[:, 0])
 
+    # The original "training" set is split in two, one part for training and
+    # validation, the other for testing. The fraction of the testing array
+    # w.r.t. the initial one is equal the "test_split" value
     training_set = mc_set[:int((1-test_split)*num_mc), :]
     test_set = mc_set[int((1-test_split)*num_mc):-1, :]
 
@@ -226,7 +242,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     k_test = np.array([test_set[i, :] for i in range(
         np.shape(test_set)[0]) if test_set[i, -1] == 1])
 
-    # Evaluation of the dnn on the testing dataset
+    # Evaluation of the dnn on the testing dataset and on data
     pi_eval = eval_dnn(deepnn, pi_test, flag_data=False, savefig=savefigs,
                        plot_opt=['Templ_eval', 'red', 'Evaluated pions'],
                        figname=f'{figpath}/{fignames[1]}')
@@ -253,7 +269,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
                 df_opt = tmp_dfopt
                 used_eff = tmp_eff
     else:
-        used_eff = efficiency
+        used_eff = efficiency  # Value of efficiency effectively used for the analysis
 
     cut, misid = find_cut(pi_eval, k_eval, used_eff)
 
@@ -263,8 +279,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         plt.legend()
         plt.savefig(f'{figpath}/eval_Templates.png')
 
-    fraction = ((data_eval > cut).sum()
-                / data_eval.size - misid)/(used_eff-misid)
+    fraction = ((data_eval > cut).sum()/data_eval.size-misid)/(used_eff-misid)
 
     df_stat = stat_error(fraction, data_eval.size, used_eff, misid)
 
@@ -286,42 +301,5 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
 
 
 if __name__ == '__main__':
-
-    settings = DnnSettings(layers=(75, 60, 45, 30, 20),
-                           batch_size=128,
-                           epochnum=10,
-                           learning_rate=5e-5)
-
-    pi_eval, k_eval, data_eval = dnn(settings=settings, load_trained=True)
-    efficiency = 0.95
-
-    y_cut, misid = find_cut(pi_eval, k_eval, efficiency)
-    plt.axvline(x=y_cut, color='green', label='y cut for '
-                + str(efficiency)+' efficiency')
-    plt.legend()
-    plt.savefig(default_figpath('ycut'))
-
-    rocdnnx, rocdnny, aucdnn = roc(pi_eval, k_eval, eff=efficiency,
-                                   inverse_mode=False, makefig=True,
-                                   name="dnn_roc")
-
-    '''
-    rocvarcutx, rocvarcuty, aucvarcut = var_cut(drawfig=False, draw_roc=False)
-    _, dtcy, dtcx = dt_classifier(print_tree='')
-
-    print(dtcx, dtcy)
-
-    plot_rocs(rocx_array=[rocdnnx, rocvarcutx],
-              rocy_array=[rocdnny, rocvarcuty], auc_array=[aucdnn, aucvarcut],
-              inverse_mode_array=(False, True),
-              roc_labels=('deep nn', 'cut on M0_Mpipi'),
-              roc_linestyles=('-', '-'), roc_colors=('red', 'green'),
-              x_pnts=(dtcx,), y_pnts=(dtcy,),
-              point_labels=('decision tree classifier',))
-    '''
-
-    print(f'y cut is {y_cut} , misid is {misid}')
-    f = ((data_eval > y_cut).sum()/data_eval.size-misid)/(efficiency-misid)
-    print(f'The estimated fraction of K events is {f}')
-
-    plt.show()
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

@@ -17,6 +17,7 @@ from utilities.exceptions import IncorrectIterableError
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
+
 def mix_function(y, x, m):
     """
     Mixing function of the two variables (x,y), with the external parameter m
@@ -58,7 +59,7 @@ def KS_optimization(v_pi, v_k, parlims=(-20, 20), n_try=1001):
     return max_stat, selected_m
 
 
-def mergevar(filepaths=default_rootpaths(), tree='tree;1',
+def mergevar(rootpaths=default_rootpaths(), tree='tree;1',
              vars=('M0_MKpi', 'M0_MpiK'), savefig=False, savetxt=False):
     """
     Function that takes two variables stored in TTrees and mixes them to create
@@ -66,8 +67,8 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
     this module. This feature is then computed for both the MCs and for data
     and stored in 3 arrays, returned by the function.
 
-    :param filepaths: Three element list or tuple containing .root file paths, of the "background" set (flag=0), the "signal" set (flag=1) and the mixed data set, in this order.
-    :type filepaths: list[str] or tuple[str]
+    :param rootpaths: Three element list or tuple containing .root file paths, of the "background" set (flag=0), the "signal" set (flag=1) and the mixed data set, in this order.
+    :type rootpaths: list[str] or tuple[str]
     :param tree: Name of the tree from which to load
     :type tree: str
     :param vars: Two element list or tuple of variables that are going to be merged
@@ -81,33 +82,35 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
 
     """
 
-    if len(filepaths)>=4:
-        msg = f'***WARNING*** \nInput filepaths given are more than three. Using only the first three...\n*************\n'
+    if len(rootpaths) >= 4:
+        msg = f'***WARNING*** \nInput filepaths given are more than three.\
+Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
+        rootpaths = rootpaths[:3]
     try:
-        if len(filepaths)<3 or not (type(filepaths)==list or type(filepfilepathsaths_in)==tuple):
-            raise IncorrectIterableError(filepaths,3) 
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
-    
-    if len(vars)>=3:
-        msg = f'***WARNING*** \nVars to merge given are more than two. Using only the first two...\n*************\n'
-        warnings.warn(msg, stacklevel=2)
-    try:
-        if len(vars)<2 or not (type(vars)==list or type(vars)==tuple):
-            raise IncorrectIterableError(vars,2) 
+        if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
 
+    if len(vars) >= 3:
+        msg = '***WARNING*** \nVars to merge given are more than two.\
+Using only the first two...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        vars = vars[:2]
+    try:
+        if len(vars) < 2 or not (type(vars) is list or type(vars) is tuple):
+            raise IncorrectIterableError(vars, 2, 'vars')
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
 
-    tree_pi, tree_k, tree_data = [uproot.open(file)[tree]
-                                  for file in filepaths]
+    tree_pi, tree_k, tree_data = [
+        uproot.open(file)[tree] for file in rootpaths]
 
-    n_vars = 2  # Merging only couples of variables
-    v_pi, v_k, v_data = [0]*n_vars, [0]*n_vars, [0]*n_vars
-    for i in range(n_vars):
+    v_pi, v_k, v_data = [0, 0], [0, 0], [0, 0]
+    for i in range(2):
         var = vars[i]
         v_pi[i] = tree_pi[var].array(library='np')
         v_k[i] = tree_k[var].array(library='np')
@@ -115,8 +118,8 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
 
     # The range of the original variables' distribution is normalized, so that
     # an unique range for the parameter "m" can be used for the mixing
-    v1lim = [min(v_pi[0], v_k[0]), max(v_pi[0], v_k[0])]
-    v2lim = [min(v_pi[1], v_k[1]), max(v_pi[1], v_k[1])]
+    v1lim = [min(min(v_pi[0]), min(v_k[0])), max(max(v_pi[0]), max(v_k[0]))]
+    v2lim = [min(min(v_pi[1]), min(v_k[1])), max(max(v_pi[1]), max(v_k[1]))]
 
     v1_pi = (v_pi[0]-v1lim[0])/(v1lim[1]-v1lim[0])
     v2_pi = (v_pi[1]-v2lim[0])/(v2lim[1]-v2lim[0])
@@ -126,6 +129,7 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
     v1_data = (v_data[0]-v1lim[0])/(v1lim[1]-v1lim[0])
     v2_data = (v_data[1]-v1lim[0])/(v1lim[1]-v1lim[0])
 
+    # Performed the KS optimization to find the best value of "m" parameter
     kolmogorov_stat, m = KS_optimization(
         (v1_pi, v2_pi), (v1_k, v2_k), parlims=(-20., 20.), n_try=1001)
 
@@ -149,13 +153,13 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
                 (v_merge_pi[:length], v_merge_k[:length]), axis=1)
         else:
             mc_array = np.stack((v_merge_pi, v_merge_k), axis=1)
-        np.savetxt(f'../data/txt/newvars/{vars[0]}_{vars[1]}_merged__mc.txt',
+        np.savetxt(f'../data/{vars[0]}_{vars[1]}_merged__mc.txt',
                    mc_array, delimiter='  ', header=f'mc_pi,  mc_k,  m={m}')
-        np.savetxt(f'../data/txt/newvars/{vars[0]}_{vars[1]}_merged__data.txt',
+        np.savetxt(f'../data/{vars[0]}_{vars[1]}_merged__data.txt',
                    v_merge_data, delimiter='  ', header=f'data  m={m}')
 
     if savefig:
-        plt.figure(1)
+        plt.figure(f'merge_{vars[0]}_{vars[1]}')
         plt.subplot(2, 1, 1)
         plt.hist(v_merge_pi, 100, color='blue', histtype='step')
         plt.hist(v_merge_k, 100, color='red', histtype='step')
@@ -164,8 +168,7 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
         plt.hist(v1_k, 100, color='red', histtype='step')
         plt.hist(v2_pi, 100, color='blue', histtype='step')
         plt.hist(v2_k, 100, color='red', histtype='step')
-        plt.savefig('fig/'+vars[0]+'_'+vars[1]+'_merged_'+str(m)+'.pdf')
-        plt.close()
+        plt.savefig(f'fig/{vars[0]}_{vars[1]}_merged_{m}.pdf')
 
     merged_arr = (v_merge_pi, v_merge_k, v_merge_data)
 
@@ -173,11 +176,12 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
 
 
 if __name__ == '__main__':
+
     t0 = time.time()
     current_path = os.path.dirname(__file__)
     tree = 't_M0pipi;1'
 
-    filepaths = default_rootpaths()
+    rootpaths = default_rootpaths()
 
     combinations = (('M0_MKpi', 'M0_MpiK'), )
 
@@ -192,14 +196,14 @@ if __name__ == '__main__':
 
     for comb in combinations:
         print(comb)
-        new_arrays, stats_new, m = mergevar(filepaths, tree, comb)
+        new_arrays, stats_new, m = mergevar(rootpaths, tree, comb)
         stats.append(stats_new)
         string_combination = comb[0]+'_'+comb[1]+'_merged'
         str_combinations.append(string_combination+'  ||  ')
 
     arr_stats = np.array(stats).reshape(len(combinations), 3)
-    # np.savetxt('txt/output_KS_merged_firstset.txt', arr_stats,
-    #            delimiter='    ', header=''.join(str_combinations))
+    np.savetxt('txt/output_KS_merged_firstset.txt', arr_stats,
+               delimiter='    ', header=''.join(str_combinations))
 
     t1 = time.time()
 

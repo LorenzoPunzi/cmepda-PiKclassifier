@@ -85,7 +85,7 @@ def include_merged_variables(rootpaths, tree, initial_vars, new_variables):
         warnings.warn(msg, stacklevel=2)
     try:
         if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
-            raise IncorrectIterableError(rootpaths, 3)
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
@@ -156,70 +156,43 @@ def array_generator(rootpaths, tree, vars, n_mc=560000, n_data=50000,
     """
 
     if len(rootpaths) >= 4:
-        msg = f'***WARNING*** \nInput filepaths given are more than two. Using\
-only the first two...\n*************\n'
+        msg = f'***WARNING*** \nInput filepaths given are more than three.\
+Using only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
+        rootpaths = rootpaths[:3]
     try:
-        if len(rootpaths) < 3 or not (type(rootpaths) == list or type(rootpaths) == tuple):
-            raise IncorrectIterableError(rootpaths, 3)
+        if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
+            raise IncorrectIterableError(rootpaths, 3, 'rootpaths')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
 
-    try:
-        if (for_training and for_testing and len(rootpaths) == 3):
-            filepath_pi, filepath_k, filepath_data = rootpaths
-        elif (for_training and len(rootpaths) == 2 and for_testing is not True):
-            filepath_pi, filepath_k = rootpaths
-        elif (for_testing and len(rootpaths) == 1 and for_training is not True):
-            filepath_data = rootpaths[0]
-        else:
-            raise InvalidArrayGenRequestError(
-                for_training, for_testing, mixed=False)
-    except InvalidArrayGenRequestError as err:
-        print(err)
-        sys.exit()
-
-    try:
-        if len(new_variables) != 0 and len(rootpaths) == 3:
-            pass
-        elif len(new_variables) == 0:
-            pass
-        else:
-            raise InvalidArrayGenRequestError(
-                for_training, for_testing, mixing=True)
-    except InvalidArrayGenRequestError as err:
-        print(err)
-        sys.exit()
-
-    train_array, test_array = np.zeros(len(vars)), np.zeros(len(vars))
+    train_array, data_array = np.zeros(len(vars)), np.zeros(len(vars))
 
     if len(new_variables) == 0:
-        if for_training:
-            v_mc_pi, v_mc_k = loadvars(filepath_pi, filepath_k,
-                                       tree, vars, flag_column=True)
-            train_array = np.concatenate((v_mc_pi[:int(n_mc/2), :],
-                                          v_mc_k[:int(n_mc/2), :]), axis=0)
-            np.random.shuffle(train_array)
-        if for_testing:
-            v_data, _ = loadvars(filepath_data, filepath_data,
-                                 tree, vars, flag_column=False)
-            test_array = v_data[:n_data, :]
+        v_mc_pi, v_mc_k = loadvars(
+            rootpaths[0], rootpaths[1], tree, vars, flag_column=True)
+        train_array = np.concatenate((v_mc_pi[:int(n_mc/2), :],
+                                      v_mc_k[:int(n_mc/2), :]), axis=0)
+        np.random.shuffle(train_array)
+
+        v_data, _ = loadvars(
+            rootpaths[2], rootpaths[2], tree, vars, flag_column=False)
+        data_array = v_data[:n_data, :]
 
     # If a mixing is requested, both the training and the testing arrays are
     # modified, with obviously the same mixing
-    elif len(new_variables) != 0 and len(rootpaths) == 3:
-
+    elif len(new_variables) != 0:
         [v_mc_pi, v_mc_k, v_data_new] = include_merged_variables(
             rootpaths, tree, vars, new_variables)
         train_array = np.concatenate(
             (v_mc_pi[:int(n_mc/2), :], v_mc_k[:int(n_mc/2), :]), axis=0)
-        test_array = v_data_new[:n_data, :]
+        data_array = v_data_new[:n_data, :]
     else:
         print("UNEXPECTED ERROR")
         sys.exit()
 
-    return train_array, test_array
+    return train_array, data_array
 
 
 if __name__ == '__main__':
