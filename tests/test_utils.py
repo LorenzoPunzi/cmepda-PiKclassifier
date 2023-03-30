@@ -7,14 +7,15 @@ import matplotlib.pyplot as plt
 from utilities.utils import find_cut, roc
 import os
 
+test_array_a = np.linspace(0, 0.7, 1000)
+test_array_b = np.linspace(0.3, 1, 1000)
 
 class TestFindCut(unittest.TestCase):
     def test_linspace(self):
         """
         Test find_cut() with a linearly spaced numpy array
         """
-        test_array_a = np.linspace(0, 0.7, 1000)
-        test_array_b = np.linspace(0.3, 1, 1000)
+
         for eff in np.linspace(0.01, 0.99, 20):
             y_cut, misid = find_cut(
                 test_array_a, test_array_b, eff, inverse_mode=False)
@@ -27,8 +28,7 @@ class TestFindCut(unittest.TestCase):
         """
         Test find_cut() with a linearly spaced numpy array in specificity mode
         """
-        test_array_a = np.linspace(0, 0.7, 1000)  # !!!! Not DRY
-        test_array_b = np.linspace(0.3, 1, 1000)
+        
         for eff in np.linspace(0.01, 0.99, 20):
             y_cut, misid = find_cut(
                 test_array_a, test_array_b, eff, specificity_mode=True)
@@ -41,8 +41,7 @@ class TestFindCut(unittest.TestCase):
         """
         Test find_cut() with a linearly spaced numpy array in inverse mode
         """
-        test_array_a = np.linspace(0, 0.7, 1000)  # !!!! Not DRY
-        test_array_b = np.linspace(0.3, 1, 1000)
+        
         for eff in np.linspace(0.01, 0.99, 20):
             y_cut, misid = find_cut(
                 test_array_a, test_array_b, eff, inverse_mode=True)
@@ -55,8 +54,7 @@ class TestFindCut(unittest.TestCase):
         """
         Test find_cut() with a linearly spaced numpy array in inverse and specificity mode
         """
-        test_array_a = np.linspace(0, 0.7, 1000)  # !!!! Not DRY
-        test_array_b = np.linspace(0.3, 1, 1000)
+        
         for eff in np.linspace(0.01, 0.99, 20):
             y_cut, misid = find_cut(
                 test_array_a, test_array_b, eff, inverse_mode=True, specificity_mode=True)
