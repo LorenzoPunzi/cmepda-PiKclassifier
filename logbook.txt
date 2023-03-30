@@ -746,8 +746,6 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 FINAL
 
 
-- FOM procedure
-- input parameters exceptions
 - !!!! in code
 
 
