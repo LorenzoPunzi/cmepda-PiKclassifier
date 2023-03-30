@@ -25,7 +25,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     :type filepaths_out: list[str] or tuple[str]
     :param tree: Name of the tree in which the desired variables are stored on the toyMC files
     :type tree: str
-    :param num_mc: Number of events generated for each output MC file
+    :param num_mc: Number of events generated for each output MC file. If both are set to zero!!!!
     :type num_mc: int
     :param num_data: Number of events generated for the output mixed file
     :type num_data: int
@@ -59,8 +59,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     # by taking from the toyMCs the maximum possible number of events (*) and
     # by imposing the condition num_data/(2*num_mc) = alpha
     # (*): for the cases fraction<0.5 and fraction>=0.5 respectively, we impose
-    #      the followingconditions:  n_evts_toymc_pi == num_mc+num_pions,
-    #                                n_evts_toymc_k == num_mc+num_kaons
+    #      the following conditions:  n_evts_toymc_pi == num_mc+num_pions,
+    #                                 n_evts_toymc_k == num_mc+num_kaons
     alpha = 0.2
     if int(num_mc) == 0 and int(num_data) == 0:
         if fraction < 0.5:
@@ -76,11 +76,9 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         try:
             num_pions, num_kaons = int(
                 (1-fraction)*num_data), int(fraction*num_data)
-            if (num_pions+num_mc <= n_evts_toymc_pi) and \
-               (num_kaons+num_mc <= n_evts_toymc_k):
-                pass
-            else:
-                raise IncorrectNumGenError()
+            if (num_pions+num_mc > n_evts_toymc_pi) or \
+               (num_kaons+num_mc > n_evts_toymc_k):
+                raise IncorrectNumGenError(num_mc, num_pions+num_kaons, n_evts_toymc_pi, n_evts_toymc_k)
         except IncorrectNumGenError as err:
             print(err)
             sys.exit()
@@ -107,7 +105,6 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         var_list.append(v_temp)
 
     var_array = np.stack(var_list, axis=1)
-    print(np.shape(var_array))
 
     np.random.shuffle(var_array)
 
@@ -115,7 +112,6 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     for idx in range(len(vars)):
         var_dictionary.update({vars[idx]: var_array[:, idx]})
 
-    print(tree)
     file = uproot.recreate(filepaths_out[2])
     file[tree] = var_dictionary
     file[tree].show()

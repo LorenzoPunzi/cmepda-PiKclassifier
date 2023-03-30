@@ -25,10 +25,10 @@ def default_rootpaths():
 
 def default_txtpaths():
     """
-    Returns the .txt file paths containing the templates array and the
-    mixed-set array, to be used in DNN or DTC analyses.
+    Returns the .txt file paths containing the training MC array and the
+    data array, to be used in DNN or DTC analyses.
 
-    :return: Tuple containing the paths of the pion MC, the kaon MC and the mixed data root files, respectively.
+    :return: Tuple containing the paths of the MC training array (50/50 signal/background for unbiased training) and the path of the data array, respectively.
     :rtype: tuple[str]
 
     """

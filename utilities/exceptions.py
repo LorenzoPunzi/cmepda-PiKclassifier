@@ -6,7 +6,7 @@ Module containing custom exceptions used in the package
 class InvalidSourceError(ValueError):
     """
     Exception that gives an error message if the type of the source file given
-    to a function is incorrect
+    to a function is incorrect.
     """
 
     def __init__(self, source):
@@ -23,7 +23,7 @@ class InvalidSourceError(ValueError):
 class InvalidArrayGenRequestError(ValueError):
     """
     Exception that gives an error message if there is an incompatibility of the
-    number of source file given and the type of array to import
+    number of source file given and the type of array to import.
     """
 
     def __init__(self, for_training, for_testing, mixing=False):
@@ -57,7 +57,7 @@ class InvalidArrayGenRequestError(ValueError):
 class LoadHeadError(Exception):
     """
     Exception that gives an error message if the header file cannot be found in
-    the selected path
+    the selected path.
     """
 
     def __init__(self, header_path):
@@ -73,7 +73,7 @@ class LoadHeadError(Exception):
 class IncorrectFractionError(ValueError):
     """
     Exception that gives an error message if the given fraction of Kaons (to be
-    used in the dataset generation) is non-physical.
+    used in the dataset generation) is not in the physical interval [0,1].
     """
 
     def __init__(self, f):
@@ -90,23 +90,38 @@ class IncorrectFractionError(ValueError):
 class IncorrectNumGenError(ValueError):
     """
     Exception that gives an error if the given number of events to be stored in
-    the MC and mixed datasets is incompatible with the event size of the toyMCs
+    the MC and mixed datasets is incompatible with the event size of the toyMCs.
     """
 
-    def __init__(self):
-        self.message = "Incorrect combinations of \'num_mc\' and \'num_data\'"\
-            " values: make sure that the toyMC files contain a sufficient" \
-            " number of events and lower the values of these two inputs!"
+    def __init__(self, num_mc, num_data, num_toyb, num_toys):
+        """
+        :param num_mc: Invalid number of mc events requested by the user.
+        :type num_mc: int
+        :param num_data: Invalid number of data events requested by the user.
+        :type num_data: int
+        :param num_toyb: Number of events in the background toy.
+        :type num_toyb: int
+        :param num_toys: Number of events in the signal toy.
+        :type num_toys: int
+        """
+        self.message = f"Invalid combinations of num_mc = {num_mc} and num_data = {num_data}"\
+            ": make sure that the toyMC files contain a sufficient" \
+            f" number of events and lower the values of these two inputs! Current number of events are" \
+            f" {num_toyb} for the background toy and {num_toys} for the signal toy"
         super().__init__(self.message)
 
 
 class IncorrectEfficiencyError(ValueError):
     """
     Exception that gives an error if the given value of efficiency is not in
-    the physical interval [0,1]
+    the physical interval [0,1].
     """
 
-    def __init__(self):
-        self.message = "Incorrect value of efficiency given. Make sure it is"
+    def __init__(self, eff):
+        """
+        :param eff: Invalid efficiency/specificity given by the user.
+        :type eff: float
+        """
+        self.message = f"{eff} is not a valid value for efficiency/specificity. Make sure it is"
         "included in the range [0,1]"
         super().__init__(self.message)
