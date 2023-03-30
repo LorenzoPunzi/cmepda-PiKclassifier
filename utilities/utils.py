@@ -1,10 +1,12 @@
 """
 Module containing general-use functions
 """
+import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 from sklearn import metrics
+from utilities.exceptions import IncorrectEfficiencyError
 
 
 def default_rootpaths():
@@ -109,6 +111,13 @@ def find_cut(pi_array, k_array, efficiency,
     :rtype: tuple[double]
 
     """
+    try:
+        if (efficiency<=0 or efficiency>=1):
+            raise IncorrectEfficiencyError(efficiency)
+    except IncorrectEfficiencyError as err:
+            print(err)
+            sys.exit()
+
     if inverse_mode:
         efficiency = 1 - efficiency
         cut = - np.sort(-k_array)[int(efficiency*(len(k_array)-1))] \
