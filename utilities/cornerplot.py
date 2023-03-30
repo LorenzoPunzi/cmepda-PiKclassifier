@@ -33,7 +33,7 @@ def overlaid_cornerplot(filepaths=default_rootpaths(), tree='t_M0pipi;1',
         warnings.warn(msg, stacklevel=2)
     try:
         if len(filepaths)<2 or not (type(filepaths)==list or type(filepaths)==tuple):
-            raise IncorrectIterableError(filepaths,2) 
+            raise IncorrectIterableError(filepaths,2,'filepaths') 
     except IncorrectIterableError as err:
         print(err)
         sys.exit()

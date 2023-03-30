@@ -132,15 +132,31 @@ class IncorrectIterableError(Exception):
     Exception that gives an error if the length of a list/tuple is incorrect.
     """
 
-    def __init__(self, input, target_length):
+    def __init__(self, input, target_length, input_name= 'input'):
         """
-        :param input: Invalid list/tuple given by the user.
-        :type input: list or tuple
+        :param input: Invalid input given by the user.
+        :type input: any
         :param target_length: Minimum length required for the list/tuple by the function.
         :type target_length: int
+        :param input_name: Name of invalid input given by the user.
+        :type input: str
         """
-        self.message = f"\nIncorrectIterableError:{input} given has length {len(input)}, which is less than \
-the minumum number of arguments {target_length}\n"
         if not (type(input)==list or type(input)==tuple):
-            self.message = f"\nIncorrectIterableError:{input} given in not a list/tuple!\n"
+            self.message = f"\nIncorrectIterableError:{input_name}={input} given in not a list/tuple!\n"
+        else:
+            self.message = f"\nIncorrectIterableError:{input_name}={input} given has length {len(input)}, \
+which is less than the minumum number of arguments {target_length}!\n"
+        
+        super().__init__(self.message)
+
+
+class IncoherentRocPlotError(Exception):
+    """
+    Exception that gives an error if the lengths of the lists/tuples ``rocx_arrays``, ``rocy_arrays``, ``roc_labels``, ``roc_linestyles``, ``roc_colors`` are not all the same.
+    """
+
+    def __init__(self):
+        self.message = f"\nIncoherentRocPlotError: The lists/tuples ``rocx_arrays``, ``rocy_arrays``, \
+ ``roc_labels``, ``roc_linestyles``, ``roc_colors`` are not all of the same length!"
+ 
         super().__init__(self.message)

@@ -12,7 +12,7 @@ from utilities.exceptions import IncorrectEfficiencyError
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 
-def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
+def var_cut(rootpaths=default_rootpaths(), tree='t_M0pipi;1', cut_var='M0_Mpipi',
             eff=0.90, error_optimization=True, inverse_mode=False,
             specificity_mode=False, savefig=False, figpath=''):
     """
@@ -29,7 +29,7 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     :type eff: float
     :param error_optimization: Performs error optimization instead of using a fixed efficiency value.
     :type error_optimization: bool
-    :param inverse_mode: Set to ``True`` if the "signal" events have lower values of the cut variable than the "background" ones.
+    :param inverse_mode: Set to ``True`` if the signal events have lower values of the cut variable than the background ones (if it is not manually set when needed to make the cut unbiased, the function gives a warning and does so by itself).
     :type inverse_mode: bool
     :param specificity_mode: Set to ``True`` if the efficiency given is the specificity.
     :type specificity_mode: bool

@@ -6,14 +6,14 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import metrics
-from utilities.exceptions import IncorrectEfficiencyError
+from utilities.exceptions import IncorrectEfficiencyError, IncorrectIterableError, IncoherentRocPlotError
 
 
 def default_rootpaths():
     """
-    Returns the default root file paths of the package.
+    Returns the default root file paths of the package, where background is pions and signal is kaons.
 
-    :return: Tuple containing the paths of the pion MC, the kaon MC and the mixed data root files, respectively.
+    :return: Three element tuple containing the paths of the pion MC, the kaon MC and the mixed data root files, respectively.
     :rtype: tuple[str]
 
     """
@@ -27,8 +27,7 @@ def default_rootpaths():
 
 def default_txtpaths():
     """
-    Returns the .txt file paths containing the training MC array and the
-    data array, to be used in DNN or DTC analyses.
+    Returns the .txt file paths containing the training MC array and the data array, to be used in DNN or DTC analyses.
 
     :return: Tuple containing the paths of the MC training array (50/50 signal/background for unbiased training) and the path of the data array, respectively.
     :rtype: tuple[str]
@@ -44,9 +43,9 @@ def default_txtpaths():
 
 def default_vars():
     """
-    Returns default variables of the package.
+    Returns default variables used by the package in the pi-K analysis.
 
-    :return: Variable tuple.
+    :return: 13 element tuple containing the names of the default variables to use.
     :rtype: tuple[str]
 
     """
@@ -95,19 +94,19 @@ def default_resultsdir(dir='outputs-PiKclassifier'):
 def find_cut(pi_array, k_array, efficiency,
              specificity_mode=False, inverse_mode=False):
     """
-    Finds where to cut a certain varibale to obtain a certain sensitivity in a hypothesis test between two given species' arrays
+    Finds where to cut a certain variable to obtain a certain sensitivity/specificity in a hypothesis test between two given species' arrays.
 
-    :param pi_array: Array containing the "negative" species.
+    :param pi_array: Array containing the background species.
     :type pi_array: numpy.array[float]
-    :param k_array: Array containing the "positive" species.
+    :param k_array: Array containing the signal species.
     :type k_array: numpy.array[float]
-    :param efficiency: Sensitivity required from the test (specificity in specificity mode)
+    :param efficiency: Sensitivity required from the test (specificity if ``specificity_mode = True``).
     :type efficiency: float
-    :param specificity_mode: To activate if the efficiency given is the specificity
+    :param specificity_mode: If set to ``True`` the efficiency given is taken to be the intended specificity.
     :type specificity_mode: bool
-    :param inverse_mode: To activate if the "positive" events tend to have lower values
+    :param inverse_mode: Set to ``True`` if the signal events tend to have lower values.
     :type inverse_mode: bool
-    :return: Two element tuple containing cut value and misidentification probability for the negative species (or sensitivity in specificity mode)
+    :return: Two element tuple containing cut value and misidentification probability for the negative species (or sensitivity if ``specificity_mode = True``)
     :rtype: tuple[double]
 
     """
@@ -133,27 +132,27 @@ def find_cut(pi_array, k_array, efficiency,
     return cut, misid
 
 
-def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
+def plot_rocs(rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors,
               x_pnts=(), y_pnts=(), point_labels=(''), eff=0,
               figtitle='ROC', figname=''):
     """
     Draws superimposed roc curves and/or points
 
-    :param rocx_array: Array of arrays, each containing the respective x points of different roc curves to be plotted.
-    :type rocx_array: numpy.array[numpy.array[float]]
-    :param rocy_array: Array of arrays, each containing the respective y points of different roc curves to be plotted.
-    :type rocy_array: numpy.array[numpy.array[float]]
+    :param rocx_arrays: List or tuple of numpy arrays, each containing the respective x points of different roc curves to be plotted.
+    :type rocx_arrays: list[numpy.array[float]] or tuple[numpy.array[float]] 
+    :param rocy_arrays: List or tuple of numpy arrays, each containing the respective y points of different roc curves to be plotted.
+    :type rocy_arrays: list[numpy.array[float]] or tuple[numpy.array[float]] 
     :param roc_labels: Names of the respective species whose roc coordinates were given.
     :type roc_labels: list[str] or tuple[str]
     :param roc_linestyles: Linestyles of the respective species whose roc coordinates were given.
     :type roc_linestyles: list[str] or tuple[str]
     :param roc_colors: Colors of the respective species whose roc coordinates were given.
     :type roc_colors: list[str] or tuple[str]
-    :param x_pnts: Tuple containing the respective x coordinates of points to be plotted.
+    :param x_pnts: List or tuple of the respective x coordinates of points to be plotted.
     :type x_pnts: list[double] or tuple[double]
-    :param y_pnts: Tuple containing the respective y coordinates of points to be plotted.
+    :param y_pnts: List or tuple of the respective y coordinates of points to be plotted.
     :type y_pnts: list[double] or tuple[double]
-    :param point_labels: Names of the respective species whose point coordinates were given.
+    :param point_labels: List or tuple of names of the respective species whose point coordinates were given.
     :type point_labels: list[str] or tuple[str]
     :param eff: If different than 0., draws a green dashed line at y = eff on the plot.
     :type eff: double
@@ -169,15 +168,49 @@ def plot_rocs(rocx_array, rocy_array, roc_labels, roc_linestyles, roc_colors,
     plt.xlim(0, 1)
     plt.ylabel('True Positive Probability')
     plt.ylim(0, 1)
-    for idx in range(len(rocx_array)):
-        '''
-        flag_inverse = inverse_mode_array[idx]
-        if flag_inverse is True:
-            rocx_array[idx] = np.ones(rocx_array[idx].size) - rocx_array[idx]
-            rocy_array[idx] = np.ones(rocy_array[idx].size) - rocy_array[idx]
-            auc_array[idx] = 1 - auc_array[idx]
-        '''
-        plt.plot(rocx_array[idx], rocy_array[idx], label=roc_labels[idx],
+
+    try:
+        if (type(rocx_arrays)==list or type(rocx_arrays)==tuple) is not True:
+            raise IncorrectIterableError(rocx_arrays,3,'rocx_arrays') 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+    try:
+        if (type(rocy_arrays)==list or type(rocy_arrays)==tuple) is not True:
+            raise IncorrectIterableError(rocy_arrays,3,'rocy_arrays') 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+    try:
+        if (type(roc_labels)==list or type(roc_labels)==tuple) is not True:
+            raise IncorrectIterableError(roc_labels,3,'roc_labels') 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+    try:
+        if (type(roc_linestyles)==list or type(roc_linestyles)==tuple) is not True:
+            raise IncorrectIterableError(roc_linestyles,3,'roc_linestyles') 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+    try:
+        if (type(roc_colors)==list or type(roc_colors)==tuple) is not True:
+            raise IncorrectIterableError(roc_colors,3,'roc_colors') 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+    
+    # Check if all the lists/tuples have same lengths
+    try:
+        if len(set([len(i) for i in [rocx_arrays,rocy_arrays,roc_labels,roc_linestyles,roc_colors]]))!=1:
+            raise IncoherentRocPlotError
+    except IncoherentRocPlotError as err:
+        print(err)
+        sys.exit()
+    
+
+    for idx in range(len(rocx_arrays)):
+        plt.plot(rocx_arrays[idx], rocy_arrays[idx], label=roc_labels[idx],
                  color=roc_colors[idx], linestyle=roc_linestyles[idx])
     for idx in range(len(x_pnts)):
         plt.plot((x_pnts[idx]), (y_pnts[idx]),
@@ -221,11 +254,10 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
     rocx, rocy, _ = metrics.roc_curve(true_array, y_array)
     auc = metrics.roc_auc_score(true_array, y_array)
 
+    # need to invert the roc to make sense when in inverse mode
     if inverse_mode:
         rocx, rocy = np.ones(rocx.size)-rocx, np.ones(rocy.size)-rocy
         auc = 1 - auc
-
-    # print(f'AUC of the ROC is {auc}')
 
     if makefig:
         plot_rocs((rocx,), (rocy,), ("ROC",), ("-",), ("blue",), eff=eff,
@@ -236,18 +268,17 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
 
 def stat_error(fraction, data_size, eff, misid):
     """
-    Evaluates the systematic error on fraction estimate due to the finite sample
-    used to evaluate the "efficiency" and "misid" parameters.
+    Evaluates the statistical error on fraction estimate due to the finite sample of the data set, using the variance of sum of two binomials (of signal and background events respectively).
 
-    :param fraction: Estimated fraction
+    :param fraction: Estimated fraction by the algorithm.
     :type fraction: float
-    :param data_size: Size of the data array
+    :param data_size: Size of the data set.
     :type template_sizes: int
-    :param eff: Efficiency of the algorithm
+    :param eff: Estimated efficiency of the algorithm.
     :type eff: float
-    :param misid: Misidentification probability (false positive) of the algorithm
+    :param misid: Estimated misidentification probability (false positive) of the algorithm.
     :type misid: float
-    :return: The statistic error associated to the fraction
+    :return: The statistical error associated to the fraction.
     :rtype: float
 
     """
@@ -265,15 +296,15 @@ def syst_error(fraction, template_sizes, eff, misid):
     Evaluates the systematic error on fraction estimate due to the finite sample
     used to evaluate the "efficiency" and "misid" parameters.
 
-    :param fraction: Estimated fraction
+    :param fraction: Estimated fraction by the algorithm.
     :type fraction: float
-    :param template_sizes: Sizes of the evaluation arrays (pi and k dataset, in this order)
-    :type template_sizes: tuple[int]
-    :param eff: Efficiency of the algorithm
+    :param template_sizes: Two element list or tuple of sizes of the evaluation arrays (background and signal dataset, in this order).
+    :type template_sizes: list[int] tuple[int]
+    :param eff: Estimated efficiency of the algorithm.
     :type eff: float
-    :param misid: Misidentification probability (false positive) of the algorithm
+    :param misid: Estimated misidentification probability (false positive) of the algorithm
     :type misid: float
-    :return: The systematic error associated to the fraction
+    :return: The systematic error associated to the fraction.
     :rtype: float
 
     """

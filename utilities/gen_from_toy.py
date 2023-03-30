@@ -53,7 +53,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         warnings.warn(msg, stacklevel=2)
     try:
         if len(filepaths_in)<2 or not (type(filepaths_in)==list or type(filepaths_in)==tuple):
-            raise IncorrectIterableError(filepaths_in,2) 
+            raise IncorrectIterableError(filepaths_in,2,'filepaths_in') 
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
@@ -63,7 +63,7 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
         warnings.warn(msg, stacklevel=2)
     try:
         if len(filepaths_out)<3 or not (type(filepaths_out)==list or type(filepaths_out)==tuple):
-            raise IncorrectIterableError(filepaths_out,3) 
+            raise IncorrectIterableError(filepaths_out,3,'filepaths_out') 
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
