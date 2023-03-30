@@ -5,28 +5,22 @@
 
 
   Cut on Variables Distribution: 
-    K fraction = 0.4199 +- 0.0099 (stat) +- 0.0033 (syst)  |  M0_MKK 
-    Efficiency = 0.9161959798994975  |  M0_MKK 
-    Misid = 0.7363208519559811  |  M0_MKK 
-    Cut = 5.3988284941326175  |  M0_MKK 
+    K fraction = 0.4176 +- 0.01 (stat) +- 0.0033 (syst)  |  M0_MKK 
+    Efficiency = 0.9  |  M0_MKK 
+    Misid = 0.7143859679902453  |  M0_MKK 
+    Cut = 5.396384308187302  |  M0_MKK 
     AUC = 0.6350478583149891  |  M0_MKK 
 
 
-  Deep Neural Network: 
-    K fraction = 0.415 +- 0.003 (stat) +- 0.002 (syst)
-    Efficiency = 0.5736884422110553
-    Misid = 0.0364016276256461
-    Cut = 0.8407812118530273
-    AUC = 0.8983684728634167
-
-
   Decision Tree Classifier: 
-    K fraction = 0.4205 +- 0.0017 (stat) +- 0.001 (syst)
-    Efficiency = 0.9049538667520447
-    Misid = 0.09356364384125025
+    K fraction = 0.4204 +- 0.0017 (stat) +- 0.001 (syst)
+    Efficiency = 0.9052790258609335
+    Misid = 0.09526939198761483
 
 
-  Template fit with ROOT: 
-    K fraction = 0.42700512132752055 +- 0.008168394644204834
-    Chi2 = 624.3738511983407
-    Probability = 0.8684596733192889
+  Deep Neural Network: 
+    K fraction = 0.4085 +- 0.0036 (stat) +- 0.0027 (syst)
+    Efficiency = 0.9
+    Misid = 0.3632684482569009
+    Cut = 0.48163193464279175
+    AUC = 0.8983684846467644
