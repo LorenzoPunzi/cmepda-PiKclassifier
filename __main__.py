@@ -406,8 +406,9 @@ if hasattr(args, "methods"):
 
         for fr in fractions_list:
 
-            lwdth_stat = 1 if fr[2] <= fr[1] else 2
-            lwdth_syst = 1 if fr[1] <= fr[2] else 2
+            lwdth_stat = 2 if fr[2] <= fr[1] else 3
+            lwdth_syst = 2 if fr[1] <= fr[2] else 3
+            lwdth_tot = 1
 
             plt.plot(fr[0], y[idx], color='black', marker='o')
             plt.errorbar(fr[0], y[idx], 0, fr[1], fmt='',
@@ -415,11 +416,16 @@ if hasattr(args, "methods"):
 
             plt.errorbar(fr[0], y[idx], 0, fr[2], fmt='',
                          ecolor='green', elinewidth=lwdth_syst)
+            
+            plt.errorbar(fr[0], y[idx], 0, np.sqrt(fr[1]**2+fr[2]**2), fmt='',
+                         ecolor='orange', elinewidth=lwdth_tot)
             idx += 1
         plt.plot([], [], marker='', linestyle='-',
                  color='blue', label="Stat. error bars")
         plt.plot([], [], marker='', linestyle='-',
                  color='green', label="Syst. error bars")
+        plt.plot([], [], marker='', linestyle='-',
+                 color='orange', label="Total error bars")
         plt.axvline(x=0.42, linestyle='--', color='red',
                     label='True K fraction')
 
