@@ -116,7 +116,7 @@ parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
 parser_an.add_argument('-err', '--err_opt', action='store_true',
-                       help='Performs error optimization in DNN and var_cut analyses instead of using a fixed efficiency value')
+                       help='Performs error optimization in DNN and var_cut analyses instead of using a fixed value')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -248,6 +248,10 @@ if hasattr(args, "methods"):
                     rocx_array.append(rocx)
                     rocy_array.append(rocy)
                     roc_labels.append(f'{vc[0]}_cut')
+                    if args.err_opt is True:
+                        x_pnts.append(stats[1])
+                        y_pnts.append(stats[0])
+                        point_labels.append(f'Optimized point {vc[0]}_cut')
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dnn", "all"]:
@@ -293,6 +297,10 @@ if hasattr(args, "methods"):
                 rocx_array.append(rocx_dnn)
                 rocy_array.append(rocy_dnn)
                 roc_labels.append("DNN")
+                if args.err_opt is True:
+                    x_pnts.append(stats[1])
+                    y_pnts.append(stats[0])
+                    point_labels.append(f'Optimized point DNN')
 
             add_result(
                 "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2], 4)} (syst)')
@@ -382,11 +390,17 @@ if hasattr(args, "methods"):
         for i in range(len(roc_labels)):
             roc_colors.append('#%06X' % randint(0, 0xFFFFFF))
             roc_linestyles.append('-')
-        plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
-                  tuple(roc_linestyles), tuple(roc_colors),
-                  x_pnts=x_pnts, y_pnts=y_pnts, point_labels=point_labels,
-                  eff=args.efficiency, figtitle='ROCs',
-                  figname=f'{respath}/ROCs.png')
+        if args.err_opt is True:
+            plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
+                      tuple(roc_linestyles), tuple(roc_colors),
+                      x_pnts=x_pnts, y_pnts=y_pnts, point_labels=point_labels,
+                      eff=0, figtitle='ROCs', figname=f'{respath}/ROCs.png')
+        else:
+            plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
+                      tuple(roc_linestyles), tuple(roc_colors),
+                      x_pnts=x_pnts, y_pnts=y_pnts, point_labels=point_labels,
+                      eff=args.efficiency, figtitle='ROCs',
+                      figname=f'{respath}/ROCs.png')
 
     if args.figures is True:
         if 'all' in analysis:
@@ -408,7 +422,6 @@ if hasattr(args, "methods"):
 
             lwdth_stat = 2 if fr[2] <= fr[1] else 3
             lwdth_syst = 2 if fr[1] <= fr[2] else 3
-            lwdth_tot = 1
 
             plt.plot(fr[0], y[idx], color='black', marker='o')
             plt.errorbar(fr[0], y[idx], 0, fr[1], fmt='',
@@ -416,16 +429,12 @@ if hasattr(args, "methods"):
 
             plt.errorbar(fr[0], y[idx], 0, fr[2], fmt='',
                          ecolor='green', elinewidth=lwdth_syst)
-            
-            plt.errorbar(fr[0], y[idx], 0, np.sqrt(fr[1]**2+fr[2]**2), fmt='',
-                         ecolor='orange', elinewidth=lwdth_tot)
+
             idx += 1
         plt.plot([], [], marker='', linestyle='-',
                  color='blue', label="Stat. error bars")
         plt.plot([], [], marker='', linestyle='-',
                  color='green', label="Syst. error bars")
-        plt.plot([], [], marker='', linestyle='-',
-                 color='orange', label="Total error bars")
         plt.axvline(x=0.42, linestyle='--', color='red',
                     label='True K fraction')
 

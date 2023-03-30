@@ -21,12 +21,6 @@
 
 
   Decision Tree Classifier: 
-    K fraction = 0.4205 +- 0.0017 (stat) +- 0.001 (syst)
-    Efficiency = 0.9049538667520447
-    Misid = 0.09356364384125025
-
-
-  Template fit with ROOT: 
-    K fraction = 0.42700512132752055 +- 0.008168394644204834
-    Chi2 = 624.3738511983407
-    Probability = 0.8684596733192889
+    K fraction = 0.4193 +- 0.0017 (stat) +- 0.001 (syst)
+    Efficiency = 0.9063553978355867
+    Misid = 0.09674645054080055
