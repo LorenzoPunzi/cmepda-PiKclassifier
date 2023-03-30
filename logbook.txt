@@ -745,16 +745,10 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 FINAL
 
-<<<<<<< HEAD
-
-- FOM procedure
-- input parameters exceptions
-=======
 - InvalidArrayGenRequestError training/testing
 - exceptions in dnnsettings
 - overlaid_cornerplot---->utils
 - gen_from_toy num = 0 explaination 
->>>>>>> a5be469 (bunch of changes everywhere)
 - !!!! in code
 
 
