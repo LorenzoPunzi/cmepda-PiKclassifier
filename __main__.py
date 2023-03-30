@@ -109,8 +109,8 @@ parser_an.add_argument('-ld', '--load_dnn', action='store_true',
 parser_an.add_argument('-vcut', '--var_cut', nargs='+', default='M0_MKK',
                        help='Variable(s) on which "variable cut" analysis is performed')
 
-parser_an.add_argument('-inv', '--vcut_inverse', nargs='+', default=True,
-                       help='Flag(s) that select the inverse mode to perform the variable(s) cut analysis')
+parser_an.add_argument('-inv', '--vcut_inverse', nargs='+', type=int, default=1,
+                       help='Flag(s) (0 or 1) that select the inverse mode to perform the variable(s) cut analysis')
 
 parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
@@ -191,7 +191,7 @@ if hasattr(args, "methods"):
             if item not in analysis]
         roc_analysis = ["dnn", "dtc", "vcut"]
         flag = len([a for a in analysis if a in roc_analysis])
-        if flag >= 2 or len([args.var_cut]) > 1:
+        if flag >= 2 or len(args.var_cut) > 1:
             SINGULAR_ROCS = False
 
     if SINGULAR_ROCS is not True:
@@ -203,7 +203,6 @@ if hasattr(args, "methods"):
 
         if opt in ["vcut", "all"]:
             # ~~~~~~~~ Setup of the var_cut - free to edit ~~~~~~~~~~~~~~~~~~~
-            INVERSE = args.vcut_inverse
             SPECIFICITY = False
             figure_cut = args.figures
             figure_roc = bool(args.figures*SINGULAR_ROCS)
@@ -215,7 +214,16 @@ if hasattr(args, "methods"):
 
             rocx_vcut, rocy_vcut, labels_vcut = [], [], []
 
-            vars = zip([args.var_cut], [args.vcut_inverse])
+            vcuts = [args.var_cut] if type(
+                args.var_cut) is str else args.var_cut
+
+            print(type(args.vcut_inverse))
+            if type(args.vcut_inverse) is int:
+                inverse = [bool(args.vcut_inverse)]
+            else:
+                inverse = [bool(inv) for inv in args.vcut_inverse]
+
+            vars = zip(vcuts, inverse)
 
             for vc in vars:
                 fr, stats, eval_arr = var_cut(
@@ -226,7 +234,7 @@ if hasattr(args, "methods"):
                 fractions_list.append(fr)
 
                 rocx, rocy, auc = roc(
-                    eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=INVERSE,
+                    eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=vc[1],
                     makefig=figure_roc, name=f'{respath}/ROC_{vc[0]}_cut')
 
                 add_result(
@@ -238,7 +246,7 @@ if hasattr(args, "methods"):
                 if SINGULAR_ROCS is not True:
                     rocx_array.append(rocx)
                     rocy_array.append(rocy)
-                    roc_labels.append(f'{vc[0]}')
+                    roc_labels.append(f'{vc[0]}_cut')
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dnn", "all"]:
@@ -381,13 +389,11 @@ if hasattr(args, "methods"):
 
     if args.figures is True:
         if 'all' in analysis:
-            analysis = ['tfit', 'dnn', 'dtc', 'vcut']
-        if len([args.var_cut]) > 1:
-            variables = [f'{vcut}_cut' for vcut in args.var_cut]
-            analysis = [args.var_cut] + analysis[1:]
-            print(analysis)
+            analysis = ['vcut', 'dnn', 'dtc', 'tfit']
+        variables = [f'{vcut}_cut' for vcut in vcuts]
+        analysis = variables + analysis[1:]
+        print(analysis)
         npts = len(fractions_list)
-        print(npts)
         y = np.linspace(0.25, 0.75, npts)
         idx = 0
         fig = plt.figure(999)
@@ -395,7 +401,7 @@ if hasattr(args, "methods"):
         plt.xlabel("Fraction")
         plt.ylim(0, 1)
         plt.yticks(y, analysis)
-        plt.xlim(0.39, 0.5)
+        plt.xlim(0.375, 0.475)
 
         for fr in fractions_list:
 
