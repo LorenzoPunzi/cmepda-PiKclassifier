@@ -6,13 +6,16 @@ distributions for the the two species
 """
 import sys
 import os
+import warnings
 import time
 import uproot
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import ks_2samp as KS
 from utilities.utils import default_rootpaths
+from utilities.exceptions import IncorrectIterableError
 
+warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 def mix_function(y, x, m):
     """
@@ -63,27 +66,41 @@ def mergevar(filepaths=default_rootpaths(), tree='tree;1',
     this module. This feature is then computed for both the MCs and for data
     and stored in 3 arrays, returned by the function.
 
-    :param filepaths: Tuple containing three .root file paths, for the "background" sample (flag=0), the "signal" sample (flag=1) and the mixed one, in this order.
-    :type filepaths: tuple[str]
+    :param filepaths: Three element list or tuple containing .root file paths, of the "background" set (flag=0), the "signal" set (flag=1) and the mixed data set, in this order.
+    :type filepaths: list[str] or tuple[str]
     :param tree: Name of the tree from which to load
     :type tree: str
-    :param vars: Couple of variables that are going to be merged
-    :type vars: tuple
+    :param vars: Two element list or tuple of variables that are going to be merged
+    :type vars: list[str] or tuple[str]
     :param savefig: If ``True`` the figure of the new variable's distribution is saved
     :type savefig: bool
     :param savetxt: If ``True`` the array containing the new variable's events is saved as .txt file
     :type savetxt: bool
-    :return: A tuple con containing the three sets of the new variable; a tuple with the value retrieved by KS_optimization() and the KS statistic of the original variables; the parameter "m" which the original variables were merged with
-    :rtype: tuple[numpy.array], tuple[float], float
+    :return: Three element tuple containing respectively: a three element tuple of numpy arrays of the new variable (MC background, MC signal, data); a two element tuple of value retrieved by KS_optimization() and the KS statistic of the original variables; the parameter "m" which the original variables were merged with
+    :rtype: tuple[tuple[numpy.array[float]], tuple[float], float]
 
     """
 
-    if len(filepaths) != 3:
-        print("Errore nella lunghezza delle liste passate a \'mergevar\'")
+    if len(filepaths)>=4:
+        msg = f'***WARNING*** \nInput filepaths given are more than three. Using only the first three...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+    try:
+        if len(filepaths)<3 or not (type(filepaths)==list or type(filepfilepathsaths_in)==tuple):
+            raise IncorrectIterableError(filepaths,3) 
+    except IncorrectIterableError as err:
+        print(err)
         sys.exit()
-    if len(vars) != 2:
-        print("Errore nella lunghezza delle liste passate a \'mergevar\'")
+    
+    if len(vars)>=3:
+        msg = f'***WARNING*** \nVars to merge given are more than two. Using only the first two...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+    try:
+        if len(vars)<2 or not (type(vars)==list or type(vars)==tuple):
+            raise IncorrectIterableError(vars,2) 
+    except IncorrectIterableError as err:
+        print(err)
         sys.exit()
+
 
     tree_pi, tree_k, tree_data = [uproot.open(file)[tree]
                                   for file in filepaths]
