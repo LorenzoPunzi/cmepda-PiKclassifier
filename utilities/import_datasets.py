@@ -4,19 +4,18 @@ the variables of interest in numpy arrays for ML treatment
 """
 
 import sys
-import time
-# import ROOT
+import warnings
 import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
-from utilities.utils import default_rootpaths, default_vars
 from utilities.exceptions import InvalidArrayGenRequestError
 
+warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     """
-    Function that extracts the events of the chosen variables from two
-    ROOT files and stores them in numpy arrays.
+    Function that extracts the chosen variables for all eventsin two
+    ROOT files given and stores them in numpy arrays.
 
 
     :param file_pi: Path to MC root file of background only processes.
@@ -25,7 +24,7 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     :type file_k: str
     :param tree: Tree in which the variables are stored on the root files.
     :type tree: str
-    :param vars: Tuple containing names of the variables to be loaded.
+    :param vars: List or tuple containing names of the variables to be loaded.
     :type vars: list[str] or tuple[str]
     :param flag_column: If set to True, a column full of 0 or 1, for background or signal events respectively, is appended as the last column of the 2D array.
     :type flag_column: bool
@@ -67,11 +66,11 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     Function that allows to append to the existing datasets (numpy arrays) new
     columns filled by the outputs of the mergevar() function.
 
-    :param rootpaths: Three element list or tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix.
+    :param rootpaths: Three element list or tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the data mix.
     :type rootpaths: list[str] or tuple[str]
     :param tree: Tree in which the variables are stored on the root files.
     :type tree: str
-    :param initial_arrays: Three element list or tuple of 2D numpy arrays containing the data of the origina variables of background, signal and mixed events.
+    :param initial_arrays: Three element list or tuple of 2D numpy arrays containing the data of the original variables of background, signal and mixed events.
     :type initial_arrays: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
     :param new_variables: List or tuple containing two element lists or tuples of variables to merge.
     :type new_variables: list[tuple[str]] or tuple[tuple[str]]
@@ -79,6 +78,16 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
 
     """
+
+    if len(filepaths_in>=3):
+        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...'
+        warnings.warn(msg, stacklevel=2)
+    try:
+        if len(filepaths_in<2):
+            raise IncorrectIterableError(filepaths_in,2) 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
 
     n_old_vars = len(initial_arrays[2][0, :])
     new_arrays = []
@@ -93,7 +102,7 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     list_pi, list_k, list_data = [], [], []
 
     for newvars in new_variables:
-        merged_arrays, KS_stats, m = mergevar(
+        merged_arrays, _, _ = mergevar(
             rootpaths, tree, newvars, savefig=False, savetxt=False)
         list_pi.append(merged_arrays[0][:length])
         list_k.append(merged_arrays[1][:length])
@@ -142,6 +151,16 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
     :return: Two element tuple containing 2D numpy arrays. The first contains the MC datasets' events (scrambled to avoid position bias) and the flag that identifies each event as background or signal. The second contains the events of the mixed dataset without flags (one less column).
     :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
     """
+
+    if len(filepaths_in>=3):
+        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...'
+        warnings.warn(msg, stacklevel=2)
+    try:
+        if len(filepaths_in<2):
+            raise IncorrectIterableError(filepaths_in,2) 
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
 
     try:
         if (for_training and for_testing and len(rootpaths) == 3):
@@ -203,27 +222,5 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
 
 
 if __name__ == '__main__':
-    t1 = time.time()
-
-    rootpaths = default_rootpaths()
-
-    file_pi, file_k, file_data = rootpaths
-
-    combinations = (('M0_MKpi', 'M0_MpiK'),)
-
-    # ('M0_MKK', 'M0_p'), ('M0_Mpipi', 'M0_p'), ('M0_MKK', 'M0_MpiK'), ('M0_Mpipi', 'M0_MKpi'))
-
-    tree = 't_M0pipi;1'
-
-    v_mc, v_data = array_generator(rootpaths, tree, vars=default_vars(),
-                                   n_mc=560000, n_data=100000,
-                                   new_variables=combinations)
-
-    print(np.shape(v_mc), np.shape(v_data))
-
-    # np.savetxt('../data/txt/train_array.txt', v_mc)
-    # np.savetxt('../data/txt/data_array.txt', v_data)
-
-    t2 = time.time()
-
-    print(f'Tempo totale = {t2-t1}')
+    print('Running this module as main module is not supported. Feel free to add \
+          a custom main or run the package as a whole (see README.md)')

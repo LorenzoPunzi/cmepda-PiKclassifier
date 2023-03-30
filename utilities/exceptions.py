@@ -1,12 +1,12 @@
 """
-Module containing custom exceptions used in the package
+Module containing the custom exceptions used in the package
 """
 
 
 class InvalidSourceError(ValueError):
     """
-    Exception that gives an error message if the type of the source file given
-    to a function is incorrect.
+    Exception that gives an error message if the type of source file given
+    is incorrect.
     """
 
     def __init__(self, source):
@@ -23,7 +23,7 @@ class InvalidSourceError(ValueError):
 class InvalidArrayGenRequestError(ValueError):
     """
     Exception that gives an error message if there is an incompatibility of the
-    number of source file given and the type of array to import.
+    number of source files given and the type of array to import.
     """
 
     def __init__(self, for_training, for_testing, mixing=False):
@@ -72,8 +72,8 @@ class LoadHeadError(Exception):
 
 class IncorrectFractionError(ValueError):
     """
-    Exception that gives an error message if the given fraction of Kaons (to be
-    used in the dataset generation) is not in the physical interval [0,1].
+    Exception that gives an error message if the given fraction of signal events (to be
+    used in the dataset generation) is not in the physical interval (0,1).
     """
 
     def __init__(self, f):
@@ -83,14 +83,15 @@ class IncorrectFractionError(ValueError):
         """
         self.fraction = f
         self.message = f" {self.fraction} is not a valid value for the \
-            fraction of Kaons in the mixed dataset!"
+            fraction of signal events in the mixed dataset! Make sure it is in\
+            the range (0,1)"
         super().__init__(self.message)
 
 
 class IncorrectNumGenError(ValueError):
     """
     Exception that gives an error if the given number of events to be stored in
-    the MC and mixed datasets is incompatible with the event size of the toyMCs.
+    the MC and mixed dataset is incompatible with the event size of the toyMCs.
     """
 
     def __init__(self, num_mc, num_data, num_toyb, num_toys):
@@ -114,7 +115,7 @@ class IncorrectNumGenError(ValueError):
 class IncorrectEfficiencyError(ValueError):
     """
     Exception that gives an error if the given value of efficiency is not in
-    the physical interval [0,1].
+    the physical interval (0,1).
     """
 
     def __init__(self, eff):
@@ -123,5 +124,23 @@ class IncorrectEfficiencyError(ValueError):
         :type eff: float
         """
         self.message = f"{eff} is not a valid value for efficiency/specificity. Make sure it is"
-        "included in the range [0,1]"
+        "in the range (0,1)"
+        super().__init__(self.message)
+
+class IncorrectIterableError(Exception):
+    """
+    Exception that gives an error if the length of a list/tuple is incorrect.
+    """
+
+    def __init__(self, input, target_length):
+        """
+        :param input: Invalid list/tuple given by the user.
+        :type input: list or tuple
+        :param target_length: Minimum length required for the list/tuple by the function.
+        :type target_length: int
+        """
+        self.message = f"{input} given has length {len(input)}, which is less than the minumum number\
+            of arguments {target_length}"
+        if not (type(input)==list or type(input)==tuple):
+            self.message = f"{input} given in not a list/tuple!"
         super().__init__(self.message)
