@@ -237,9 +237,11 @@ if hasattr(args, "methods"):
 
             vars = zip(vcuts, inverse)
 
+            # Performs the analysis on every specified variable in args.var_cut
             for vc in vars:
                 fr, stats, eval_arr = var_cut(
-                    rootpaths=filepaths, tree=tree, cut_var=vc[0], eff=args.efficiency,
+                    rootpaths=filepaths, tree=tree, cut_var=vc[0],
+                    eff=args.efficiency, error_optimization=True,
                     inverse_mode=vc[1], specificity_mode=SPECIFICITY,
                     savefig=figure_cut, figpath=respath)
 
@@ -249,12 +251,6 @@ if hasattr(args, "methods"):
                     eval_arr[0], eval_arr[1], eff=round(stats[0], 4), inverse_mode=vc[1],
                     makefig=figure_roc, name=f'{respath}/ROC_{vc[0]}_cut')
 
-                add_result(
-                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc[0])
-                add_result("Efficiency", stats[0], vc[0])
-                add_result("Misid", stats[1], vc[0])
-                add_result("Cut", stats[2], vc[0])
-                add_result("AUC", auc, vc[0])
                 if SINGULAR_ROCS is not True:
                     rocx_array.append(rocx)
                     rocy_array.append(rocy)
@@ -263,6 +259,14 @@ if hasattr(args, "methods"):
                         x_pnts.append(stats[1])
                         y_pnts.append(stats[0])
                         point_labels.append(f'Optimized point {vc[0]}_cut')
+
+                add_result(
+                    "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2],4)} (syst)', vc[0])
+                add_result("Efficiency", stats[0], vc[0])
+                add_result("Misid", stats[1], vc[0])
+                add_result("Cut", stats[2], vc[0])
+                add_result("AUC", auc, vc[0])
+
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dnn", "all"]:
@@ -276,7 +280,6 @@ if hasattr(args, "methods"):
             VERBOSE = 2
             MODEL_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.json'
             WEIGHTS_FILE = 'cmepda-PiKclassifier/machine_learning/deepnn.h5'
-            INVERSE = False
             figs = args.figures
             PLOT_ROC = bool(args.figures*SINGULAR_ROCS)
             fignames = ("DNN_history.png", "eval_Pions.png", "eval_Kaons.png",
@@ -295,13 +298,13 @@ if hasattr(args, "methods"):
                 source=('root', filepaths), root_tree=tree,
                 vars=args.variables, settings=settings, load=args.load_dnn,
                 trained_filenames=(MODEL_FILE, WEIGHTS_FILE),
-                efficiency=args.efficiency,
+                efficiency=args.efficiency, error_optimization=args.err_opt,
                 savefigs=figs, figpath=respath, fignames=fignames)
 
             fractions_list.append(fr)
 
             rocx_dnn, rocy_dnn, auc_dnn = roc(
-                eval_test[0], eval_test[1], eff=stats[2], inverse_mode=INVERSE,
+                eval_test[0], eval_test[1], eff=stats[2],
                 makefig=PLOT_ROC, name=f'{respath}/ROC_dnn')
 
             if SINGULAR_ROCS is not True:
@@ -319,6 +322,7 @@ if hasattr(args, "methods"):
             add_result("Misid", stats[1])
             add_result("Cut", stats[2])
             add_result("AUC", auc_dnn)
+
             print(f"\n  {method_title} - ended successfully! \n\n")
 
         if opt in ["dtc", "all"]:
@@ -349,6 +353,7 @@ if hasattr(args, "methods"):
                 "K fraction", f'{round(fr[0],4)} +- {round(fr[1],4)} (stat) +- {round(fr[2], 4)} (syst)')
             add_result("Efficiency", stats[0])
             add_result("Misid", stats[1])
+
             print(f'\n  {method_title} - ended successfully! \n\n')
 
         if opt in ["tfit", "all"]:
@@ -394,14 +399,19 @@ if hasattr(args, "methods"):
                 "K fraction", f'{res.Parameters()[1]} +- {res.Errors()[1]}')
             add_result("Chi2", res.Chi2())
             add_result("Probability", res.Prob())
-            print(
-                f'  {method_title} - ended successfully')
 
+            print(f'  {method_title} - ended successfully')
+
+    # If there are two or more lines/points to draw in the misid-efficiency plot,
+    # they are plotted in the same figure
     if SINGULAR_ROCS is not True:
         for i in range(len(roc_labels)):
             roc_colors.append('#%06X' % randint(0, 0xFFFFFF))
             roc_linestyles.append('-')
 
+        # If error_optimization is enabled, the efficiency line is not shown;
+        # instead are highlited the points on the roc curves corresponding to
+        # the chosen working point
         if args.err_opt is True:
             roc_labels = [f'{lab} roc' for lab in roc_labels]
             plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
@@ -415,6 +425,7 @@ if hasattr(args, "methods"):
                       eff=args.efficiency, figtitle='ROCs',
                       figname=f'{respath}/ROCs.png')
 
+    # Plots the fraction estimations, with uncertainties, in a joint plot
     if args.figures is True:
         if 'all' in analysis:
             analysis = ['vcut', 'dnn', 'dtc', 'tfit']

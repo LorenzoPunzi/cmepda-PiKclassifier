@@ -3,14 +3,12 @@ Module containing general-use functions
 """
 import os
 import sys
-import corner
 import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import metrics
 from utilities.exceptions import IncorrectEfficiencyError, \
                                  IncorrectIterableError, IncoherentRocPlotError
-from utilities.import_datasets import loadvars
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
@@ -327,60 +325,6 @@ def syst_error(fraction, template_sizes, eff, misid):
                      + (d_eff*fraction)**2)/(eff-misid)
 
     return d_frac
-
-
-def overlaid_cornerplot(rootpaths=default_rootpaths(), tree='t_M0pipi;1',
-                        vars=default_vars(), figpath=''):
-    """
-    Generates and saves cornerplots for two different (multidimensional)
-    arrays on the same canvas.
-
-    :param figpaths: Two element list or tuple containing the two root file paths where the events are stored.
-    :type figpaths: list[str] or tuple[str]
-    :param tree: Name of the tree where the events are stored
-    :type tree: str
-    :param vars: List or tuple of names of the variables to plot.
-    :type vars: list[str] or tuple[str]
-    :param figpath: Path where the figure is saved. This string must not contain the name of the figure itself since it is given automatically.
-    :type figpath: str
-
-    """
-    if len(rootpaths) >= 3:
-        msg = '***WARNING*** \nFilepaths given are more than three. \
-Using only the first three...\n*************\n'
-        warnings.warn(msg, stacklevel=2)
-        rootpaths = rootpaths[:3]
-    try:
-        if len(rootpaths) < 2 or not (type(rootpaths) == list or type(rootpaths) == tuple):
-            raise IncorrectIterableError(rootpaths, 2, 'rootpaths')
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
-
-    arr_mc_pi, arr_mc_k = loadvars(rootpaths[0], rootpaths[1],
-                                   tree, vars, flag_column=False)
-
-    # To exclude RICH events that have not triggered (=999)
-    mask_pi = (arr_mc_pi < 999).all(axis=1)
-    mask_k = (arr_mc_k < 999).all(axis=1)
-
-    array_tuple = (arr_mc_pi[mask_pi, :], arr_mc_k[mask_k, :])
-    num = len(array_tuple)
-
-    colormap = plt.cm.get_cmap('gist_rainbow', num+10)
-    colors = [colormap(i) for i in range(num+10)]
-    figure = corner.corner(
-        array_tuple[0], bins=100, color=colors[0], labels=vars)
-
-    figure.suptitle("Corner-plot of some variables")
-    for i in range(1, num):
-        figure = corner.corner(array_tuple[i], bins=100, fig=figure,
-                               color=colors[i+7], labels=vars)
-
-    figure.set_size_inches(9, 7)
-
-    plt.savefig(default_figpath('corner_'+'_'.join(vars))) if figpath == '' \
-        else plt.savefig(figpath+'/corner_'+'_'.join(vars)+'.pdf')
 
 
 if __name__ == '__main__':
