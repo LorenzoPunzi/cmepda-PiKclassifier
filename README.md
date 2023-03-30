@@ -34,15 +34,31 @@ Install dependencies from inside the project directory
 !!!PLEASE NOTE!!! : ROOT is not in requirements.txt file but is needed to run the template fit module. The package works as of ROOT v6.26/10.
 Also, the requirements are NOT strict, meaning that former versions could potentially work.
 
+To run the project as a package, add the following code in the .bashrc (or .bash_profile, for MAC users):
+```bash
+  export PYTHONPATH="/path/to/cmepda-PiKclassifier"
+```
+
 
 ## Run
 
-To run the package as a whole using the main with parser
+The package can be run as a whole using the main with parser:
 
 ```bash
   python cmepda-Pikclassifier [generic options] <subparser name> [subparser options]
 ```
-for example "python cmepda-Pikclassifier -fig analysis -m dnn dtc -ld"
+
+### Datasets generation
+To generate the MC and data sets for the analysis use the "gen" subparser, for exaple:
+```bash
+  python cmepda-Pikclassifier gen -f 0.42
+```
+
+### Perform the analysis
+The analysis can be done by using the "analysis" subparser, once that the MC and data sets are generated. For example, a command that covers all the analyses and saves the figure in an apposite folder in the current directoty is: 
+```bash
+  python cmepda-Pikclassifier -fig analysis -m all -ld -err
+```
 
 ## Running Tests
 
