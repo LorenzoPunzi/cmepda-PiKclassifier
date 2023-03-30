@@ -16,3 +16,5 @@ Documentation for the exception classes in the  ``utilities.exception`` module:
 .. autoclass:: utilities.exceptions.IncorrectEfficiencyError
 
 .. autoclass:: utilities.exceptions.IncorrectIterableError
+
+.. autoclass:: utilities.exceptions.IncoherentRocPlotError

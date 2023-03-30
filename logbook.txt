@@ -745,12 +745,6 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 FINAL
 
-- exceptions in dnnsettings
-- overlaid_cornerplot---->utils
-- gen_from_toy num = 0 explaination
-- use of \ in strings to correct
-- !!!! in code
-- self.__class__.__name__
 
 
 
