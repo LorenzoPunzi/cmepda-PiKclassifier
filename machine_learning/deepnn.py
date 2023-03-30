@@ -135,7 +135,7 @@ def eval_dnn(dnn, eval_set, flag_data=True,
 
 def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         vars=default_vars(), n_mc=560000, n_data=50000, test_split=0.2,
-        settings=DnnSettings(), efficiency=0.9,
+        settings=DnnSettings(), efficiency=0.9, error_optimization=True,
         load=False, trained_filenames=('deepnn.json', 'deepnn.h5'),
         savefigs=False, figpath='', fignames=("", "", "", "")):
     """
@@ -163,6 +163,8 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     :type trained_filenames: tuple[str]
     :param efficiency: Sensitivity required from the test
     :type efficiency: float
+    :param error_optimization: Performs error optimization instead of using a fixed efficiency value
+    :type error_optimization: bool
     :param savefigs: If ``True``, saves the training history (if the DNN was not loaded) and the histograms of the evaluation results on the training and mixed datasets.
     :type savefigs: bool
     :param figpath: Path where to save the figures (in case savefigs=``True``)
@@ -188,13 +190,13 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     except InvalidSourceError as err:
         print(err)
         sys.exit()
-    
+
     try:
-        if (efficiency<=0 or efficiency=>1 or type(efficiency) is not float):
+        if efficiency <= 0 or efficiency >= 1:
             raise IncorrectEfficiencyError(efficiency)
     except IncorrectEfficiencyError as err:
-            print(err)
-            sys.exit()
+        print(err)
+        sys.exit()
 
     num_mc = len(mc_set[:, 0])
 
@@ -239,7 +241,7 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
     used_eff = 0
     df_opt = -99999
 
-    if efficiency == 0:  # Enables FOM maximization
+    if error_optimization is True:  # Enables FOM maximization
         efficiencies = np.linspace(0.25, 0.999, 200)
         for tmp_eff in efficiencies:
             tmp_cut, tmp_misid = find_cut(pi_eval, k_eval, tmp_eff)
@@ -270,8 +272,10 @@ def dnn(source=('root', default_rootpaths()), root_tree='tree;1',
         fraction, (pi_eval.size, k_eval.size), used_eff, misid)
 
     print(f'y cut is {cut} for {used_eff} efficiency\n')
-    print(f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/pi_eval.size)} for {used_eff} efficiency\n')
-    print(f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
+    print(
+        f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/pi_eval.size)} for {used_eff} efficiency\n')
+    print(
+        f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
 
     fr = (fraction, df_stat, df_syst)
 

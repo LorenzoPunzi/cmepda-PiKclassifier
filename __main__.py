@@ -115,8 +115,8 @@ parser_an.add_argument('-inv', '--vcut_inverse', nargs='+', type=int, default=1,
 parser_an.add_argument('-e', '--efficiency', type=float, default=0.90,
                        help='Probability of correct K identification requested (applies only to dnn and var_cut analyses)')
 
-parser_an.add_argument('-fom', '--fom_optimization', action='store_true',
-                       help='Performs FOM optimization instead of using a fixed efficiency value')
+parser_an.add_argument('-err', '--err_opt', action='store_true',
+                       help='Performs error optimization in DNN and var_cut analyses instead of using a fixed efficiency value')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -227,7 +227,8 @@ if hasattr(args, "methods"):
 
             for vc in vars:
                 fr, stats, eval_arr = var_cut(
-                    rootpaths=filepaths, tree=tree, cut_var=vc[0], eff=args.efficiency,
+                    rootpaths=filepaths, tree=tree, cut_var=vc[0],
+                    eff=args.efficiency, error_optimization=args.err_opt,
                     inverse_mode=vc[1], specificity_mode=SPECIFICITY,
                     savefig=figure_cut, figpath=respath)
 
@@ -279,7 +280,7 @@ if hasattr(args, "methods"):
                 source=('root', filepaths), root_tree=tree,
                 vars=args.variables, settings=settings, load=args.load_dnn,
                 trained_filenames=(MODEL_FILE, WEIGHTS_FILE),
-                efficiency=args.efficiency,
+                efficiency=args.efficiency, error_optimization=args.err_opt,
                 savefigs=figs, figpath=respath, fignames=fignames)
 
             fractions_list.append(fr)

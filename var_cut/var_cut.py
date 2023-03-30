@@ -15,8 +15,8 @@ warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 
 def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
-            eff=0.90, inverse_mode=False, specificity_mode=False,
-            savefig=False, figpath=''):
+            eff=0.90, error_optimization=True, inverse_mode=False,
+            specificity_mode=False, savefig=False, figpath=''):
     """
     Estimates the fraction of kaons in the mixed sample by performing a cut on
     a specified variable in the template dataset. The cut point is chosen so
@@ -31,6 +31,8 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     :type cut_var: str
     :param eff: Sensitivity required from the test (specificity in specificity mode)
     :type eff: float
+    :param error_optimization: Performs error optimization instead of using a fixed efficiency value
+    :type error_optimization: bool
     :param inverse_mode: Set to ``True`` if the "signal" events have lower values of the cut variable than the "background" ones
     :type inverse_mode: bool
     :param specificity_mode: Set to ``True`` if the efficiency given is the specificity
@@ -53,13 +55,13 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     df_opt = -99999
 
     try:
-        if (eff<=0 or eff=>1 or type(eff) is not float):
+        if (eff <= 0) or (eff >= 1):
             raise IncorrectEfficiencyError(eff)
     except IncorrectEfficiencyError as err:
-            print(err)
-            sys.exit()
+        print(err)
+        sys.exit()
 
-    if eff == 0:  # Enables FOM maximization
+    if error_optimization is True:  # Enables FOM maximization
         efficiencies = np.linspace(0.25, 0.999, 200)
         for tmp_eff in efficiencies:
             tmp_cut, tmp_misid = find_cut(var_pi, var_k, tmp_eff, inverse_mode=inverse_mode,
@@ -119,8 +121,10 @@ def var_cut(rootpaths=default_rootpaths(), tree='tree;1', cut_var='M0_Mpipi',
     fr = (fraction, df_stat, df_syst)
 
     print(f'{cut_var} cut is {cut} for {used_eff} efficiency\n')
-    print(f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/var_pi.size)} for {used_eff} efficiency\n')
-    print(f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
+    print(
+        f'Misid is {misid} +- {np.sqrt(misid*(1-misid)/var_pi.size)} for {used_eff} efficiency\n')
+    print(
+        f'The estimated fraction of K events is {fraction} +- {df_stat} (stat) +- {df_syst} (syst)\n')
 
     algorithm_parameters = (used_eff, misid, cut)
 
