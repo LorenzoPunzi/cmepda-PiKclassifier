@@ -12,3 +12,5 @@ Documentation for the exception classes in the  ``utilities.exception`` module:
 .. autoclass:: utilities.exceptions.IncorrectFractionError
 
 .. autoclass:: utilities.exceptions.IncorrectNumGenError
+
+.. autoclass:: utilities.exceptions.IncorrectEfficiencyError
