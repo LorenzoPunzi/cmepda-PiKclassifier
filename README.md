@@ -1,6 +1,6 @@
 # cmepda-PiKclassifier
 
-A brief description of what this project does and who it's for
+Package containing different tools for estimating the fraction \'f\' signal events with respect to the total number of events in a data set which also contains background
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/LorenzoPunzi/cmepda-PiKclassifier/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/LorenzoPunzi/cmepda-PiKclassifier/tree/main)
 
@@ -55,7 +55,7 @@ To generate the MC and data sets for the analysis use the "gen" subparser, for e
 ```
 
 ### Perform the analysis
-The analysis can be done by using the "analysis" subparser, once that the MC and data sets are generated. For example, a command that covers all the analyses and saves the figure in an apposite folder in the current directoty is: 
+The analysis can be done by using the "analysis" subparser, once that the MC and data sets are generated. For example, a command that covers all the analyses and saves the figure in an apposite folder in the current directoty is:
 ```bash
   python cmepda-Pikclassifier -fig analysis -m all -ld -err
 ```

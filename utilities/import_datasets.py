@@ -8,7 +8,7 @@ import warnings
 import uproot
 import numpy as np
 from utilities.merge_variables import mergevar
-from utilities.exceptions import InvalidArrayGenRequestError, IncorrectIterableError
+from utilities.exceptions import IncorrectIterableError
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 

@@ -3,15 +3,22 @@ Module containing general-use functions
 """
 import os
 import sys
+import corner
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import metrics
-from utilities.exceptions import IncorrectEfficiencyError, IncorrectIterableError, IncoherentRocPlotError
+from utilities.exceptions import IncorrectEfficiencyError, \
+                                 IncorrectIterableError, IncoherentRocPlotError
+from utilities.import_datasets import loadvars
+
+warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
 
 def default_rootpaths():
     """
-    Returns the default root file paths of the package, where background is pions and signal is kaons.
+    Returns the default root file paths of the package, where background is
+    pions and signal is kaons.
 
     :return: Three element tuple containing the paths of the pion MC, the kaon MC and the mixed data root files, respectively.
     :rtype: tuple[str]
@@ -27,7 +34,8 @@ def default_rootpaths():
 
 def default_txtpaths():
     """
-    Returns the .txt file paths containing the training MC array and the data array, to be used in DNN or DTC analyses.
+    Returns the .txt file paths containing the training MC array and the data
+    array, to be used in DNN or DTC analyses.
 
     :return: Tuple containing the paths of the MC training array (50/50 signal/background for unbiased training) and the path of the data array, respectively.
     :rtype: tuple[str]
@@ -56,7 +64,8 @@ def default_vars():
 
 def default_figpath(figname, dir='fig', figtype='pdf'):
     """
-    Returns the path to the figure folder with respect to the cwd in which to then save figures.
+    Returns the path to the figure folder with respect to the cwd in which to
+    then save figures.
 
     :param figname: Name with which to save the figure.
     :type figname: str
@@ -94,7 +103,8 @@ def default_resultsdir(dir='outputs-PiKclassifier'):
 def find_cut(pi_array, k_array, efficiency,
              specificity_mode=False, inverse_mode=False):
     """
-    Finds where to cut a certain variable to obtain a certain sensitivity/specificity in a hypothesis test between two given species' arrays.
+    Finds where to cut a certain variable to obtain a certain
+    sensitivity/specificity in a hypothesis test between two given species' arrays.
 
     :param pi_array: Array containing the background species.
     :type pi_array: numpy.array[float]
@@ -111,11 +121,11 @@ def find_cut(pi_array, k_array, efficiency,
 
     """
     try:
-        if (efficiency<=0 or efficiency>=1):
+        if (efficiency <= 0 or efficiency >= 1):
             raise IncorrectEfficiencyError(efficiency)
     except IncorrectEfficiencyError as err:
-            print(err)
-            sys.exit()
+        print(err)
+        sys.exit()
 
     if inverse_mode:
         efficiency = 1 - efficiency
@@ -139,9 +149,9 @@ def plot_rocs(rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors,
     Draws superimposed roc curves and/or points
 
     :param rocx_arrays: List or tuple of numpy arrays, each containing the respective x points of different roc curves to be plotted.
-    :type rocx_arrays: list[numpy.array[float]] or tuple[numpy.array[float]] 
+    :type rocx_arrays: list[numpy.array[float]] or tuple[numpy.array[float]]
     :param rocy_arrays: List or tuple of numpy arrays, each containing the respective y points of different roc curves to be plotted.
-    :type rocy_arrays: list[numpy.array[float]] or tuple[numpy.array[float]] 
+    :type rocy_arrays: list[numpy.array[float]] or tuple[numpy.array[float]]
     :param roc_labels: Names of the respective species whose roc coordinates were given.
     :type roc_labels: list[str] or tuple[str]
     :param roc_linestyles: Linestyles of the respective species whose roc coordinates were given.
@@ -170,44 +180,43 @@ def plot_rocs(rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors,
     plt.ylim(0, 1)
 
     try:
-        if (type(rocx_arrays)==list or type(rocx_arrays)==tuple) is not True:
-            raise IncorrectIterableError(rocx_arrays,3,'rocx_arrays') 
+        if (type(rocx_arrays) == list or type(rocx_arrays) == tuple) is not True:
+            raise IncorrectIterableError(rocx_arrays, 3, 'rocx_arrays')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
     try:
-        if (type(rocy_arrays)==list or type(rocy_arrays)==tuple) is not True:
-            raise IncorrectIterableError(rocy_arrays,3,'rocy_arrays') 
+        if (type(rocy_arrays) == list or type(rocy_arrays) == tuple) is not True:
+            raise IncorrectIterableError(rocy_arrays, 3, 'rocy_arrays')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
     try:
-        if (type(roc_labels)==list or type(roc_labels)==tuple) is not True:
-            raise IncorrectIterableError(roc_labels,3,'roc_labels') 
+        if (type(roc_labels) == list or type(roc_labels) == tuple) is not True:
+            raise IncorrectIterableError(roc_labels, 3, 'roc_labels')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
     try:
-        if (type(roc_linestyles)==list or type(roc_linestyles)==tuple) is not True:
-            raise IncorrectIterableError(roc_linestyles,3,'roc_linestyles') 
+        if (type(roc_linestyles) == list or type(roc_linestyles) == tuple) is not True:
+            raise IncorrectIterableError(roc_linestyles, 3, 'roc_linestyles')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
     try:
-        if (type(roc_colors)==list or type(roc_colors)==tuple) is not True:
-            raise IncorrectIterableError(roc_colors,3,'roc_colors') 
+        if (type(roc_colors) == list or type(roc_colors) == tuple) is not True:
+            raise IncorrectIterableError(roc_colors, 3, 'roc_colors')
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
-    
+
     # Check if all the lists/tuples have same lengths
     try:
-        if len(set([len(i) for i in [rocx_arrays,rocy_arrays,roc_labels,roc_linestyles,roc_colors]]))!=1:
+        if len(set([len(i) for i in [rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors]])) != 1:
             raise IncoherentRocPlotError
     except IncoherentRocPlotError as err:
         print(err)
         sys.exit()
-    
 
     for idx in range(len(rocx_arrays)):
         plt.plot(rocx_arrays[idx], rocy_arrays[idx], label=roc_labels[idx],
@@ -230,7 +239,8 @@ def plot_rocs(rocx_arrays, rocy_arrays, roc_labels, roc_linestyles, roc_colors,
 
 def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC"):
     """
-    Returns the roc curve's x and y coordinates given two arrays of values for two different species. optionally draws the roc curve using plot_rocs().
+    Returns the roc curve's x and y coordinates given two arrays of values for
+    two different species. optionally draws the roc curve using plot_rocs().
 
     :param pi_array: Array containing the "negative" species.
     :type pi_array: numpy.array[float]
@@ -268,7 +278,9 @@ def roc(pi_array, k_array, inverse_mode=False, makefig=False, eff=0, name="ROC")
 
 def stat_error(fraction, data_size, eff, misid):
     """
-    Evaluates the statistical error on fraction estimate due to the finite sample of the data set, using the variance of sum of two binomials (of signal and background events respectively).
+    Evaluates the statistical error on fraction estimate due to the finite
+    sample of the data set, using the variance of sum of two binomials (of
+    signal and background events respectively).
 
     :param fraction: Estimated fraction by the algorithm.
     :type fraction: float
@@ -293,8 +305,8 @@ def stat_error(fraction, data_size, eff, misid):
 
 def syst_error(fraction, template_sizes, eff, misid):
     """
-    Evaluates the systematic error on fraction estimate due to the finite sample
-    used to evaluate the "efficiency" and "misid" parameters.
+    Evaluates the systematic error on fraction estimate due to the finite
+    sample used to evaluate the "efficiency" and "misid" parameters.
 
     :param fraction: Estimated fraction by the algorithm.
     :type fraction: float
@@ -315,3 +327,62 @@ def syst_error(fraction, template_sizes, eff, misid):
                      + (d_eff*fraction)**2)/(eff-misid)
 
     return d_frac
+
+
+def overlaid_cornerplot(rootpaths=default_rootpaths(), tree='t_M0pipi;1',
+                        vars=default_vars(), figpath=''):
+    """
+    Generates and saves cornerplots for two different (multidimensional)
+    arrays on the same canvas.
+
+    :param figpaths: Two element list or tuple containing the two root file paths where the events are stored.
+    :type figpaths: list[str] or tuple[str]
+    :param tree: Name of the tree where the events are stored
+    :type tree: str
+    :param vars: List or tuple of names of the variables to plot.
+    :type vars: list[str] or tuple[str]
+    :param figpath: Path where the figure is saved. This string must not contain the name of the figure itself since it is given automatically.
+    :type figpath: str
+
+    """
+    if len(rootpaths) >= 3:
+        msg = '***WARNING*** \nFilepaths given are more than three. \
+Using only the first three...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        rootpaths = rootpaths[:3]
+    try:
+        if len(rootpaths) < 2 or not (type(rootpaths) == list or type(rootpaths) == tuple):
+            raise IncorrectIterableError(rootpaths, 2, 'rootpaths')
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
+
+    arr_mc_pi, arr_mc_k = loadvars(rootpaths[0], rootpaths[1],
+                                   tree, vars, flag_column=False)
+
+    # To exclude RICH events that have not triggered (=999)
+    mask_pi = (arr_mc_pi < 999).all(axis=1)
+    mask_k = (arr_mc_k < 999).all(axis=1)
+
+    array_tuple = (arr_mc_pi[mask_pi, :], arr_mc_k[mask_k, :])
+    num = len(array_tuple)
+
+    colormap = plt.cm.get_cmap('gist_rainbow', num+10)
+    colors = [colormap(i) for i in range(num+10)]
+    figure = corner.corner(
+        array_tuple[0], bins=100, color=colors[0], labels=vars)
+
+    figure.suptitle("Corner-plot of some variables")
+    for i in range(1, num):
+        figure = corner.corner(array_tuple[i], bins=100, fig=figure,
+                               color=colors[i+7], labels=vars)
+
+    figure.set_size_inches(9, 7)
+
+    plt.savefig(default_figpath('corner_'+'_'.join(vars))) if figpath == '' \
+        else plt.savefig(figpath+'/corner_'+'_'.join(vars)+'.pdf')
+
+
+if __name__ == '__main__':
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

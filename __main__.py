@@ -18,8 +18,8 @@
 """
 """
 import os
+import sys
 import argparse
-import time
 import numpy as np
 from random import randint
 import matplotlib.pyplot as plt
@@ -32,25 +32,26 @@ from utilities.gen_from_toy import gen_from_toy
 from utilities.dnn_settings import DnnSettings
 from utilities.utils import default_rootpaths, default_resultsdir, \
                             default_vars, roc, plot_rocs
+from utilities.exceptions import IncorrectIterableError
 from var_cut.var_cut import var_cut
 import warnings
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
-# print(" ----------------------------------------------- ")
-# print("|  Welcome to the PiK Classifier package!       |")
-# print("|                                               |")
-# print("|  Authors: Lorenzo Punzi, Ruben Forti          |")
-# print("|  Release: 1.0  -  march 2023                  |")
-# print(" ----------------------------------------------- ")
+print(" ----------------------------------------------- ")
+print("|  Welcome to the PiK Classifier package!       |")
+print("|                                               |")
+print("|  Authors: Lorenzo Punzi, Ruben Forti          |")
+print("|  Release: 1.0  -  march 2023                  |")
+print(" ----------------------------------------------- ")
 
 
 default_toyMC_path = ('cmepda-PiKclassifier/data/root_files/toyMC_B0PiPi.root',
                       'cmepda-PiKclassifier/data/root_files/toyMC_B0sKK.root')
 
 parser = argparse.ArgumentParser(prog='PiK classifier',
-                                 description='What the program does',
-                                 epilog='Text at the bottom of help')
+                                 description='Package containing different tools for estimating the fraction \'f\' signal events with respect to the total number of events in a data set which also contains background',
+                                 epilog='See subparser\'s help or README.md for more options and informations')
 
 subparsers = parser.add_subparsers(help='Sub-command help')
 
@@ -136,6 +137,7 @@ with open(results_file, encoding='utf-8', mode='w') as f:
 
 def add_result(name, value, note=''):
     """
+    Function that writes the results of the analyses in the apposite file
     """
     with open(results_file, encoding='utf-8', mode='a') as file:
         if note == '':
@@ -145,12 +147,21 @@ def add_result(name, value, note=''):
 
 
 if hasattr(args, 'rootpaths_toy'):
-    # Generates the datasets with the requested fraction of Kaons in
-    # the mixed sample. If the following two quantities are BOTH set to
-    # zero, the function generates the datasets with the maximum
-    # possible number of events
+    # Generates the datasets with the requested fraction of signal events in
+    # the data set. If the following two quantities are BOTH set to zero, the
+    # function generates the datasets with the maximum possible number of events
+    if len(args.num_events) >= 2:
+        msg = '***WARNING*** \nList with number of events to be generated \
+contains more than two values. Using only the first two...\n*************\n'
+        warnings.warn(msg, stacklevel=2)
+        args.num_events = args.num_events[:2]
+    try:
+        if len(args.num_events) < 2:
+            raise IncorrectIterableError(args.num_events, 2, 'args.num_events')
+    except IncorrectIterableError as err:
+        print(err)
+        sys.exit()
     NUM_MC, NUM_DATA = args.num_events
-    print(NUM_MC, NUM_DATA)
     gen_from_toy(filepaths_in=tuple(args.rootpaths_toy), tree=args.tree,
                  fraction=args.fraction, vars=tuple(args.variables),
                  num_mc=NUM_MC, num_data=NUM_DATA)
@@ -163,9 +174,9 @@ if args.cornerplot is True:
         overlaid_cornerplot(
             vars=('M0_p',)+args.variables[7:9], figpath=respath)
     elif len(args.variables) > 5:
-        msg = '***WARNING*** \nNumber of variables to print in the corner plot\
-        exceeds the maximum suggested (5). Running the \'cornerplot\' function\
-        on groups of five contiguous variables in the list.'
+        msg = "***WARNING*** \nNumber of variables to print in the corner plot \
+exceeds the maximum suggested (5). Running the \'cornerplot\' function on \
+groups of five contiguous variables in the list\n*************\n"
         warnings.warn(msg, stacklevel=2)
         ind = 0
         while ind+5 <= len(args.variables):
@@ -177,11 +188,12 @@ if args.cornerplot is True:
         overlaid_cornerplot(vars=args.variables, figpath=respath)
 
 
+# Starts the analysis on the selected methods
 if hasattr(args, "methods"):
     fractions_list = []
     SINGULAR_ROCS = True
-    # Initialize a list with the requesteds method of analysis, also removing
-    # duplicates.
+    # Initialize a list with the  requested methods of analysis (removing
+    # duplicates if present.
     if 'all' in args.methods:
         analysis = ['all']
         SINGULAR_ROCS = False
@@ -214,10 +226,10 @@ if hasattr(args, "methods"):
 
             rocx_vcut, rocy_vcut, labels_vcut = [], [], []
 
+            # If args.var_cut contains a single element (type str), it is
+            # changed into a list
             vcuts = [args.var_cut] if type(
                 args.var_cut) is str else args.var_cut
-
-            print(type(args.vcut_inverse))
             if type(args.vcut_inverse) is int:
                 inverse = [bool(args.vcut_inverse)]
             else:
@@ -389,6 +401,7 @@ if hasattr(args, "methods"):
         for i in range(len(roc_labels)):
             roc_colors.append('#%06X' % randint(0, 0xFFFFFF))
             roc_linestyles.append('-')
+
         if args.err_opt is True:
             roc_labels = [f'{lab} roc' for lab in roc_labels]
             plot_rocs(tuple(rocx_array), tuple(rocy_array), tuple(roc_labels),
