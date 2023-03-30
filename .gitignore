@@ -139,8 +139,10 @@ data/txt/
 *.d
 template_fit/fit_functions
 
-# Personal notebook files
-domande_ruben.txt
 
 # Trash Folder
 trash_folder/
+
+
+# Logbook
+logbook.txt

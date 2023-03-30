@@ -193,6 +193,16 @@ groups of five contiguous variables in the list\n*************\n"
 if hasattr(args, "methods"):
     fractions_list = []
     SINGULAR_ROCS = True
+
+    # If args.var_cut contains a single element (type str), it is
+    # changed into a list
+    vcuts = [args.var_cut] if type(
+        args.var_cut) is str else args.var_cut
+    if type(args.vcut_inverse) is int:
+        inverse_vcut = [bool(args.vcut_inverse)]
+    else:
+        inverse_vcut = [bool(inv) for inv in args.vcut_inverse]
+
     # Initialize a list with the  requested methods of analysis (removing
     # duplicates if present.
     if 'all' in args.methods:
@@ -204,7 +214,7 @@ if hasattr(args, "methods"):
             if item not in analysis]
         roc_analysis = ["dnn", "dtc", "vcut"]
         flag = len([a for a in analysis if a in roc_analysis])
-        if flag >= 2 or len(args.var_cut) > 1:
+        if flag >= 2 or len(vcuts) > 1:
             SINGULAR_ROCS = False
 
     # Initializing lists if multiple rocs are plotted together
@@ -229,16 +239,7 @@ if hasattr(args, "methods"):
 
             rocx_vcut, rocy_vcut, labels_vcut = [], [], []
 
-            # If args.var_cut contains a single element (type str), it is
-            # changed into a list
-            vcuts = [args.var_cut] if type(
-                args.var_cut) is str else args.var_cut
-            if type(args.vcut_inverse) is int:
-                inverse = [bool(args.vcut_inverse)]
-            else:
-                inverse = [bool(inv) for inv in args.vcut_inverse]
-
-            vars = zip(vcuts, inverse)
+            vars = zip(vcuts, inverse_vcut)
 
             # Performs the analysis on every specified variable in args.var_cut
             for vc in vars:
@@ -434,7 +435,6 @@ if hasattr(args, "methods"):
             analysis = ['vcut', 'dnn', 'dtc', 'tfit']
         variables = [f'{vcut}_cut' for vcut in vcuts]
         analysis = variables + analysis[1:]
-        print(analysis)
         npts = len(fractions_list)
         y = np.linspace(0.2, 0.8, npts)
         idx = 0

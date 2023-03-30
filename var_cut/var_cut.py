@@ -70,7 +70,7 @@ Using only the first three...\n*************\n'
     try:
         if type(eff) is not float:
             raise IncorrectEfficiencyError(eff)
-        elif eff<=0 or eff>=1:
+        elif eff <= 0 or eff >= 1:
             raise IncorrectEfficiencyError(eff)
     except IncorrectEfficiencyError:
         print(traceback.format_exc())
@@ -118,7 +118,7 @@ inverse_mode = {not inverse_mode} \n*************\n'
         plt.hist(var_k, nbins, range=range, histtype='step',
                  color='blue', label=f'{cut_var} for Kaons')
         plt.axvline(x=cut, color='green',
-                    label=f'{cut_var} Cut for {used_eff} efficiency')
+                    label=f'{cut_var} Cut for {round(used_eff,3)} efficiency')
         plt.title(f'Varibale Cut on {cut_var}')
         plt.xlabel(cut_var)
         plt.ylabel(
