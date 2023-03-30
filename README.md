@@ -18,7 +18,7 @@ A brief description of what this project does and who it's for
 [Documentation](https://cmepda-pikclassifier.readthedocs.io/en/latest/index.html)
 
 
-## Run Locally
+## Install
 
 Clone the project
 
@@ -33,6 +33,9 @@ Install dependencies from inside the project directory
 ```
 !!!PLEASE NOTE!!! : ROOT is not in requirements.txt file but is needed to run the template fit module. The package works as of ROOT v6.26/10.
 Also, the requirements are NOT strict, meaning that former versions could potentially work.
+
+
+## Run
 
 To run the package as a whole using the main with parser
 

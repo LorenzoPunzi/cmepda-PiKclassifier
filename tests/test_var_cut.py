@@ -9,8 +9,10 @@ from var_cut.var_cut import var_cut
 
 current_dir = os.path.dirname(__file__)
 
-path_A = os.path.join(current_dir, 'dummy/dummy_A.root') # uniformly distributed between 0 and 1.0
-path_B = os.path.join(current_dir, 'dummy/dummy_B.root') # uniformly distributed between 0.5 and 1.5
+# uniformly distributed between 0 and 1.0
+path_A = os.path.join(current_dir, 'dummy/dummy_A.root')
+# uniformly distributed between 0.5 and 1.5
+path_B = os.path.join(current_dir, 'dummy/dummy_B.root')
 
 
 class TestVarCut(unittest.TestCase):
@@ -22,7 +24,8 @@ class TestVarCut(unittest.TestCase):
         eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=eff, inverse_mode=False, specificity_mode=False, savefig=False)
+                                eff=eff, error_optimization=False,
+                                inverse_mode=False, specificity_mode=False, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -41,7 +44,8 @@ class TestVarCut(unittest.TestCase):
         eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=eff, inverse_mode=True, specificity_mode=False, savefig=False)
+                                eff=eff, error_optimization=False,
+                                inverse_mode=True, specificity_mode=False, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -60,7 +64,8 @@ class TestVarCut(unittest.TestCase):
         eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=eff, inverse_mode=False, specificity_mode=True, savefig=False)
+                                eff=eff, error_optimization=False,
+                                inverse_mode=False, specificity_mode=True, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -79,7 +84,8 @@ class TestVarCut(unittest.TestCase):
         eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=eff, inverse_mode=True, specificity_mode=True, savefig=False)
+                                eff=eff, error_optimization=False,
+                                inverse_mode=True, specificity_mode=True, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
@@ -98,7 +104,8 @@ class TestVarCut(unittest.TestCase):
         eff = 0.9
 
         fr, stats, _, = var_cut(rootpaths=rootpaths, tree='dummytree', cut_var='dummyvar',
-                                eff=eff, inverse_mode=True, specificity_mode=False, savefig=False)
+                                eff=eff, error_optimization=False,
+                                inverse_mode=True, specificity_mode=False, savefig=False)
         efficiency = stats[0]
         misid = stats[1]
         cut = stats[2]
