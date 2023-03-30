@@ -37,8 +37,8 @@ def fit_mc_template(filepath, tree, var, fitfunc, Nbins=1000,
     :type img_name: str
     :return: Best-fit farameters of the fit function
     :rtype: tuple[float]
-
     """
+
     if histo_name == '':
         histo_name = var
     if histo_title == '':
@@ -109,7 +109,6 @@ def global_fit(filepath, tree, var, Nbins=1000, histo_lims=(5.0, 5.6),
     :type img_name: str
     :return: Root object containing the fit details
     :rtype: ROOT::TFitResult
-
     """
     if histo_name == '':
         histo_name = var
@@ -153,3 +152,5 @@ def global_fit(filepath, tree, var, Nbins=1000, histo_lims=(5.0, 5.6),
 
 
 if __name__ == "__main__":
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

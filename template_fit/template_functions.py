@@ -53,8 +53,8 @@ def DoubleGaussian(func_limits, funcname='DoubleGaussian',
     :type pars: tuple[float]
     :return: The corresponding ROOT function
     :rtype: ROOT::TF1
-
     """
+
     initialize_library()
 
     function = ROOT.TF1(funcname, ROOT.DoubleGaussian,
@@ -87,8 +87,8 @@ def GaussJohnson(func_limits, funcname='Gauss+Johnson',
     :type pars: tuple[float]
     :return: The corresponding ROOT function
     :rtype: ROOT::TF1
-
     """
+
     initialize_library()
 
     function = ROOT.TF1(funcname, ROOT.GaussJohnson,
@@ -104,3 +104,5 @@ def GaussJohnson(func_limits, funcname='Gauss+Johnson',
 
 
 if __name__ == "__main__":
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')

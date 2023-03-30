@@ -12,11 +12,11 @@ from utilities.exceptions import InvalidArrayGenRequestError, IncorrectIterableE
 
 warnings.formatwarning = lambda msg, *args, **kwargs: f'\n{msg}\n'
 
+
 def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     """
     Function that extracts the chosen variables for all eventsin two
     ROOT files given and stores them in numpy arrays.
-
 
     :param file_pi: Path to MC root file of background only processes.
     :type file_pi: str
@@ -26,9 +26,9 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
     :type tree: str
     :param vars: List or tuple containing names of the variables to be loaded.
     :type vars: list[str] or tuple[str]
-    :param flag_column: If set to True, a column full of 0 or 1, for background or signal events respectively, is appended as the last column of the 2D array.
+    :param flag_column: If is ``True``, a column full of 0 or 1, for background or signal events respectively, is appended as the last column of the 2D array.
     :type flag_column: bool
-    :param flatten1d: If is True and only one variable is passed as "vars", the arrays generated are returned as row-arrays instead of one-column arrays.
+    :param flatten1d: If is ``True`` and only one variable is passed as "vars", the arrays generated are returned as row-arrays instead of one-column arrays.
     :type flatten1d: bool
     :return: Two 2D numpy arrays filled by events of the two root files given in input and containing the requested variables, plus a flag-column if requested.
     :rtype: 2D numpy.array[float]
@@ -55,13 +55,14 @@ def loadvars(file_pi, file_k, tree, vars, flag_column=False, flatten1d=True):
         # Otherwise becomes a 1D column vector when 1D
         v_pi, v_k = v_pi.flatten(), v_k.flatten()
 
+    # Shuffling of the rows in MC sets
     np.random.shuffle(v_pi)
     np.random.shuffle(v_k)
 
     return v_pi, v_k
 
 
-def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
+def include_merged_variables(rootpaths, tree, initial_vars, new_variables):
     """
     Function that allows to append to the existing datasets (numpy arrays) new
     columns filled by the outputs of the mergevar() function.
@@ -70,8 +71,8 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     :type rootpaths: list[str] or tuple[str]
     :param tree: Tree in which the variables are stored on the root files.
     :type tree: str
-    :param initial_arrays: Three element list or tuple of 2D numpy arrays containing the data of the original variables of background, signal and mixed events.
-    :type initial_arrays: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
+    :param initial_vars: List or tuple containing names of the variables to be loaded.
+    :type initial_vars: list[str] or tuple[str]
     :param new_variables: List or tuple containing two element lists or tuples of variables to merge.
     :type new_variables: list[tuple[str]] or tuple[tuple[str]]
     :return: A list or tuple containing the new numpy arrays for the three datasets, with the new columns filled with the data retrieved by the merge-variables algorithm. For MC datasets the flag column is still the rightmost column.
@@ -79,33 +80,25 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
 
     """
 
-    if len(rootpaths)>=4:
+    if len(rootpaths) >= 4:
         msg = f'***WARNING*** \nInput rootpaths given are more than three. Using only the first three...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(rootpaths)<3 or not (type(rootpaths)==list or type(rootpaths)==tuple):
-            raise IncorrectIterableError(rootpaths,3) 
+        if len(rootpaths) < 3 or not (type(rootpaths) is list or type(rootpaths) is tuple):
+            raise IncorrectIterableError(rootpaths, 3)
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
-    
-    if len(initial_arrays)>=4:
-        msg = f'***WARNING*** \nInput rootpaths given are more than three. Using only the first three...\n*************\n'
-        warnings.warn(msg, stacklevel=2)
-    try:
-        if len(initial_arrays)<3 or not (type(initial_arrays)==list or type(initial_arrays)==tuple):
-            raise IncorrectIterableError(initial_arrays,3) 
-    except IncorrectIterableError as err:
-        print(err)
-        sys.exit()
-    
-    
 
-    n_old_vars = len(initial_arrays[2][0, :])
+    v1, v2 = loadvars(rootpaths[0], rootpaths[1], tree, vars)
+    v_data, _ = loadvars(rootpaths[2], rootpaths[2],
+                         tree, vars, flag_column=False)
+
+    n_old_vars = len(v_data[0, :])
     new_arrays = []
 
-    l0_pi = len(initial_arrays[0][:, 0])
-    l0_k = len(initial_arrays[1][:, 0])
+    l0_pi = len(v1[:, 0])
+    l0_k = len(v2[:, 0])
     if l0_pi != l0_k:
         length = min(l0_pi, l0_k)
     else:
@@ -114,20 +107,20 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     list_pi, list_k, list_data = [], [], []
 
     for newvars in new_variables:
-        merged_arrays, _, _ = mergevar(
-            rootpaths, tree, newvars, savefig=False, savetxt=False)
+        merged_arrays, _, _ = mergevar(rootpaths, tree, newvars,
+                                       savefig=False, savetxt=False)
         list_pi.append(merged_arrays[0][:length])
         list_k.append(merged_arrays[1][:length])
         list_data.append(merged_arrays[2])
 
     for col in range(n_old_vars):
-        list_pi.append(initial_arrays[0][:length, col])
-        list_k.append(initial_arrays[1][:length, col])
-        list_data.append(initial_arrays[2][:, col])
+        list_pi.append(v1[:length, col])
+        list_k.append(v2[:length, col])
+        list_data.append(v_data[:, col])
 
     # Appending the flag column to mc arrays
-    list_pi.append(initial_arrays[0][:length, -1])
-    list_k.append(initial_arrays[1][:length, -1])
+    list_pi.append(v1[:length, -1])
+    list_k.append(v2[:length, -1])
 
     new_arrays = (np.stack(list_pi, axis=1), np.stack(list_k, axis=1),
                   np.stack(list_data, axis=1))
@@ -135,13 +128,12 @@ def include_merged_variables(rootpaths, tree, initial_arrays, new_variables):
     return new_arrays
 
 
-def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
+def array_generator(rootpaths, tree, vars, n_mc=560000, n_data=50000,
                     for_training=True, for_testing=True, new_variables=()):
     """
     Generates arrays for ML treatment (training and testing). To guarantee
     unbiasedness the training array has an equal number of background and signal
     events.
-
 
     :param rootpaths: Three element list or tuple of .root file paths. The first should indicate the root file containing the "background" species (flag=0), the second the "signal" species (flag=1), the third the mix.
     :type rootpaths: list[str] or tuple[str]
@@ -159,17 +151,17 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
     :type for_testing: bool
     :param new_variables: Optional list or tuple containing two element lists or tuples of variables to merge.
     :type new_variables: list[tuple[str]] or tuple[tuple[str]]
-
     :return: Two element tuple containing 2D numpy arrays. The first contains the MC datasets' events (scrambled to avoid position bias) and the flag that identifies each event as background or signal. The second contains the events of the mixed dataset without flags (one less column).
     :rtype: list[2D numpy.array[double]] or tuple[2D numpy.array[double]]
     """
 
-    if len(rootpaths)>=4:
-        msg = f'***WARNING*** \nInput filepaths given are more than two. Using only the first two...\n*************\n'
+    if len(rootpaths) >= 4:
+        msg = f'***WARNING*** \nInput filepaths given are more than two. Using\
+only the first two...\n*************\n'
         warnings.warn(msg, stacklevel=2)
     try:
-        if len(rootpaths)<3 or not (type(rootpaths)==list or type(rootpaths)==tuple):
-            raise IncorrectIterableError(rootpaths,3) 
+        if len(rootpaths) < 3 or not (type(rootpaths) == list or type(rootpaths) == tuple):
+            raise IncorrectIterableError(rootpaths, 3)
     except IncorrectIterableError as err:
         print(err)
         sys.exit()
@@ -217,12 +209,9 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
     # If a mixing is requested, both the training and the testing arrays are
     # modified, with obviously the same mixing
     elif len(new_variables) != 0 and len(rootpaths) == 3:
-        v1, v2 = loadvars(filepath_pi, filepath_k, tree, vars)
-        v_data, _ = loadvars(filepath_data, filepath_data,
-                             tree, vars, flag_column=False)
-        initial_arrays = [v1, v2, v_data]
+
         [v_mc_pi, v_mc_k, v_data_new] = include_merged_variables(
-            rootpaths, tree, initial_arrays, new_variables)
+            rootpaths, tree, vars, new_variables)
         train_array = np.concatenate(
             (v_mc_pi[:int(n_mc/2), :], v_mc_k[:int(n_mc/2), :]), axis=0)
         test_array = v_data_new[:n_data, :]
@@ -234,5 +223,5 @@ def array_generator(rootpaths, tree, vars, n_mc=100000, n_data=15000,
 
 
 if __name__ == '__main__':
-    print('Running this module as main module is not supported. Feel free to add \
-          a custom main or run the package as a whole (see README.md)')
+    print('Running this module as main module is not supported. Feel free to \
+add a custom main or run the package as a whole (see README.md)')
