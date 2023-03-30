@@ -15,42 +15,8 @@ class InvalidSourceError(ValueError):
         :type source: str
         """
         self.source = source
-        self.message = f"\'{self.source}\' is not a valid source! Only \
-            \'.txt\' and \'.root\' are allowed, \'.root\' being the default"
-        super().__init__(self.message)
-
-
-class InvalidArrayGenRequestError(ValueError):
-    """
-    Exception that gives an error message if there is an incompatibility of the
-    number of source files given and the type of array to import.
-    """
-
-    def __init__(self, for_training, for_testing, mixing=False):
-        """
-        :param for_training: Flag indicating the user wants to generate arrays for training.
-        :type for_training: bool
-        :param for_testing: Flag indicating the user wants to generate arrays for testing.
-        :type for_testing: bool
-        :param mixing: Flag indicating the user wants to use mixed variables.
-        :type mixing: bool
-        """
-        if (for_training and for_testing):
-            self.message = "To create both the tranining and testing \
-                            datasets, the file paths (.root) of both the two \
-                            MCs d.s. and the mixed d.s. are needed!"
-        elif for_training:
-            self.message = "To create the tranining dataset, the file paths \
-                            (.root) of both the two MCs datasets are needed!"
-        elif for_testing:
-            self.message = "To create the testing dataset, only the file \
-                            path (.root) of the mixed dataset is needed!"
-        elif mixing:
-            self.message = "To add the mixed-variables data, all the three \
-                            root file paths are needed!"
-        else:
-            self.message = "UNEXPECTED ERROR: a deep review of the code is \
-                            suggested."
+        self.message = f"\n\n\'{self.source}\' is not a valid source! Only \
+            \'.txt\' and \'.root\' are allowed, \'.root\' being the default\n"
         super().__init__(self.message)
 
 
@@ -66,7 +32,7 @@ class LoadHeadError(Exception):
         :type header_path: str
         """
         self.header_path = header_path
-        self.message = f"Could not load header at path \'{self.header_path}\'"
+        self.message = f"\n\nCould not load header at path \'{self.header_path}\'\n"
         super().__init__(self.message)
 
 
@@ -82,9 +48,9 @@ class IncorrectFractionError(ValueError):
         :type f: float
         """
         self.fraction = f
-        self.message = f" {self.fraction} is not a valid value for the \
+        self.message = f"\n\n{self.fraction} is not a valid value for the \
             fraction of signal events in the mixed dataset! Make sure it is in\
-            the range (0,1)"
+            the range (0,1)\n"
         super().__init__(self.message)
 
 
@@ -105,10 +71,10 @@ class IncorrectNumGenError(ValueError):
         :param num_toys: Number of events in the signal toy.
         :type num_toys: int
         """
-        self.message = f"Invalid combinations of num_mc = {num_mc} and num_data = {num_data}\
+        self.message = f"\n\nInvalid combinations of num_mc = {num_mc} and num_data = {num_data}\
 : make sure that the toyMC files contain a sufficient number of events and lower \
 the values of these two inputs! Current number of events are \
-{num_toyb} for the background toy and {num_toys} for the signal toy"
+{num_toyb} for the background toy and {num_toys} for the signal toy\n"
         super().__init__(self.message)
 
 
@@ -124,7 +90,7 @@ class IncorrectEfficiencyError(ValueError):
         :type eff: float
         """
         self.message = f"{eff} is not a valid value for efficiency/specificity. Make sure it is"
-        "in the range (0,1)"
+        "in the range (0,1)\n"
         super().__init__(self.message)
 
 class IncorrectIterableError(Exception):
@@ -142,9 +108,9 @@ class IncorrectIterableError(Exception):
         :type input: str
         """
         if not (type(input)==list or type(input)==tuple):
-            self.message = f"\nIncorrectIterableError:{input_name}={input} given in not a list/tuple!\n"
+            self.message = f"\n\n{input_name}={input} given in not a list/tuple!\n"
         else:
-            self.message = f"\nIncorrectIterableError:{input_name}={input} given has length {len(input)}, \
+            self.message = f"\n\n{input_name}={input} given has length {len(input)}, \
 which is less than the minumum number of arguments {target_length}!\n"
         
         super().__init__(self.message)
@@ -156,7 +122,7 @@ class IncoherentRocPlotError(Exception):
     """
 
     def __init__(self):
-        self.message = f"\nIncoherentRocPlotError: The lists/tuples ``rocx_arrays``, ``rocy_arrays``, \
- ``roc_labels``, ``roc_linestyles``, ``roc_colors`` are not all of the same length!"
+        self.message = f"\n\nThe lists/tuples ``rocx_arrays``, ``rocy_arrays``, \
+ ``roc_labels``, ``roc_linestyles``, ``roc_colors`` are not all of the same length!\n"
  
         super().__init__(self.message)

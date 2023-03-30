@@ -2,7 +2,7 @@
 Generates the datasets needed for the analysis, starting from two toy events root files
 .
 """
-import time
+import traceback
 import sys
 import warnings
 import ROOT
@@ -44,8 +44,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     try:
         if fraction <= 0.0 or fraction >= 1.0:
             raise IncorrectFractionError(fraction)
-    except IncorrectFractionError as err:
-        print(err)
+    except IncorrectFractionError:
+        print(traceback.format_exc())
         sys.exit()
 
     if len(filepaths_in)>=3:
@@ -54,8 +54,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     try:
         if len(filepaths_in)<2 or not (type(filepaths_in)==list or type(filepaths_in)==tuple):
             raise IncorrectIterableError(filepaths_in,2,'filepaths_in') 
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
 
     if len(filepaths_out)>=4:
@@ -64,8 +64,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
     try:
         if len(filepaths_out)<3 or not (type(filepaths_out)==list or type(filepaths_out)==tuple):
             raise IncorrectIterableError(filepaths_out,3,'filepaths_out') 
-    except IncorrectIterableError as err:
-        print(err)
+    except IncorrectIterableError:
+        print(traceback.format_exc())
         sys.exit()
     
 
@@ -101,8 +101,8 @@ def gen_from_toy(filepaths_in=('../data/root_files/toyMC_B0PiPi.root',
             if (num_pions+num_mc > n_evts_toymc_pi) or \
                (num_kaons+num_mc > n_evts_toymc_k):
                 raise IncorrectNumGenError(num_mc, num_pions+num_kaons, n_evts_toymc_pi, n_evts_toymc_k)
-        except IncorrectNumGenError as err:
-            print(err)
+        except IncorrectNumGenError:
+            print(traceback.format_exc())
             sys.exit()
 
     print(f'Actual fraction of signal events = {num_kaons/num_data}')

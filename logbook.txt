@@ -745,17 +745,16 @@ IN GENERALE TRASCUREREMO LE EFFICIENZE DI FONDO SUI MONTECARLO
 
 FINAL
 
-- InvalidArrayGenRequestError and array_generator training/testing
 - exceptions in dnnsettings
 - overlaid_cornerplot---->utils
-- gen_from_toy num = 0 explaination 
-- include_merged_variables input redundancy
+- gen_from_toy num = 0 explaination
 - use of \ in strings to correct
 - !!!! in code
+- self.__class__.__name__
 
 
 
-- eliminare logbook.txt dal package
+- logbook.txt in .gitignore
 
 
 
