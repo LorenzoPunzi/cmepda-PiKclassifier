@@ -71,7 +71,7 @@ parser.add_argument('-v', '--variables', nargs='+', default=default_vars(),
 parser.add_argument('-fig', '--figures', action='store_true',
                     help='Saves the generated figures')
 
-parser.add_argument('-rd', '--resdir', default=default_resultsdir(dir='cmepda-PiKclassifier/outputs_main'),  # 'PiKclassifier_results'
+parser.add_argument('-rd', '--resdir', default=default_resultsdir(dir='PiKclassifier_results'),  # 'cmepda-PiKclassifier/outputs_main'
                     help='Directory where to save the results')
 
 parser.add_argument('-cr', '--cornerplot', action='store_true',
@@ -368,9 +368,9 @@ if hasattr(args, "methods"):
             p0_pi = (1e5, 0.16, 5.28, 0.08, 5.29, 0.04)
             p0_k = (1e5, 0.97, 1.6, 0.046, 5.30, 1.1, 5.27, 0.00045)
             figures = args.figures
-            FIGNAME_TEMPL_PI = 'Template_fit_Pi.pdf'
-            FIGNAME_TEMPL_K = 'Template_fit_K.pdf'
-            FIGNAME_GLOBAL = 'Template_fit_Data.pdf'
+            FIGNAME_TEMPL_PI = 'Template_fit_Pi.png'
+            FIGNAME_TEMPL_K = 'Template_fit_K.png'
+            FIGNAME_GLOBAL = 'Template_fit_Data.png'
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             method_title = 'Template fit with ROOT'
             with open(results_file, encoding='utf-8', mode='a') as file_tfit:
