@@ -164,9 +164,9 @@ def include_merged_variables(rootpaths, tree, initial_vars, new_variables):
             print(traceback.format_exc())
             sys.exit()
 
-    v1, v2 = loadvars(rootpaths[0], rootpaths[1], tree, vars)
+    v1, v2 = loadvars(rootpaths[0], rootpaths[1], tree, initial_vars)
     v_data, _ = loadvars(rootpaths[2], rootpaths[2],
-                         tree, vars, flag_column=False)
+                         tree, initial_vars, flag_column=False)
 
     n_old_vars = len(v_data[0, :])
     new_arrays = []
@@ -202,8 +202,7 @@ def include_merged_variables(rootpaths, tree, initial_vars, new_variables):
     return new_arrays
 
 
-def array_generator(rootpaths, tree, vars, n_mc=560000, n_data=50000,
-                    for_training=True, for_testing=True, new_variables=()):
+def array_generator(rootpaths, tree, vars, n_mc=560000, n_data=50000, new_variables=()):
     """
     Generates arrays for ML treatment (training and testing). To guarantee
     unbiasedness the training array has an equal number of background and signal
@@ -219,10 +218,6 @@ def array_generator(rootpaths, tree, vars, n_mc=560000, n_data=50000,
     :type n_mc: int
     :param n_data: Number of events to take from the root file for the testing set.
     :type n_data: int
-    :param for_training: If True generates scambled dataset for training from the mc sets with flags.
-    :type for_training: bool
-    :param for_testing: If True generates dataset to be evaluated, hence without flag column.
-    :type for_testing: bool
     :param new_variables: Optional list or tuple containing two element lists or tuples of variables to merge.
     :type new_variables: list[tuple[str]] or tuple[tuple[str]]
     :return: Two element tuple containing 2D numpy arrays. The first contains the MC datasets' events (scrambled to avoid position bias) and the flag that identifies each event as background or signal. The second contains the events of the mixed dataset without flags (one less column).
